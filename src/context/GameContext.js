@@ -7,7 +7,8 @@ import {
   INITIAL_TARGET_SCORE,
   TARGET_SCORE_INCREMENT,
   MAX_DISCARDS_PER_ROUND,
-  MAX_LETTERS_PER_DISCARD
+  MAX_LETTERS_PER_DISCARD,
+  INITIAL_GAME_STATUS
 } from '../constants/gameConfig';
 
 const GameContext = createContext();
@@ -18,7 +19,7 @@ const initialState = {
   maxWordLength: MAX_WORD_LENGTH,
   
   // Game state
-  gameStatus: 'welcome', // welcome, playing, roundComplete, roundEnd, gameOver
+  gameStatus: INITIAL_GAME_STATUS, // welcome, playing, roundComplete, roundEnd, gameOver
   currentRound: 1,
   score: 0,
   roundScore: 0,
@@ -32,6 +33,7 @@ const initialState = {
   selectedCards: [], // Indices of selected cards in playerHand
   canReshuffle: false, // Whether player can reshuffle their hand
   discardsUsed: 0, // Track number of discards used in current round
+  legendaryLetterPlayed: null, // Track if ! or ? has been played in current round
 };
 
 // Helper function to handle dealing new cards
@@ -48,12 +50,16 @@ const handleCardDealing = (state, selectedIndices) => {
   // Deal new cards to replace used ones
   const dealResult = dealCards(updatedDeck, selectedIndices.length);
   
-  // Create new hand with new cards added to the end
-  const newHand = [...remainingHand, ...dealResult.dealtCards];
+  // Create new hand with new cards added to the end, marking them as new
+  const newHand = [
+    ...remainingHand.map(card => ({ ...card, isNew: false })),
+    ...dealResult.dealtCards.map(card => ({ ...card, isNew: true }))
+  ];
 
   return {
     deck: dealResult.remainingDeck,
-    playerHand: newHand
+    playerHand: newHand,
+    newCardCount: dealResult.dealtCards.length
   };
 };
 
@@ -67,7 +73,8 @@ const gameReducer = (state, action) => {
         ...initialState,
         gameStatus: 'playing',
         deck: remainingDeck,
-        playerHand: dealtCards,
+        playerHand: dealtCards.map(card => ({ ...card, isNew: true })),
+        newCardCount: dealtCards.length,
         canReshuffle: !hasVowelsAtStart,
       };
 
@@ -87,6 +94,9 @@ const gameReducer = (state, action) => {
         
         // Check if round target score is reached
         if (newRoundScore >= state.targetScore) {
+          // Remove used cards from hand but don't deal new ones
+          const remainingHand = state.playerHand.filter((_, index) => !state.selectedCards.includes(index));
+          
           return {
             ...state,
             words: [...state.words, { word: normalizedWord, type: validation.wordType }],
@@ -95,6 +105,7 @@ const gameReducer = (state, action) => {
             roundScore: newRoundScore,
             currentWord: '',
             selectedCards: [],
+            playerHand: remainingHand,
             gameStatus: 'roundComplete'
           };
         }
@@ -116,20 +127,19 @@ const gameReducer = (state, action) => {
           canReshuffle: !hasVowelsAfterWord,
         };
       } else {
-        // Only deal new cards if round target hasn't been reached
-        const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(state, state.selectedCards);
-        const hasVowelsAfterWord = hasVowels(newHand);
+        // Add invalid word with no score and deal new cards
+        const { deck: updatedDeckInvalid, playerHand: newHandInvalid } = handleCardDealing(state, state.selectedCards);
+        const hasVowelsAfterInvalid = hasVowels(newHandInvalid);
 
-        // Add invalid word with no score
         return {
           ...state,
           invalidWords: [...state.invalidWords, normalizedWord],
           allWords: [...state.allWords, { word: normalizedWord }],
           currentWord: '',
           selectedCards: [],
-          deck: updatedDeck,
-          playerHand: newHand,
-          canReshuffle: !hasVowelsAfterWord,
+          deck: updatedDeckInvalid,
+          playerHand: newHandInvalid,
+          canReshuffle: !hasVowelsAfterInvalid,
         };
       }
 
@@ -164,6 +174,7 @@ const gameReducer = (state, action) => {
         invalidWords: [],
         roundScore: 0,
         targetScore: state.targetScore + TARGET_SCORE_INCREMENT,
+        legendaryLetterPlayed: null, // Reset legendary letter for new round
         deck: nextHand.remainingDeck,
         playerHand: nextHand.dealtCards,
         canReshuffle: !hasVowelsNextRound,
@@ -173,10 +184,31 @@ const gameReducer = (state, action) => {
     case 'PLAY_AGAIN':
       return initialState;
 
+    case 'CLEAR_NEW_FLAGS':
+      return {
+        ...state,
+        playerHand: state.playerHand.map(card => ({ ...card, isNew: false }))
+      };
+
     case 'ADD_LETTER':
       const { letter, cardIndex } = action.payload;
-      // Only add letter if it hasn't been used (not in selectedCards)
+      // Only add letter if it hasn't been used and no legendary letter has been played
       if (!state.selectedCards.includes(cardIndex)) {
+        // Check if current word already has a legendary letter
+        const hasLegendaryLetter = state.currentWord.includes('!') || state.currentWord.includes('?');
+        if (hasLegendaryLetter) {
+          return state; // Prevent adding more letters after legendary
+        }
+        
+        // If this is a legendary letter, set the flag
+        if (letter === '!' || letter === '?') {
+          return {
+            ...state,
+            currentWord: state.currentWord + letter,
+            selectedCards: [...state.selectedCards, cardIndex],
+            legendaryLetterPlayed: letter
+          };
+        }
         return {
           ...state,
           currentWord: state.currentWord + letter,
@@ -200,9 +232,10 @@ const gameReducer = (state, action) => {
       };
 
     case 'DISCARD_CARDS':
-      // Check discard limits
+      // Check discard limits and round target
       if (state.discardsUsed >= MAX_DISCARDS_PER_ROUND || 
-          state.selectedCards.length > MAX_LETTERS_PER_DISCARD) {
+          state.selectedCards.length > MAX_LETTERS_PER_DISCARD ||
+          state.roundScore >= state.targetScore) {
         return state;
       }
 
@@ -220,6 +253,11 @@ const gameReducer = (state, action) => {
       };
 
     case 'RESHUFFLE_HAND':
+      // Don't allow reshuffle if round target is reached
+      if (state.roundScore >= state.targetScore) {
+        return state;
+      }
+
       // Create a new shuffled deck with all cards
       const reshuffledDeck = shuffleArray([...state.deck, ...state.playerHand]);
       const reshuffledHand = dealCards(reshuffledDeck, 10);
@@ -240,6 +278,13 @@ const gameReducer = (state, action) => {
 
 export const GameProvider = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
+
+  // Auto-start game if initial status is 'playing'
+  React.useEffect(() => {
+    if (INITIAL_GAME_STATUS === 'playing') {
+      dispatch({ type: 'START_GAME' });
+    }
+  }, []);
   const { validateWord } = useWordValidation({ 
     minWordLength: initialState.minWordLength, 
     maxWordLength: initialState.maxWordLength 
@@ -271,6 +316,7 @@ export const GameProvider = ({ children }) => {
     playAgain: () => dispatch({ type: 'PLAY_AGAIN' }),
     discardCards: () => dispatch({ type: 'DISCARD_CARDS' }),
     reshuffleHand: () => dispatch({ type: 'RESHUFFLE_HAND' }),
+    clearNewFlags: () => dispatch({ type: 'CLEAR_NEW_FLAGS' }),
     // Expose deck and hand for components
     deck: state.deck,
     playerHand: state.playerHand,

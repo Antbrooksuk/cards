@@ -11,9 +11,11 @@ export const VOWEL_SCORE = 50;
 export const UNCOMMON_SCORE = 100;
 export const RARE_SCORE = 200;
 export const EPIC_SCORE = 500;
+export const LEGENDARY_SCORE = 0;
 
 // Card types
 export const CARD_TYPE = {
+  LEGENDARY: 'legendary',
   EPIC: 'epic',
   UNCOMMON: 'uncommon',
   RARE: 'rare',
@@ -21,16 +23,21 @@ export const CARD_TYPE = {
 };
 
 // Letters
+export const LEGENDARY_LETTERS = ['!', '?'];
 export const EPIC_CONSONANTS = ['Q', 'Z', 'X', 'J'];
-export const UNCOMMON_CONSONANTS = ['R', 'T', 'N', 'S'];
 export const RARE_CONSONANTS = ['B', 'C', 'D', 'F', 'G', 'H', 'K', 'L', 'M', 'P', 'V', 'W', 'Y'];
+export const UNCOMMON_CONSONANTS = ['R', 'T', 'N', 'S'];
 export const VOWELS = ['A', 'E', 'I', 'O', 'U'];
 
 // Deck configuration
+export const LEGENDARY_SETS = 1;            // 1 set of legendary letters
 export const EPIC_CONSONANTS_SETS = 2;      // 2 sets of epic consonants
-export const UNCOMMON_CONSONANTS_SETS = 4;   // 4 sets of uncommon consonants
+export const UNCOMMON_CONSONANTS_SETS = 8;   // 8 sets of uncommon consonants
 export const RARE_CONSONANTS_SETS = 2;       // 2 sets of rare consonants
 export const VOWEL_SETS = 5;                 // 5 sets of vowels
+
+// Game state
+export const INITIAL_GAME_STATUS = 'playing'; // 'welcome' or 'playing'
 
 // Target scores
 export const INITIAL_TARGET_SCORE = 1000;

@@ -1,6 +1,6 @@
 import React from 'react';
-import { WORD_TYPE_COLORS } from '../../constants/gameConfig';
-import { calculateWordScore } from '../../utils/cardUtils';
+import { WORD_TYPE_COLORS, WORD_TYPE_MULTIPLIER } from '../../constants/gameConfig';
+import { calculateWordScore, calculateLetterScore } from '../../utils/cardUtils';
 
 const PlayedWord = ({ word, type, className = '' }) => {
   const typeColor = WORD_TYPE_COLORS[type?.toLowerCase() || 'unknown'];
@@ -17,7 +17,11 @@ const PlayedWord = ({ word, type, className = '' }) => {
           </span>
         )}
       </div>
-      <span className="font-bold">
+      <span className="font-bold flex items-center gap-1">
+        {word.split('').reduce((score, letter) => score + calculateLetterScore(letter), 0)}
+        <span className="text-xs opacity-75">×</span>
+        {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']}
+        <span className="text-xs opacity-75">=</span>
         {calculateWordScore(word, type)}
       </span>
     </div>

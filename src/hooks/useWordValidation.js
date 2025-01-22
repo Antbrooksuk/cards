@@ -23,11 +23,11 @@ const useWordValidation = (config = { minWordLength: 2, maxWordLength: 15 }) => 
       };
     }
 
-    // Only letters allowed
-    if (!/^[a-z]+$/.test(trimmedWord)) {
+    // Only letters and legendary characters allowed
+    if (!/^[a-z!?]+$/.test(trimmedWord)) {
       return {
         isValid: false,
-        reason: 'Word must contain only letters'
+        reason: 'Word must contain only letters and legendary characters (! or ?)'
       };
     }
 
@@ -39,8 +39,19 @@ const useWordValidation = (config = { minWordLength: 2, maxWordLength: 15 }) => 
       };
     }
 
+    // Remove legendary letters before API validation
+    const wordWithoutLegendary = trimmedWord.replace(/[!?]/g, '');
+    
+    // If word becomes too short after removing legendary letters
+    if (wordWithoutLegendary.length < minWordLength) {
+      return {
+        isValid: false,
+        reason: `Word must be at least ${minWordLength} letters long (excluding legendary letters)`
+      };
+    }
+
     // All basic validations passed, check against dictionary API
-    return await validateWordWithDictionary(trimmedWord);
+    return await validateWordWithDictionary(wordWithoutLegendary);
   }, [minWordLength, maxWordLength]);
 
   return {

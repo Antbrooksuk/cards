@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes float {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
 @layer components {
   .btn {
     @apply px-4 py-2 rounded-lg font-semibold transition-colors;

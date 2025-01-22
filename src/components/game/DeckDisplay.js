@@ -21,6 +21,8 @@ const DeckDisplay = () => {
             if (isDealt) return 'bg-gray-300 text-gray-500 border-gray-300';
             
             switch (card.type) {
+              case CARD_TYPE.LEGENDARY:
+                return 'bg-orange-500 text-white border-orange-500';
               case CARD_TYPE.EPIC:
                 return 'bg-purple-500 text-white border-purple-500';
               case CARD_TYPE.UNCOMMON:

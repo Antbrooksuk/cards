@@ -1,14 +1,17 @@
 import { 
   CARD_TYPE,
+  LEGENDARY_LETTERS,
   EPIC_CONSONANTS,
   UNCOMMON_CONSONANTS,
   RARE_CONSONANTS,
   VOWELS,
   WORD_TYPE_MULTIPLIER,
   VOWEL_SCORE,
+  LEGENDARY_SCORE,
   EPIC_SCORE,
   UNCOMMON_SCORE,
   RARE_SCORE,
+  LEGENDARY_SETS,
   EPIC_CONSONANTS_SETS,
   UNCOMMON_CONSONANTS_SETS,
   RARE_CONSONANTS_SETS,
@@ -25,6 +28,7 @@ let cardIdCounter = 0;
  */
 export const calculateLetterScore = (letter) => {
   const upperLetter = letter.toUpperCase();
+  if (LEGENDARY_LETTERS.includes(upperLetter)) return LEGENDARY_SCORE;
   if (VOWELS.includes(upperLetter)) return VOWEL_SCORE;
   if (EPIC_CONSONANTS.includes(upperLetter)) return EPIC_SCORE;
   if (UNCOMMON_CONSONANTS.includes(upperLetter)) return UNCOMMON_SCORE;
@@ -44,9 +48,9 @@ export const calculateWordScore = (word, wordType) => {
     .split('')
     .reduce((score, letter) => score + calculateLetterScore(letter), 0);
   
-  // Apply word type multiplier
+  // Apply word type multiplier and word length
   const multiplier = WORD_TYPE_MULTIPLIER[wordType.toLowerCase()] || WORD_TYPE_MULTIPLIER.unknown;
-  return baseScore * multiplier;
+  return baseScore * multiplier * word.length;
 };
 
 /**
@@ -58,7 +62,9 @@ export const calculateWordScore = (word, wordType) => {
 export const createCard = (letter, type) => ({
   id: ++cardIdCounter,
   letter,
-  type: VOWELS.includes(letter.toUpperCase()) 
+  type: LEGENDARY_LETTERS.includes(letter.toUpperCase())
+    ? CARD_TYPE.LEGENDARY
+    : VOWELS.includes(letter.toUpperCase()) 
     ? CARD_TYPE.VOWEL 
     : EPIC_CONSONANTS.includes(letter.toUpperCase())
     ? CARD_TYPE.EPIC
@@ -73,6 +79,13 @@ export const createCard = (letter, type) => ({
  */
 export const createDeck = () => {
   const deck = [];
+
+  // Add legendary sets
+  for (let i = 0; i < LEGENDARY_SETS; i++) {
+    LEGENDARY_LETTERS.forEach(letter => {
+      deck.push(createCard(letter, CARD_TYPE.LEGENDARY));
+    });
+  }
 
   // Add epic consonant sets
   for (let i = 0; i < EPIC_CONSONANTS_SETS; i++) {

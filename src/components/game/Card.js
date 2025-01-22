@@ -2,10 +2,12 @@ import React from 'react';
 import { calculateLetterScore } from '../../utils/cardUtils';
 import { CARD_TYPE } from '../../constants/gameConfig';
 
-const Card = ({ id, letter, type, isSelected, onClick }) => {
+const Card = ({ id, letter, type, isSelected, isAnimating, isNew, onClick }) => {
   const getCardStyle = () => {
     if (isSelected) return 'bg-gray-400 text-white';
     switch (type) {
+      case CARD_TYPE.LEGENDARY:
+        return 'bg-orange-500 text-white';
       case CARD_TYPE.EPIC:
         return 'bg-purple-500 text-white';
       case CARD_TYPE.UNCOMMON:
@@ -26,8 +28,8 @@ const Card = ({ id, letter, type, isSelected, onClick }) => {
         ${getCardStyle()} font-bold text-2xl
         w-16 h-20 rounded-lg shadow-md
         flex items-center justify-center
-        transform transition-transform
-        ${isSelected ? 'opacity-50' : 'hover:scale-105 cursor-pointer'}
+        transform transition-all duration-300
+        ${isAnimating ? 'animate-dealCard' : isNew ? 'opacity-0' : ''}
       `}
     >
       <div className="relative w-full h-full flex flex-col items-center justify-center">
