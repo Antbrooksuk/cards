@@ -15,6 +15,7 @@ const GameScreen = () => {
     roundScore,
     words,
     allWords,
+    targetScore,
     startGame,
     addWord,
     startNextRound,
@@ -36,6 +37,7 @@ const GameScreen = () => {
       return <Welcome onStartGame={startGame} />;
 
     case 'playing':
+    case 'roundComplete':
       return (
         <Round
           words={words}
@@ -54,6 +56,7 @@ const GameScreen = () => {
           roundScore={roundScore}
           totalScore={score}
           roundNumber={currentRound}
+          targetScore={targetScore}
           onNextRound={startNextRound}
         />
       );

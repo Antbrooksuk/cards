@@ -1,19 +1,28 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import { createDeck, shuffleArray, dealCards, calculateWordScore, hasVowels } from '../utils/cardUtils';
 import useWordValidation from '../hooks/useWordValidation';
+import { 
+  MIN_WORD_LENGTH, 
+  MAX_WORD_LENGTH,
+  INITIAL_TARGET_SCORE,
+  TARGET_SCORE_INCREMENT,
+  MAX_DISCARDS_PER_ROUND,
+  MAX_LETTERS_PER_DISCARD
+} from '../constants/gameConfig';
 
 const GameContext = createContext();
 
 const initialState = {
   // Game configuration
-  minWordLength: 2,
-  maxWordLength: 15,
+  minWordLength: MIN_WORD_LENGTH,
+  maxWordLength: MAX_WORD_LENGTH,
   
   // Game state
-  gameStatus: 'welcome', // welcome, playing, roundEnd, gameOver
+  gameStatus: 'welcome', // welcome, playing, roundComplete, roundEnd, gameOver
   currentRound: 1,
   score: 0,
   roundScore: 0,
+  targetScore: INITIAL_TARGET_SCORE,
   words: [], // Valid words for current round [{word: string, type: string}]
   invalidWords: [], // Invalid words for current round
   allWords: [], // All words used across rounds (both valid and invalid)
@@ -22,6 +31,7 @@ const initialState = {
   currentWord: '', // Current word being built
   selectedCards: [], // Indices of selected cards in playerHand
   canReshuffle: false, // Whether player can reshuffle their hand
+  discardsUsed: 0, // Track number of discards used in current round
 };
 
 // Helper function to handle dealing new cards
@@ -70,18 +80,35 @@ const gameReducer = (state, action) => {
         return state;
       }
 
-      // Deal new cards
-      const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(state, state.selectedCards);
-
-      const hasVowelsAfterWord = hasVowels(newHand);
       if (isValid) {
         const wordScore = calculateWordScore(normalizedWord, validation.wordType);
+        const newScore = state.score + wordScore;
+        const newRoundScore = state.roundScore + wordScore;
+        
+        // Check if round target score is reached
+        if (newRoundScore >= state.targetScore) {
+          return {
+            ...state,
+            words: [...state.words, { word: normalizedWord, type: validation.wordType }],
+            allWords: [...state.allWords, { word: normalizedWord, type: validation.wordType }],
+            score: newScore,
+            roundScore: newRoundScore,
+            currentWord: '',
+            selectedCards: [],
+            gameStatus: 'roundComplete'
+          };
+        }
+
+        // Only deal new cards if round target hasn't been reached
+        const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(state, state.selectedCards);
+        const hasVowelsAfterWord = hasVowels(newHand);
+
         return {
           ...state,
           words: [...state.words, { word: normalizedWord, type: validation.wordType }],
           allWords: [...state.allWords, { word: normalizedWord, type: validation.wordType }],
-          score: state.score + wordScore,
-          roundScore: state.roundScore + wordScore,
+          score: newScore,
+          roundScore: newRoundScore,
           currentWord: '',
           selectedCards: [],
           deck: updatedDeck,
@@ -89,6 +116,10 @@ const gameReducer = (state, action) => {
           canReshuffle: !hasVowelsAfterWord,
         };
       } else {
+        // Only deal new cards if round target hasn't been reached
+        const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(state, state.selectedCards);
+        const hasVowelsAfterWord = hasVowels(newHand);
+
         // Add invalid word with no score
         return {
           ...state,
@@ -105,6 +136,12 @@ const gameReducer = (state, action) => {
     case 'END_ROUND':
       return {
         ...state,
+        gameStatus: 'roundComplete',
+      };
+
+    case 'SHOW_ROUND_END':
+      return {
+        ...state,
         gameStatus: 'roundEnd',
       };
 
@@ -118,6 +155,7 @@ const gameReducer = (state, action) => {
       const nextDeck = shuffleArray(createDeck());
       const nextHand = dealCards(nextDeck, 10);
       const hasVowelsNextRound = hasVowels(nextHand.dealtCards);
+      
       return {
         ...state,
         gameStatus: 'playing',
@@ -125,9 +163,11 @@ const gameReducer = (state, action) => {
         words: [],
         invalidWords: [],
         roundScore: 0,
+        targetScore: state.targetScore + TARGET_SCORE_INCREMENT,
         deck: nextHand.remainingDeck,
         playerHand: nextHand.dealtCards,
         canReshuffle: !hasVowelsNextRound,
+        discardsUsed: 0, // Reset discards for new round
       };
 
     case 'PLAY_AGAIN':
@@ -160,6 +200,12 @@ const gameReducer = (state, action) => {
       };
 
     case 'DISCARD_CARDS':
+      // Check discard limits
+      if (state.discardsUsed >= MAX_DISCARDS_PER_ROUND || 
+          state.selectedCards.length > MAX_LETTERS_PER_DISCARD) {
+        return state;
+      }
+
       const { deck: discardDeck, playerHand: discardHand } = handleCardDealing(state, state.selectedCards);
       const hasVowelsAfterDiscard = hasVowels(discardHand);
       
@@ -170,6 +216,7 @@ const gameReducer = (state, action) => {
         selectedCards: [],
         currentWord: '',
         canReshuffle: !hasVowelsAfterDiscard,
+        discardsUsed: state.discardsUsed + 1,
       };
 
     case 'RESHUFFLE_HAND':
@@ -193,7 +240,10 @@ const gameReducer = (state, action) => {
 
 export const GameProvider = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
-  const { validateWord } = useWordValidation();
+  const { validateWord } = useWordValidation({ 
+    minWordLength: initialState.minWordLength, 
+    maxWordLength: initialState.maxWordLength 
+  });
 
   const addWord = useCallback(async (word) => {
     const validation = await validateWord(word);
@@ -216,6 +266,7 @@ export const GameProvider = ({ children }) => {
     removeLetter: () => dispatch({ type: 'REMOVE_LETTER' }),
     clearWord: () => dispatch({ type: 'CLEAR_WORD' }),
     endRound: () => dispatch({ type: 'END_ROUND' }),
+    showRoundEnd: () => dispatch({ type: 'SHOW_ROUND_END' }),
     startNextRound: () => dispatch({ type: 'START_NEXT_ROUND' }),
     playAgain: () => dispatch({ type: 'PLAY_AGAIN' }),
     discardCards: () => dispatch({ type: 'DISCARD_CARDS' }),

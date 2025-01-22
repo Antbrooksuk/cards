@@ -7,7 +7,6 @@ const WordBuilder = () => {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="text-lg font-semibold">Current Word</div>
       <div className="flex flex-wrap gap-4 justify-center p-4 bg-blue-100 rounded-lg shadow-inner min-h-[100px]">
         {selectedCards.map((cardIndex, index) => {
           const card = playerHand[cardIndex];

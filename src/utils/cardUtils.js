@@ -1,38 +1,22 @@
+import { 
+  CARD_TYPE,
+  EPIC_CONSONANTS,
+  UNCOMMON_CONSONANTS,
+  RARE_CONSONANTS,
+  VOWELS,
+  WORD_TYPE_MULTIPLIER,
+  VOWEL_SCORE,
+  EPIC_SCORE,
+  UNCOMMON_SCORE,
+  RARE_SCORE,
+  EPIC_CONSONANTS_SETS,
+  UNCOMMON_CONSONANTS_SETS,
+  RARE_CONSONANTS_SETS,
+  VOWEL_SETS
+} from '../constants/gameConfig';
+
 // Static ID counter for generating unique card IDs
 let cardIdCounter = 0;
-
-/**
- * Card types enum
- */
-export const CardType = {
-  CONSONANT: 'consonant',
-  VOWEL: 'vowel',
-};
-
-/**
- * List of all consonants and vowels
- */
-export const CONSONANTS = [
-  'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M',
-  'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'
-];
-
-export const VOWELS = ['A', 'E', 'I', 'O', 'U'];
-
-/**
- * Word type multipliers for scoring
- */
-export const WordTypeMultiplier = {
-  noun: 2,
-  verb: 4,
-  adjective: 8,
-  adverb: 16,
-  preposition: 16,
-  pronoun: 16,
-  conjunction: 16,
-  interjection: 16,
-  unknown: 1
-};
 
 /**
  * Calculate score for a single letter
@@ -40,7 +24,12 @@ export const WordTypeMultiplier = {
  * @returns {number} The score for the letter
  */
 export const calculateLetterScore = (letter) => {
-  return VOWELS.includes(letter.toUpperCase()) ? 50 : 100;
+  const upperLetter = letter.toUpperCase();
+  if (VOWELS.includes(upperLetter)) return VOWEL_SCORE;
+  if (EPIC_CONSONANTS.includes(upperLetter)) return EPIC_SCORE;
+  if (UNCOMMON_CONSONANTS.includes(upperLetter)) return UNCOMMON_SCORE;
+  if (RARE_CONSONANTS.includes(upperLetter)) return RARE_SCORE;
+  return 0; // Should never happen
 };
 
 /**
@@ -56,7 +45,7 @@ export const calculateWordScore = (word, wordType) => {
     .reduce((score, letter) => score + calculateLetterScore(letter), 0);
   
   // Apply word type multiplier
-  const multiplier = WordTypeMultiplier[wordType.toLowerCase()] || WordTypeMultiplier.unknown;
+  const multiplier = WORD_TYPE_MULTIPLIER[wordType.toLowerCase()] || WORD_TYPE_MULTIPLIER.unknown;
   return baseScore * multiplier;
 };
 
@@ -69,27 +58,47 @@ export const calculateWordScore = (word, wordType) => {
 export const createCard = (letter, type) => ({
   id: ++cardIdCounter,
   letter,
-  type,
+  type: VOWELS.includes(letter.toUpperCase()) 
+    ? CARD_TYPE.VOWEL 
+    : EPIC_CONSONANTS.includes(letter.toUpperCase())
+    ? CARD_TYPE.EPIC
+    : UNCOMMON_CONSONANTS.includes(letter.toUpperCase())
+    ? CARD_TYPE.UNCOMMON
+    : CARD_TYPE.RARE,
 });
 
 /**
- * Creates a complete deck of cards with 2 sets of consonants and 4 sets of vowels
+ * Creates a complete deck of cards with configured number of consonant and vowel sets
  * @returns {Array} Array of card objects
  */
 export const createDeck = () => {
   const deck = [];
 
-  // Add 2 sets of consonants
-  for (let i = 0; i < 2; i++) {
-    CONSONANTS.forEach(letter => {
-      deck.push(createCard(letter, CardType.CONSONANT));
+  // Add epic consonant sets
+  for (let i = 0; i < EPIC_CONSONANTS_SETS; i++) {
+    EPIC_CONSONANTS.forEach(letter => {
+      deck.push(createCard(letter, CARD_TYPE.EPIC));
     });
   }
 
-  // Add 4 sets of vowels
-  for (let i = 0; i < 4; i++) {
+  // Add uncommon consonant sets
+  for (let i = 0; i < UNCOMMON_CONSONANTS_SETS; i++) {
+    UNCOMMON_CONSONANTS.forEach(letter => {
+      deck.push(createCard(letter, CARD_TYPE.UNCOMMON));
+    });
+  }
+
+  // Add rare consonant sets
+  for (let i = 0; i < RARE_CONSONANTS_SETS; i++) {
+    RARE_CONSONANTS.forEach(letter => {
+      deck.push(createCard(letter, CARD_TYPE.RARE));
+    });
+  }
+
+  // Add vowel sets
+  for (let i = 0; i < VOWEL_SETS; i++) {
     VOWELS.forEach(letter => {
-      deck.push(createCard(letter, CardType.VOWEL));
+      deck.push(createCard(letter, CARD_TYPE.VOWEL));
     });
   }
 
@@ -111,20 +120,20 @@ export const shuffleArray = (array) => {
 };
 
 /**
- * Deals a specified number of cards from the deck
- * @param {Array} deck - The deck to deal from
- * @param {number} count - Number of cards to deal
- * @returns {Object} Object containing dealt cards and remaining deck
- */
-/**
  * Checks if a hand of cards contains any vowels
  * @param {Array} hand - Array of card objects to check
  * @returns {boolean} True if hand contains at least one vowel
  */
 export const hasVowels = (hand) => {
-  return hand.some(card => card.type === CardType.VOWEL);
+  return hand.some(card => card.type === CARD_TYPE.VOWEL);
 };
 
+/**
+ * Deals a specified number of cards from the deck
+ * @param {Array} deck - The deck to deal from
+ * @param {number} count - Number of cards to deal
+ * @returns {Object} Object containing dealt cards and remaining deck
+ */
 export const dealCards = (deck, count) => {
   if (count > deck.length) {
     throw new Error('Not enough cards in deck');

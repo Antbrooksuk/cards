@@ -7,6 +7,7 @@ const RoundEnd = ({
   roundScore,
   totalScore,
   roundNumber,
+  targetScore,
   onNextRound,
   className = ''
 }) => {
@@ -17,7 +18,7 @@ const RoundEnd = ({
       <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-2xl">
         <div className="flex justify-around mb-8">
           <ScoreDisplay label="Round Score" score={roundScore} />
-          <ScoreDisplay label="Total Score" score={totalScore} />
+          <ScoreDisplay label="Total Score" score={totalScore} targetScore={targetScore} />
         </div>
         
         <div className="mb-6">
@@ -26,9 +27,14 @@ const RoundEnd = ({
             {words.map((word, index) => (
               <div
                 key={index}
-                className="bg-gray-100 rounded px-3 py-1 text-sm text-center"
+                className="bg-gray-100 rounded px-3 py-1 text-sm flex items-center justify-between"
               >
-                {word}
+                <span>{typeof word === 'string' ? word : word.word}</span>
+                {typeof word === 'object' && word.type && (
+                  <span className="px-2 py-0.5 bg-gray-200 rounded-full text-xs">
+                    {word.type}
+                  </span>
+                )}
               </div>
             ))}
           </div>

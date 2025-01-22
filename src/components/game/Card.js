@@ -1,15 +1,29 @@
 import React from 'react';
-import { CardType, calculateLetterScore } from '../../utils/cardUtils';
+import { calculateLetterScore } from '../../utils/cardUtils';
+import { CARD_TYPE } from '../../constants/gameConfig';
 
 const Card = ({ id, letter, type, isSelected, onClick }) => {
-  const baseColor = type === CardType.VOWEL ? 'bg-blue-500' : 'bg-green-500';
-  const bgColor = isSelected ? 'bg-gray-400' : baseColor;
+  const getCardStyle = () => {
+    if (isSelected) return 'bg-gray-400 text-white';
+    switch (type) {
+      case CARD_TYPE.EPIC:
+        return 'bg-purple-500 text-white';
+      case CARD_TYPE.UNCOMMON:
+        return 'bg-green-500 text-white';
+      case CARD_TYPE.RARE:
+        return 'bg-blue-500 text-white';
+      case CARD_TYPE.VOWEL:
+        return 'bg-white text-gray-800';
+      default:
+        return 'bg-gray-500 text-white';
+    }
+  };
   
   return (
     <div 
       onClick={onClick}
       className={`
-        ${bgColor} text-white font-bold text-2xl
+        ${getCardStyle()} font-bold text-2xl
         w-16 h-20 rounded-lg shadow-md
         flex items-center justify-center
         transform transition-transform
