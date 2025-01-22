@@ -1,0 +1,31 @@
+/**
+ * Validates a word using the Dictionary API
+ * @param {string} word - The word to validate
+ * @returns {Promise<{isValid: boolean, reason?: string, word?: string, wordType?: string}>} Validation result
+ */
+export const validateWordWithDictionary = async (word) => {
+  try {
+    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        isValid: false,
+        reason: errorData.message || 'Word not found in dictionary'
+      };
+    }
+
+    const data = await response.json();
+    const wordType = data[0]?.meanings[0]?.partOfSpeech || 'unknown';
+    
+    return {
+      isValid: true,
+      word: word,
+      wordType: wordType
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      reason: 'Dictionary validation failed'
+    };
+  }
+};
