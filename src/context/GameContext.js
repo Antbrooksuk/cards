@@ -1,10 +1,15 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
-import { createDeck, shuffleArray, dealCards, calculateWordScore } from '../utils/cardUtils';
+import { createDeck, shuffleArray, dealCards, calculateWordScore, hasVowels } from '../utils/cardUtils';
 import useWordValidation from '../hooks/useWordValidation';
 
 const GameContext = createContext();
 
 const initialState = {
+  // Game configuration
+  minWordLength: 2,
+  maxWordLength: 15,
+  
+  // Game state
   gameStatus: 'welcome', // welcome, playing, roundEnd, gameOver
   currentRound: 1,
   score: 0,
@@ -16,6 +21,7 @@ const initialState = {
   playerHand: [], // Player's current hand of cards
   currentWord: '', // Current word being built
   selectedCards: [], // Indices of selected cards in playerHand
+  canReshuffle: false, // Whether player can reshuffle their hand
 };
 
 // Helper function to handle dealing new cards
@@ -46,11 +52,13 @@ const gameReducer = (state, action) => {
     case 'START_GAME':
       const startDeck = shuffleArray(createDeck());
       const { dealtCards, remainingDeck } = dealCards(startDeck, 10);
+      const hasVowelsAtStart = hasVowels(dealtCards);
       return {
         ...initialState,
         gameStatus: 'playing',
         deck: remainingDeck,
         playerHand: dealtCards,
+        canReshuffle: !hasVowelsAtStart,
       };
 
     case 'ADD_WORD':
@@ -65,6 +73,7 @@ const gameReducer = (state, action) => {
       // Deal new cards
       const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(state, state.selectedCards);
 
+      const hasVowelsAfterWord = hasVowels(newHand);
       if (isValid) {
         const wordScore = calculateWordScore(normalizedWord, validation.wordType);
         return {
@@ -77,6 +86,7 @@ const gameReducer = (state, action) => {
           selectedCards: [],
           deck: updatedDeck,
           playerHand: newHand,
+          canReshuffle: !hasVowelsAfterWord,
         };
       } else {
         // Add invalid word with no score
@@ -88,6 +98,7 @@ const gameReducer = (state, action) => {
           selectedCards: [],
           deck: updatedDeck,
           playerHand: newHand,
+          canReshuffle: !hasVowelsAfterWord,
         };
       }
 
@@ -106,6 +117,7 @@ const gameReducer = (state, action) => {
       }
       const nextDeck = shuffleArray(createDeck());
       const nextHand = dealCards(nextDeck, 10);
+      const hasVowelsNextRound = hasVowels(nextHand.dealtCards);
       return {
         ...state,
         gameStatus: 'playing',
@@ -115,6 +127,7 @@ const gameReducer = (state, action) => {
         roundScore: 0,
         deck: nextHand.remainingDeck,
         playerHand: nextHand.dealtCards,
+        canReshuffle: !hasVowelsNextRound,
       };
 
     case 'PLAY_AGAIN':
@@ -148,11 +161,27 @@ const gameReducer = (state, action) => {
 
     case 'DISCARD_CARDS':
       const { deck: discardDeck, playerHand: discardHand } = handleCardDealing(state, state.selectedCards);
+      const hasVowelsAfterDiscard = hasVowels(discardHand);
       
       return {
         ...state,
         deck: discardDeck,
         playerHand: discardHand,
+        selectedCards: [],
+        currentWord: '',
+        canReshuffle: !hasVowelsAfterDiscard,
+      };
+
+    case 'RESHUFFLE_HAND':
+      // Create a new shuffled deck with all cards
+      const reshuffledDeck = shuffleArray([...state.deck, ...state.playerHand]);
+      const reshuffledHand = dealCards(reshuffledDeck, 10);
+      
+      return {
+        ...state,
+        deck: reshuffledHand.remainingDeck,
+        playerHand: reshuffledHand.dealtCards,
+        canReshuffle: false, // Reset reshuffle ability
         selectedCards: [],
         currentWord: '',
       };
@@ -190,9 +219,11 @@ export const GameProvider = ({ children }) => {
     startNextRound: () => dispatch({ type: 'START_NEXT_ROUND' }),
     playAgain: () => dispatch({ type: 'PLAY_AGAIN' }),
     discardCards: () => dispatch({ type: 'DISCARD_CARDS' }),
+    reshuffleHand: () => dispatch({ type: 'RESHUFFLE_HAND' }),
     // Expose deck and hand for components
     deck: state.deck,
     playerHand: state.playerHand,
+    canReshuffle: state.canReshuffle,
   };
 
   return (

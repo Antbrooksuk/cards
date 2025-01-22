@@ -1,12 +1,13 @@
 import { useCallback } from 'react';
 import { validateWordWithDictionary } from '../utils/dictionaryApi';
+import { useGame } from '../context/GameContext';
 
 /**
  * Performs basic validation rules on a word
  * @param {string} word - The word to validate
  * @returns {{isValid: boolean, reason?: string, word?: string}} Validation result
  */
-const validateBasicRules = (word) => {
+const validateBasicRules = (word, minWordLength, maxWordLength) => {
   if (!word || typeof word !== 'string') {
     return {
       isValid: false,
@@ -17,10 +18,10 @@ const validateBasicRules = (word) => {
   const trimmedWord = word.trim().toLowerCase();
 
   // Length check
-  if (trimmedWord.length < 3) {
+  if (trimmedWord.length < minWordLength) {
     return {
       isValid: false,
-      reason: 'Word must be at least 3 letters long'
+      reason: `Word must be at least ${minWordLength} letters long`
     };
   }
 
@@ -33,10 +34,10 @@ const validateBasicRules = (word) => {
   }
 
   // Maximum length check
-  if (trimmedWord.length > 15) {
+  if (trimmedWord.length > maxWordLength) {
     return {
       isValid: false,
-      reason: 'Word is too long (maximum 15 letters)'
+      reason: `Word is too long (maximum ${maxWordLength} letters)`
     };
   }
 
@@ -47,16 +48,18 @@ const validateBasicRules = (word) => {
 };
 
 const useWordValidation = () => {
+  const { minWordLength, maxWordLength } = useGame();
+  
   const validateWord = useCallback(async (word) => {
     // First perform basic validation
-    const basicValidation = validateBasicRules(word);
+    const basicValidation = validateBasicRules(word, minWordLength, maxWordLength);
     if (!basicValidation.isValid) {
       return basicValidation;
     }
 
     // Then check against dictionary API
     return await validateWordWithDictionary(basicValidation.word);
-  }, []);
+  }, [minWordLength, maxWordLength]);
 
   return {
     validateWord

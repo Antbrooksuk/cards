@@ -116,6 +116,15 @@ export const shuffleArray = (array) => {
  * @param {number} count - Number of cards to deal
  * @returns {Object} Object containing dealt cards and remaining deck
  */
+/**
+ * Checks if a hand of cards contains any vowels
+ * @param {Array} hand - Array of card objects to check
+ * @returns {boolean} True if hand contains at least one vowel
+ */
+export const hasVowels = (hand) => {
+  return hand.some(card => card.type === CardType.VOWEL);
+};
+
 export const dealCards = (deck, count) => {
   if (count > deck.length) {
     throw new Error('Not enough cards in deck');
