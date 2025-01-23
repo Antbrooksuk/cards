@@ -9,6 +9,8 @@ import GameBoard from '../game/GameBoard'
 import Hand from '../game/Hand'
 import DeckDisplay from '../game/DeckDisplay'
 import WordBuilder from '../game/WordBuilder'
+import ActionBar from '../game/ActionBar'
+import useCardAnimation from '../../hooks/useCardAnimation'
 
 const Round = ({ className = '' }) => {
   const [isAnimating, setIsAnimating] = useState(false)
@@ -38,11 +40,21 @@ const Round = ({ className = '' }) => {
     showRoundEnd,
     discardsUsed,
     debugMode,
+    clearNewFlags,
   } = useGame()
+
+  const animatingCards = useCardAnimation(playerHand, clearNewFlags)
 
   useEffect(() => {
     const handleKeyDown = async e => {
-      if (gameStatus !== 'playing' || isValidating || isAnimating || debugMode)
+      const hasAnimatingCards = animatingCards.size > 0
+      if (
+        gameStatus !== 'playing' ||
+        isValidating ||
+        isAnimating ||
+        debugMode ||
+        hasAnimatingCards
+      )
         return
 
       if (e.key === 'Enter' && currentWord) {
@@ -80,6 +92,7 @@ const Round = ({ className = '' }) => {
     isAnimating,
     gameStatus,
     debugMode,
+    animatingCards,
   ])
 
   const handleWordSubmit = async debugWord => {
@@ -109,16 +122,16 @@ const Round = ({ className = '' }) => {
     // Wait for the last animation to complete
     await new Promise(resolve => setTimeout(resolve, 1000))
 
-    // Reset animation states and prepare for validation
+    // Reset animation states
     setAnimatingIndices([])
     setIsAnimating(false)
-    setIsValidating(true)
 
-    // Submit the word and get validation
+    // Now validate the word
+    setIsValidating(true)
     const validation = await addWord(currentWord)
     setIsValidating(false)
 
-    // Only clear word after validation (so selectedCards are available for invalid words)
+    // Clear word after validation (so selectedCards are available for invalid words)
     clearWord()
 
     if (!validation.isValid) {
@@ -145,69 +158,24 @@ const Round = ({ className = '' }) => {
           animatingIndices={animatingIndices}
           onAnimationComplete={() => {
             setAnimatingIndices([])
-            setIsAnimating(false)
+            // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
           }}
         />
         <Hand isValidating={isValidating} />
-        <div className='flex justify-center gap-4'>
-          {gameStatus === 'playing' ? (
-            <>
-              <button
-                className='px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600'
-                disabled={
-                  (!debugMode && selectedCards.length === 0) ||
-                  isAnimating ||
-                  isValidating
-                }
-                onClick={handleWordSubmit}
-              >
-                Play Word
-              </button>
-              <button
-                className='px-4 py-2 bg-gray-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600'
-                onClick={reshuffleHand}
-                disabled={isValidating || isAnimating}
-              >
-                Shuffle Hand
-              </button>
-              <button
-                onClick={reshuffleDeck}
-                disabled={!canReshuffle || isValidating}
-                className={`px-4 py-2 rounded-lg ${
-                  canReshuffle
-                    ? 'bg-yellow-500 hover:bg-yellow-600 text-white cursor-pointer'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-              >
-                Reshuffle
-              </button>
-              <button
-                className='px-4 py-2 bg-gray-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600'
-                disabled={
-                  selectedCards.length === 0 ||
-                  selectedCards.length > MAX_LETTERS_PER_DISCARD ||
-                  discardsUsed >= MAX_DISCARDS_PER_ROUND ||
-                  isValidating
-                }
-                onClick={discardCards}
-                title={`${MAX_LETTERS_PER_DISCARD} letters max, ${
-                  MAX_DISCARDS_PER_ROUND - discardsUsed
-                } discards remaining`}
-              >
-                Discard ({MAX_DISCARDS_PER_ROUND - discardsUsed})
-              </button>
-            </>
-          ) : (
-            gameStatus === 'roundComplete' && (
-              <button
-                onClick={showRoundEnd}
-                className='px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600'
-              >
-                Continue
-              </button>
-            )
-          )}
-        </div>
+        <ActionBar
+          gameStatus={gameStatus}
+          isAnimating={isAnimating}
+          isValidating={isValidating}
+          selectedCards={selectedCards}
+          discardsUsed={discardsUsed}
+          canReshuffle={canReshuffle}
+          debugMode={debugMode}
+          onPlayWord={handleWordSubmit}
+          onShuffleHand={reshuffleHand}
+          onReshuffleDeck={reshuffleDeck}
+          onDiscardCards={discardCards}
+          onShowRoundEnd={showRoundEnd}
+        />
         <DeckDisplay />
       </div>
     </div>

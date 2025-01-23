@@ -10,8 +10,17 @@ const Hand = ({ isValidating }) => {
 
   const animatingCards = useCardAnimation(playerHand, clearNewFlags)
 
+  const hasAnimatingCards = animatingCards.size > 0
   const handleCardClick = (letter, index) => {
-    if (canSelectCard(index, selectedCards, gameStatus, isValidating)) {
+    if (
+      canSelectCard(
+        index,
+        selectedCards,
+        gameStatus,
+        isValidating,
+        hasAnimatingCards,
+      )
+    ) {
       addLetter(letter, index)
     }
   }

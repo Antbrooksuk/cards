@@ -29,13 +29,13 @@ export const WORD_LENGTH_CLASSES = {
  */
 export const WORD_TYPE_MULTIPLIER = {
   noun: 2,
-  verb: 4,
-  adjective: 8,
-  adverb: 16,
-  preposition: 16,
-  pronoun: 16,
-  conjunction: 16,
-  interjection: 16,
+  verb: 3,
+  adjective: 4,
+  adverb: 6,
+  preposition: 6,
+  pronoun: 6,
+  conjunction: 6,
+  interjection: 6,
   unknown: 1,
 }
 
@@ -224,6 +224,14 @@ export const LOVE_WORDS = [
   'HONEY',
   'CUTE',
   'ADORE',
+  'NUDE',
+  'NUDIST',
+  'SAUCY',
+  'ROMP',
+  'FLIRT',
+  'THIGH',
+  'BREAST',
+  'GROAN',
 ]
 
 export const LOVE_WORD_STYLE = {

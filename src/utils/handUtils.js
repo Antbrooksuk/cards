@@ -6,11 +6,13 @@ export const canSelectCard = (
   selectedCards,
   gameStatus,
   isValidating,
+  hasAnimatingCards,
 ) => {
   return (
     !selectedCards.includes(index) &&
     gameStatus === GAME_STATUS.PLAYING &&
-    !isValidating
+    !isValidating &&
+    !hasAnimatingCards
   )
 }
 

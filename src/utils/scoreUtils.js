@@ -106,7 +106,7 @@ export const getSpecialWordBonus = wordScoreResult => {
   } else if (isLove) {
     return {
       style: LOVE_WORD_STYLE,
-      text: 'LOVE!',
+      text: 'MWAH!',
       multiplier: LOVE_WORD_STYLE.MULTIPLIER,
     }
   }
