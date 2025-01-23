@@ -9,10 +9,9 @@ const GameBoard = ({
   roundScore,
   roundNumber,
   targetScore,
-  className = '',
 }) => {
   return (
-    <div className={`game-container ${className}`}>
+    <div className={`game-container`}>
       <div className='flex justify-between items-center mb-6'>
         <div className='text-xl font-bold'>Round {roundNumber}</div>
         <div className='flex gap-8'>
@@ -27,7 +26,7 @@ const GameBoard = ({
 
       <div className='space-y-4'>
         {words.length > 0 && (
-          <div className='bg-gray-200 rounded-lg p-4 shadow-inner'>
+          <div className='gap-4 p-4 border bg-gray-100 rounded-lg'>
             <h3 className='text-lg font-semibold mb-2'>
               Valid Words ({words.length})
             </h3>
@@ -43,7 +42,7 @@ const GameBoard = ({
           </div>
         )}
         {invalidWords.length > 0 && (
-          <div className='bg-gray-200 rounded-lg p-4 shadow-inner'>
+          <div className='gap-4 p-4 border bg-gray-100 rounded-lg'>
             <h3 className='text-lg font-semibold mb-2'>
               Invalid Words ({invalidWords.length})
             </h3>

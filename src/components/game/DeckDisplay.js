@@ -9,7 +9,7 @@ const DeckDisplay = () => {
   const allCards = [...playerHand, ...deck]
 
   return (
-    <div className='mt-4 p-4 border rounded-lg bg-gray-100'>
+    <div className='p-4 border rounded-lg bg-gray-100'>
       <h3 className='text-lg font-semibold mb-2'>Deck Status</h3>
       <div className='flex flex-wrap gap-2'>
         {allCards.map((card, index) => {

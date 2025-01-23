@@ -114,7 +114,7 @@ const Round = ({ className = '' }) => {
   }
 
   return (
-    <div className={`min-h-screen py-8 ${className}`}>
+    <div className={`min-h-screen py-4 ${className}`}>
       <GameBoard
         words={words}
         invalidWords={invalidWords}
@@ -124,7 +124,7 @@ const Round = ({ className = '' }) => {
         targetScore={targetScore}
       />
 
-      <div className='game-container space-y-6'>
+      <div className='game-container mt-8 flex flex-col gap-4'>
         <WordBuilder
           isAnimating={isAnimating}
           isValidating={isValidating}
@@ -135,7 +135,7 @@ const Round = ({ className = '' }) => {
           }}
         />
         <Hand isValidating={isValidating} />
-        <div className='flex justify-center gap-4 mb-6'>
+        <div className='flex justify-center gap-4'>
           {gameStatus === 'playing' ? (
             <>
               <button

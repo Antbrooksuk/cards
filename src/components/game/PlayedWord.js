@@ -12,7 +12,7 @@ const PlayedWord = ({ word, type, className = '' }) => {
 
   return (
     <div
-      className={`bg-gray-800 rounded-lg px-3 py-2 flex items-center gap-3 ${className}`}
+      className={`bg-gray-100 rounded-lg px-3 py-2 flex items-center gap-3 ${className}`}
     >
       <div className='flex gap-1'>
         {word.split('').map((letter, index) => (
@@ -20,13 +20,13 @@ const PlayedWord = ({ word, type, className = '' }) => {
         ))}
       </div>
       <div className='flex items-center gap-2 text-sm'>
-        <span className='bg-gray-700 text-white px-2 py-0.5 rounded-md'>
+        <span className='flex h-10 text-lg items-center bg-gray-200 px-2 py-0.5 rounded-md'>
           Letters × {word.length}
         </span>
-        <span className={`${typeColor} px-2 py-0.5 rounded-md`}>
+        <span className={`flex h-10 text-lg items-center ${typeColor} px-2 py-0.5 rounded-md`}>
           {type} × {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']}
         </span>
-        <span className='bg-gray-700 text-white px-2 py-0.5 rounded-md font-bold'>
+        <span className='flex h-10 text-lg items-center bg-gray-200 px-2 py-0.5 rounded-md font-bold'>
           {wordScore}
         </span>
       </div>

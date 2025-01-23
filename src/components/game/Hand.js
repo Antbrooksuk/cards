@@ -37,7 +37,7 @@ const Hand = ({ isValidating }) => {
   }, [playerHand])
 
   return (
-    <div className='w-full flex flex-wrap gap-4 justify-center p-4 bg-gray-100 rounded-lg shadow-inner'>
+    <div className='w-full border flex flex-wrap gap-4 justify-center p-4 bg-gray-100 rounded-lg'>
       {playerHand.map((card, index) => (
         <Card
           key={card.id}
