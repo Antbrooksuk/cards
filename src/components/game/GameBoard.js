@@ -22,8 +22,8 @@ const GameBoard = ({
 }) => {
   return (
     <div className={GAME_BOARD_STYLES.CONTAINER}>
+      <DebugPanel onWordSubmit={onWordSubmit} />
       <div className={GAME_BOARD_STYLES.HEADER}>
-        <DebugPanel onWordSubmit={onWordSubmit} />
         <div className={GAME_BOARD_STYLES.ROUND_NUMBER}>
           Round {roundNumber}
         </div>

@@ -1,12 +1,12 @@
 import React from 'react'
-import { CARD_LAYOUT } from '../../constants/cardConstants'
+import { CARD_CLASSES } from '../../constants/tailwindClasses'
 
 const CardLayout = ({ id, letter, score, children }) => {
   return (
-    <div className={CARD_LAYOUT.CONTENT}>
-      <span className={CARD_LAYOUT.ID}>{id}</span>
-      <span className={CARD_LAYOUT.LETTER}>{letter}</span>
-      <span className={CARD_LAYOUT.SCORE}>{score}</span>
+    <div className={CARD_CLASSES.content}>
+      <span className={CARD_CLASSES.id}>{id}</span>
+      <span className={CARD_CLASSES.letter}>{letter}</span>
+      <span className={CARD_CLASSES.score}>{score}</span>
       {children}
     </div>
   )

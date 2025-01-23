@@ -3,6 +3,7 @@ import React, {
   useContext,
   useReducer,
   useCallback,
+  useMemo,
 } from 'react'
 import {
   createDeck,
@@ -19,7 +20,56 @@ import {
   MAX_DISCARDS_PER_ROUND,
   MAX_LETTERS_PER_DISCARD,
   INITIAL_GAME_STATUS,
+  GAME_STATUS,
+  MAX_HAND_SIZE,
+  LEGENDARY_LETTERS,
+  ACTION_TYPES,
 } from '../constants/gameConfig'
+
+// Helper functions
+const handleNewRound = (deck, handSize = MAX_HAND_SIZE) => {
+  const shuffledDeck = shuffleArray(deck)
+  const { dealtCards, remainingDeck } = dealCards(shuffledDeck, handSize)
+  const hasVowelsInHand = hasVowels(dealtCards)
+
+  return {
+    deck: remainingDeck,
+    playerHand: dealtCards.map(card => ({ ...card, isNew: true })),
+    canReshuffle: !hasVowelsInHand,
+  }
+}
+
+const handleWordValidation = (state, word, isValid, validation) => {
+  if (isValid) {
+    const { score: wordScore } = calculateWordTotalScore(
+      word,
+      validation.wordType,
+    )
+    return {
+      score: Number(state.score) + wordScore,
+      roundScore: Number(state.roundScore) + wordScore,
+      words: [...state.wordHistory.valid, { word, type: validation.wordType }],
+    }
+  }
+  return {
+    invalidWords: [...state.wordHistory.invalid, word],
+  }
+}
+
+const isValidDiscard = state => {
+  return !(
+    state.discardsUsed >= MAX_DISCARDS_PER_ROUND ||
+    state.wordHistory.current.selectedIndices.length >
+      MAX_LETTERS_PER_DISCARD ||
+    state.roundScore >= state.targetScore
+  )
+}
+
+const canAddLetter = (state, letter) => {
+  const isLegendary =
+    letter === LEGENDARY_LETTERS.WILD || letter === LEGENDARY_LETTERS.SPECIAL
+  return !state.wordHistory?.current?.hasLegendaryLetter || !isLegendary
+}
 
 const GameContext = createContext()
 
@@ -30,21 +80,30 @@ const initialState = {
   debugMode: false,
 
   // Game state
-  gameStatus: INITIAL_GAME_STATUS, // welcome, playing, roundComplete, roundEnd, gameOver
+  gameStatus: INITIAL_GAME_STATUS,
   currentRound: 1,
   score: 0,
   roundScore: 0,
   targetScore: INITIAL_TARGET_SCORE,
-  words: [], // Valid words for current round [{word: string, type: string}]
-  invalidWords: [], // Invalid words for current round
-  allWords: [], // All words used across rounds (both valid and invalid)
-  deck: [], // Current deck of cards
-  playerHand: [], // Player's current hand of cards
-  currentWord: '', // Current word being built
-  selectedCards: [], // Indices of selected cards in playerHand
-  canReshuffle: false, // Whether player can reshuffle their hand
-  discardsUsed: 0, // Track number of discards used in current round
-  legendaryLetterPlayed: null, // Track if ! or ? has been played in current round
+
+  // Word tracking
+  wordHistory: {
+    valid: [], // Valid words for current round [{word: string, type: string}]
+    invalid: [], // Invalid words for current round
+    all: [], // All words across rounds
+    current: {
+      text: '',
+      selectedIndices: [],
+      hasLegendaryLetter: false,
+    },
+  },
+
+  // Card management
+  deck: [],
+  playerHand: [],
+  canReshuffle: false,
+  discardsUsed: 0,
+  legendaryLetterPlayed: null,
 }
 
 // Helper function to handle dealing new cards
@@ -78,357 +137,370 @@ const handleCardDealing = (state, selectedIndices) => {
 
 const gameReducer = (state, action) => {
   switch (action.type) {
-    case 'START_GAME':
-      const startDeck = shuffleArray(createDeck())
-      const { dealtCards, remainingDeck } = dealCards(startDeck, 10)
-      const hasVowelsAtStart = hasVowels(dealtCards)
+    case ACTION_TYPES.START_GAME:
+      const {
+        deck: startDeck,
+        playerHand: startHand,
+        canReshuffle: startReshuffle,
+      } = handleNewRound(createDeck())
       return {
         ...initialState,
-        gameStatus: 'playing',
-        deck: remainingDeck,
-        playerHand: dealtCards.map(card => ({ ...card, isNew: true })),
-        newCardCount: dealtCards.length,
-        canReshuffle: !hasVowelsAtStart,
+        gameStatus: GAME_STATUS.PLAYING,
+        deck: startDeck,
+        playerHand: startHand,
+        canReshuffle: startReshuffle,
       }
 
-    case 'ADD_WORD':
+    case ACTION_TYPES.ADD_WORD:
       const { word, isValid, validation } = action.payload
       const normalizedWord = word.toLowerCase()
 
       // Check if word has been played before
-      if (
-        state.allWords.some(w =>
-          typeof w === 'string'
-            ? w === normalizedWord
-            : w.word === normalizedWord,
-        )
-      ) {
+      if (state.wordHistory.all.some(w => w.word === normalizedWord)) {
         return state
       }
 
-      if (isValid) {
-        const { score: wordScore } = calculateWordTotalScore(
-          normalizedWord,
-          validation.wordType || 'unknown',
-        )
-        const newScore = Number(state.score) + wordScore
-        const newRoundScore = Number(state.roundScore) + wordScore
+      const wordResult = handleWordValidation(
+        state,
+        normalizedWord,
+        isValid,
+        validation,
+      )
+      const newScore = wordResult.score || state.score
+      const newRoundScore = wordResult.roundScore || state.roundScore
 
-        // In debug mode, just add the word without dealing with cards
-        if (state.debugMode) {
-          const updatedState = {
-            ...state,
-            words: [
-              ...state.words,
-              { word: normalizedWord, type: validation.wordType },
-            ],
-            allWords: [
-              ...state.allWords,
-              { word: normalizedWord, type: validation.wordType },
-            ],
-            score: newScore,
-            roundScore: newRoundScore,
-          }
-
-          if (newRoundScore >= state.targetScore) {
-            updatedState.gameStatus = 'roundComplete'
-          }
-
-          return updatedState
-        }
-
-        // Normal mode - handle cards
-        if (newRoundScore >= state.targetScore) {
-          // Remove used cards from hand but don't deal new ones
-          const remainingHand = state.playerHand.filter(
-            (_, index) => !state.selectedCards.includes(index),
-          )
-
-          return {
-            ...state,
-            words: [
-              ...state.words,
-              { word: normalizedWord, type: validation.wordType },
-            ],
-            allWords: [
-              ...state.allWords,
-              { word: normalizedWord, type: validation.wordType },
-            ],
-            score: newScore,
-            roundScore: newRoundScore,
-            currentWord: '',
-            selectedCards: [],
-            playerHand: remainingHand,
-            gameStatus: 'roundComplete',
-          }
-        }
-
-        // Only deal new cards if round target hasn't been reached
-        const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(
-          state,
-          state.selectedCards,
-        )
-        const hasVowelsAfterWord = hasVowels(newHand)
-
-        return {
+      // Handle debug mode
+      if (state.debugMode) {
+        const updatedState = {
           ...state,
-          words: [
-            ...state.words,
-            { word: normalizedWord, type: validation.wordType },
-          ],
-          allWords: [
-            ...state.allWords,
-            { word: normalizedWord, type: validation.wordType },
-          ],
           score: newScore,
           roundScore: newRoundScore,
-          currentWord: '',
-          selectedCards: [],
-          deck: updatedDeck,
-          playerHand: newHand,
-          canReshuffle: !hasVowelsAfterWord,
-        }
-      } else {
-        // In debug mode, just add the invalid word without dealing with cards
-        if (state.debugMode) {
-          return {
-            ...state,
-            invalidWords: [...state.invalidWords, normalizedWord],
-            allWords: [...state.allWords, { word: normalizedWord }],
-          }
+          wordHistory: {
+            ...state.wordHistory,
+            valid: wordResult.words || state.wordHistory.valid,
+            invalid: wordResult.invalidWords || state.wordHistory.invalid,
+            all: [
+              ...state.wordHistory.all,
+              { word: normalizedWord, type: validation?.wordType },
+            ],
+            current: {
+              text: '',
+              selectedIndices: [],
+              hasLegendaryLetter: false,
+            },
+          },
         }
 
-        // Normal mode - handle cards for invalid word
-        const { deck: updatedDeckInvalid, playerHand: newHandInvalid } =
-          handleCardDealing(state, state.selectedCards)
-        const hasVowelsAfterInvalid = hasVowels(newHandInvalid)
-
-        return {
-          ...state,
-          invalidWords: [...state.invalidWords, normalizedWord],
-          allWords: [...state.allWords, { word: normalizedWord }],
-          currentWord: '',
-          selectedCards: [],
-          deck: updatedDeckInvalid,
-          playerHand: newHandInvalid,
-          canReshuffle: !hasVowelsAfterInvalid,
+        if (newRoundScore >= state.targetScore) {
+          updatedState.gameStatus = GAME_STATUS.ROUND_COMPLETE
         }
+
+        return updatedState
       }
 
-    case 'END_ROUND':
+      // Handle normal mode
+      const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(
+        state,
+        state.wordHistory.current.selectedIndices,
+      )
+
       return {
         ...state,
-        gameStatus: 'roundComplete',
+        score: newScore,
+        roundScore: newRoundScore,
+        deck: updatedDeck,
+        playerHand: newHand,
+        canReshuffle: !hasVowels(newHand),
+        wordHistory: {
+          ...state.wordHistory,
+          valid: wordResult.words || state.wordHistory.valid,
+          invalid: wordResult.invalidWords || state.wordHistory.invalid,
+          all: [
+            ...state.wordHistory.all,
+            { word: normalizedWord, type: validation?.wordType },
+          ],
+          current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
+        },
+        gameStatus:
+          newRoundScore >= state.targetScore
+            ? GAME_STATUS.ROUND_COMPLETE
+            : state.gameStatus,
       }
 
-    case 'SHOW_ROUND_END':
+    case ACTION_TYPES.END_ROUND:
       return {
         ...state,
-        gameStatus: 'roundEnd',
+        gameStatus: GAME_STATUS.ROUND_COMPLETE,
       }
 
-    case 'START_NEXT_ROUND':
+    case ACTION_TYPES.SHOW_ROUND_END:
+      return {
+        ...state,
+        gameStatus: GAME_STATUS.ROUND_END,
+      }
+
+    case ACTION_TYPES.START_NEXT_ROUND:
       if (state.currentRound >= 3) {
         return {
           ...state,
-          gameStatus: 'gameOver',
+          gameStatus: GAME_STATUS.GAME_OVER,
         }
       }
-      const nextDeck = shuffleArray(createDeck())
-      const nextHand = dealCards(nextDeck, 10)
-      const hasVowelsNextRound = hasVowels(nextHand.dealtCards)
 
+      const {
+        deck: nextDeck,
+        playerHand: nextHand,
+        canReshuffle: nextReshuffle,
+      } = handleNewRound(createDeck())
       return {
         ...state,
-        gameStatus: 'playing',
+        gameStatus: GAME_STATUS.PLAYING,
         currentRound: state.currentRound + 1,
-        words: [],
-        invalidWords: [],
+        wordHistory: {
+          valid: [],
+          invalid: [],
+          all: state.wordHistory.all, // Preserve game history
+          current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
+        },
         roundScore: 0,
         targetScore: state.targetScore + TARGET_SCORE_INCREMENT,
-        legendaryLetterPlayed: null, // Reset legendary letter for new round
-        deck: nextHand.remainingDeck,
-        playerHand: nextHand.dealtCards,
-        canReshuffle: !hasVowelsNextRound,
-        discardsUsed: 0, // Reset discards for new round
+        legendaryLetterPlayed: null,
+        deck: nextDeck,
+        playerHand: nextHand,
+        canReshuffle: nextReshuffle,
+        discardsUsed: 0,
       }
 
-    case 'PLAY_AGAIN':
+    case ACTION_TYPES.PLAY_AGAIN:
       return initialState
 
-    case 'TOGGLE_DEBUG':
+    case ACTION_TYPES.TOGGLE_DEBUG:
       return {
         ...state,
         debugMode: !state.debugMode,
       }
 
-    case 'CLEAR_NEW_FLAGS':
+    case ACTION_TYPES.CLEAR_NEW_FLAGS:
       return {
         ...state,
         playerHand: state.playerHand.map(card => ({ ...card, isNew: false })),
       }
 
-    case 'ADD_LETTER':
+    case ACTION_TYPES.ADD_LETTER: {
       const { letter, cardIndex } = action.payload
-      // Only add letter if it hasn't been used and no legendary letter has been played
-      if (!state.selectedCards.includes(cardIndex)) {
-        // Check if current word already has a legendary letter
-        const hasLegendaryLetter =
-          state.currentWord.includes('!') || state.currentWord.includes('?')
-        if (hasLegendaryLetter) {
-          return state // Prevent adding more letters after legendary
+      if (!state.wordHistory.current.selectedIndices.includes(cardIndex)) {
+        const isLegendary =
+          letter === LEGENDARY_LETTERS.WILD ||
+          letter === LEGENDARY_LETTERS.SPECIAL
+
+        // Prevent adding more letters after legendary
+        if (state.wordHistory.current.hasLegendaryLetter) {
+          return state
         }
 
-        // If this is a legendary letter, set the flag
-        if (letter === '!' || letter === '?') {
-          return {
-            ...state,
-            currentWord: state.currentWord + letter,
-            selectedCards: [...state.selectedCards, cardIndex],
-            legendaryLetterPlayed: letter,
-          }
+        const updatedCurrent = {
+          text: state.wordHistory.current.text + letter,
+          selectedIndices: [
+            ...state.wordHistory.current.selectedIndices,
+            cardIndex,
+          ],
+          hasLegendaryLetter: isLegendary,
         }
+
         return {
           ...state,
-          currentWord: state.currentWord + letter,
-          selectedCards: [...state.selectedCards, cardIndex],
+          wordHistory: {
+            ...state.wordHistory,
+            current: updatedCurrent,
+          },
+          legendaryLetterPlayed: isLegendary
+            ? letter
+            : state.legendaryLetterPlayed,
         }
       }
       return state
+    }
 
-    case 'REMOVE_LETTER':
+    case ACTION_TYPES.REMOVE_LETTER:
       return {
         ...state,
-        currentWord: state.currentWord.slice(0, -1),
-        selectedCards: state.selectedCards.slice(0, -1),
+        wordHistory: {
+          ...state.wordHistory,
+          current: {
+            text: state.wordHistory.current.text.slice(0, -1),
+            selectedIndices: state.wordHistory.current.selectedIndices.slice(
+              0,
+              -1,
+            ),
+            hasLegendaryLetter: false, // Reset on removal
+          },
+        },
       }
 
-    case 'CLEAR_WORD':
+    case ACTION_TYPES.CLEAR_WORD:
       return {
         ...state,
-        currentWord: '',
-        selectedCards: [],
+        wordHistory: {
+          ...state.wordHistory,
+          current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
+        },
       }
 
-    case 'DISCARD_CARDS':
-      // Check discard limits and round target
-      if (
-        state.discardsUsed >= MAX_DISCARDS_PER_ROUND ||
-        state.selectedCards.length > MAX_LETTERS_PER_DISCARD ||
-        state.roundScore >= state.targetScore
-      ) {
+    case ACTION_TYPES.DISCARD_CARDS:
+      if (!isValidDiscard(state)) {
         return state
       }
 
       const { deck: discardDeck, playerHand: discardHand } = handleCardDealing(
         state,
-        state.selectedCards,
+        state.wordHistory.current.selectedIndices,
       )
-      const hasVowelsAfterDiscard = hasVowels(discardHand)
 
       return {
         ...state,
         deck: discardDeck,
         playerHand: discardHand,
-        selectedCards: [],
-        currentWord: '',
-        canReshuffle: !hasVowelsAfterDiscard,
+        wordHistory: {
+          ...state.wordHistory,
+          current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
+        },
+        canReshuffle: !hasVowels(discardHand),
         discardsUsed: state.discardsUsed + 1,
       }
 
-    case 'RESHUFFLE_HAND':
-      // Don't allow reshuffle if round target is reached
+    case ACTION_TYPES.RESHUFFLE_HAND:
       if (state.roundScore >= state.targetScore) {
         return state
       }
 
-      // Only shuffle the cards in hand
-      const shuffledHand = shuffleArray([...state.playerHand])
-
       return {
         ...state,
-        playerHand: shuffledHand,
-        selectedCards: [],
-        currentWord: '',
+        playerHand: shuffleArray([...state.playerHand]),
+        wordHistory: {
+          ...state.wordHistory,
+          current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
+        },
       }
 
-    case 'RESHUFFLE_DECK':
-      // Don't allow reshuffle if round target is reached
+    case ACTION_TYPES.RESHUFFLE_DECK:
       if (state.roundScore >= state.targetScore) {
         return state
       }
 
-      // Create a new shuffled deck with all cards
-      const reshuffledDeck = shuffleArray([...state.deck, ...state.playerHand])
-      const reshuffledHand = dealCards(reshuffledDeck, 10)
-      const hasVowelsAfterReshuffle = hasVowels(reshuffledHand.dealtCards)
+      const {
+        deck: reshuffledDeck,
+        playerHand: reshuffledHand,
+        canReshuffle: reshuffleReshuffle,
+      } = handleNewRound(shuffleArray([...state.deck, ...state.playerHand]))
 
       return {
         ...state,
-        deck: reshuffledHand.remainingDeck,
-        playerHand: reshuffledHand.dealtCards,
-        canReshuffle: !hasVowelsAfterReshuffle,
-        selectedCards: [],
-        currentWord: '',
+        deck: reshuffledDeck,
+        playerHand: reshuffledHand,
+        canReshuffle: reshuffleReshuffle,
+        wordHistory: {
+          ...state.wordHistory,
+          current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
+        },
       }
 
     default:
+      console.warn(`Unknown action type: ${action.type}`)
       return state
   }
 }
 
 export const GameProvider = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState)
+  const [error, setError] = React.useState(null)
 
   // Auto-start game if initial status is 'playing'
   React.useEffect(() => {
-    if (INITIAL_GAME_STATUS === 'playing') {
-      dispatch({ type: 'START_GAME' })
+    if (INITIAL_GAME_STATUS === GAME_STATUS.PLAYING) {
+      dispatch({ type: ACTION_TYPES.START_GAME })
     }
   }, [])
+
+  // Clear error after 3 seconds
+  React.useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [error])
+
   const { validateWord } = useWordValidation({
     minWordLength: initialState.minWordLength,
     maxWordLength: initialState.maxWordLength,
   })
 
+  const safeDispatch = useCallback(action => {
+    try {
+      dispatch(action)
+    } catch (err) {
+      console.error('Game action error:', err)
+      setError(err.message)
+    }
+  }, [])
+
   const addWord = useCallback(
     async word => {
-      const validation = await validateWord(word)
-      dispatch({
-        type: 'ADD_WORD',
-        payload: {
-          word: word.toLowerCase(),
-          isValid: validation.isValid,
-          validation, // Pass the full validation result for word type
-        },
-      })
-      return validation
+      try {
+        const validation = await validateWord(word)
+        safeDispatch({
+          type: ACTION_TYPES.ADD_WORD,
+          payload: {
+            word: word.toLowerCase(),
+            isValid: validation.isValid,
+            validation,
+          },
+        })
+        return validation
+      } catch (err) {
+        console.error('Word validation error:', err)
+        setError('Failed to validate word')
+        return { isValid: false, error: err.message }
+      }
     },
-    [validateWord],
+    [validateWord, safeDispatch],
   )
 
-  const value = {
-    ...state,
-    startGame: () => dispatch({ type: 'START_GAME' }),
-    addWord,
-    toggleDebug: () => dispatch({ type: 'TOGGLE_DEBUG' }),
-    addLetter: (letter, cardIndex) =>
-      dispatch({ type: 'ADD_LETTER', payload: { letter, cardIndex } }),
-    removeLetter: () => dispatch({ type: 'REMOVE_LETTER' }),
-    clearWord: () => dispatch({ type: 'CLEAR_WORD' }),
-    endRound: () => dispatch({ type: 'END_ROUND' }),
-    showRoundEnd: () => dispatch({ type: 'SHOW_ROUND_END' }),
-    startNextRound: () => dispatch({ type: 'START_NEXT_ROUND' }),
-    playAgain: () => dispatch({ type: 'PLAY_AGAIN' }),
-    discardCards: () => dispatch({ type: 'DISCARD_CARDS' }),
-    reshuffleHand: () => dispatch({ type: 'RESHUFFLE_HAND' }),
-    reshuffleDeck: () => dispatch({ type: 'RESHUFFLE_DECK' }),
-    clearNewFlags: () => dispatch({ type: 'CLEAR_NEW_FLAGS' }),
-    // Expose deck and hand for components
-    deck: state.deck,
-    playerHand: state.playerHand,
-    canReshuffle: state.canReshuffle,
-  }
+  const value = useMemo(
+    () => ({
+      ...state,
+      error,
+      // Backward compatibility layer
+      words: state.wordHistory.valid,
+      invalidWords: state.wordHistory.invalid,
+      currentWord: state.wordHistory.current.text,
+      selectedCards: state.wordHistory.current.selectedIndices,
+      // Actions
+      startGame: () => safeDispatch({ type: ACTION_TYPES.START_GAME }),
+      addWord,
+      toggleDebug: () => safeDispatch({ type: ACTION_TYPES.TOGGLE_DEBUG }),
+      addLetter: (letter, cardIndex) =>
+        safeDispatch({
+          type: ACTION_TYPES.ADD_LETTER,
+          payload: { letter, cardIndex },
+        }),
+      removeLetter: () => safeDispatch({ type: ACTION_TYPES.REMOVE_LETTER }),
+      clearWord: () => safeDispatch({ type: ACTION_TYPES.CLEAR_WORD }),
+      endRound: () => safeDispatch({ type: ACTION_TYPES.END_ROUND }),
+      showRoundEnd: () => safeDispatch({ type: ACTION_TYPES.SHOW_ROUND_END }),
+      startNextRound: () =>
+        safeDispatch({ type: ACTION_TYPES.START_NEXT_ROUND }),
+      playAgain: () => safeDispatch({ type: ACTION_TYPES.PLAY_AGAIN }),
+      discardCards: () => safeDispatch({ type: ACTION_TYPES.DISCARD_CARDS }),
+      reshuffleHand: () => safeDispatch({ type: ACTION_TYPES.RESHUFFLE_HAND }),
+      reshuffleDeck: () => safeDispatch({ type: ACTION_TYPES.RESHUFFLE_DECK }),
+      clearNewFlags: () => safeDispatch({ type: ACTION_TYPES.CLEAR_NEW_FLAGS }),
+      // Expose deck and hand for components
+      deck: state.deck,
+      playerHand: state.playerHand,
+      canReshuffle: state.canReshuffle,
+    }),
+    [state, error, addWord, safeDispatch],
+  )
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>
 }

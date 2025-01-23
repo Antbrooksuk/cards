@@ -1,6 +1,6 @@
 import React from 'react'
 import { calculateLetterScore } from '../../utils/scoreUtils'
-import { CARD_ANIMATION, CARD_LAYOUT } from '../../constants/cardConstants'
+import { CARD_CLASSES } from '../../constants/tailwindClasses'
 import { getCardStyle } from '../../utils/cardUtils'
 import CardLayout from './CardLayout'
 
@@ -13,16 +13,18 @@ const Card = ({
   isNew,
   onClick,
 }) => {
-  const animationClasses = `${CARD_ANIMATION.BASE} ${
-    isAnimating ? CARD_ANIMATION.DEAL : isNew ? CARD_ANIMATION.NEW : ''
-  }`
+  const animationClass = isAnimating
+    ? CARD_CLASSES.animation.deal
+    : isNew
+    ? CARD_CLASSES.animation.new
+    : ''
 
   return (
     <div
       onClick={onClick}
-      className={`${getCardStyle(type, isSelected)} font-bold text-2xl ${
-        CARD_LAYOUT.CONTAINER
-      } ${animationClasses}`}
+      className={`${getCardStyle(type, isSelected)} ${
+        CARD_CLASSES.base
+      } ${animationClass}`}
     >
       <CardLayout
         id={id}

@@ -6,35 +6,51 @@ import {
   RARE_CONSONANTS,
   VOWELS,
   DECK_CONFIG,
-  CARD_STYLES,
 } from '../constants/cardConstants'
+import { CARD_COLORS } from '../constants/tailwindClasses'
 
 import { WORD_LENGTH, WORD_LENGTH_CLASSES } from '../constants/wordConstants'
+import { ERROR_MESSAGES } from '../constants/gameConstants'
 
 // Static ID counter for generating unique card IDs
 let cardIdCounter = 0
 
 /**
+ * Determines the type of a letter based on its rarity
+ * @param {string} letter - The letter to check
+ * @returns {string} The card type constant
+ */
+export const getLetterType = letter => {
+  const upperLetter = letter.toUpperCase()
+  if (LEGENDARY_LETTERS.includes(upperLetter)) return CARD_TYPE.LEGENDARY
+  if (VOWELS.includes(upperLetter)) return CARD_TYPE.VOWEL
+  if (EPIC_CONSONANTS.includes(upperLetter)) return CARD_TYPE.EPIC
+  if (UNCOMMON_CONSONANTS.includes(upperLetter)) return CARD_TYPE.UNCOMMON
+  return CARD_TYPE.RARE
+}
+
+/**
  * Get the style class for a card based on its type and selection state
  * @param {CardType} type - The type of card
  * @param {boolean} isSelected - Whether the card is selected
+ * @param {boolean} isMini - Whether this is a mini card
  * @returns {string} The CSS class for the card style
  */
-export const getCardStyle = (type, isSelected) => {
-  if (isSelected) return CARD_STYLES.SELECTED
+export const getCardStyle = (type, isSelected = false, isMini = false) => {
+  if (isSelected && !isMini) return CARD_COLORS.selected
   switch (type) {
     case CARD_TYPE.LEGENDARY:
-      return CARD_STYLES.LEGENDARY
+      return CARD_COLORS.legendary
     case CARD_TYPE.EPIC:
-      return CARD_STYLES.EPIC
+      return CARD_COLORS.epic
     case CARD_TYPE.UNCOMMON:
-      return CARD_STYLES.UNCOMMON
+      return CARD_COLORS.uncommon
     case CARD_TYPE.RARE:
-      return CARD_STYLES.RARE
+      return CARD_COLORS.rare
     case CARD_TYPE.VOWEL:
-      return CARD_STYLES.VOWEL
+      return CARD_COLORS.common
     default:
-      return CARD_STYLES.DEFAULT
+      return CARD_COLORS.default
   }
 }
 
@@ -56,21 +72,12 @@ export const getWordLengthClass = length => {
 /**
  * Creates a new card with a unique ID
  * @param {string} letter - The letter on the card
- * @param {CardType} type - The type of card (consonant/vowel)
  * @returns {Object} A new card object
  */
-export const createCard = (letter, type) => ({
+export const createCard = letter => ({
   id: ++cardIdCounter,
   letter,
-  type: LEGENDARY_LETTERS.includes(letter.toUpperCase())
-    ? CARD_TYPE.LEGENDARY
-    : VOWELS.includes(letter.toUpperCase())
-    ? CARD_TYPE.VOWEL
-    : EPIC_CONSONANTS.includes(letter.toUpperCase())
-    ? CARD_TYPE.EPIC
-    : UNCOMMON_CONSONANTS.includes(letter.toUpperCase())
-    ? CARD_TYPE.UNCOMMON
-    : CARD_TYPE.RARE,
+  type: getLetterType(letter),
 })
 
 /**
@@ -159,19 +166,4 @@ export const dealCards = (deck, count) => {
     dealtCards,
     remainingDeck,
   }
-}
-
-/**
- * Get the style class for a mini card based on its letter
- * @param {string} letter - The letter on the card
- * @returns {string} The CSS class for the card style
- */
-export const getMiniCardStyle = letter => {
-  const upperLetter = letter.toUpperCase()
-  if (LEGENDARY_LETTERS.includes(upperLetter)) return CARD_STYLES.LEGENDARY
-  if (EPIC_CONSONANTS.includes(upperLetter)) return CARD_STYLES.EPIC
-  if (RARE_CONSONANTS.includes(upperLetter)) return CARD_STYLES.RARE
-  if (UNCOMMON_CONSONANTS.includes(upperLetter)) return CARD_STYLES.UNCOMMON
-  if (VOWELS.includes(upperLetter)) return CARD_STYLES.VOWEL
-  return CARD_STYLES.DEFAULT
 }
