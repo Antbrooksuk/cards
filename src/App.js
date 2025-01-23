@@ -1,10 +1,10 @@
-import React from 'react';
-import { GameProvider, useGame } from './context/GameContext';
-import Welcome from './components/screens/Welcome';
-import Round from './components/screens/Round';
-import RoundEnd from './components/screens/RoundEnd';
-import GameOver from './components/screens/GameOver';
-import useWordValidation from './hooks/useWordValidation';
+import React from 'react'
+import { GameProvider, useGame } from './context/GameContext'
+import Welcome from './components/screens/Welcome'
+import Round from './components/screens/Round'
+import RoundEnd from './components/screens/RoundEnd'
+import GameOver from './components/screens/GameOver'
+import useWordValidation from './hooks/useWordValidation'
 
 const GameScreen = () => {
   const {
@@ -21,20 +21,20 @@ const GameScreen = () => {
     startNextRound,
     playAgain,
     updateTime,
-  } = useGame();
+  } = useGame()
 
-  const { validateWord } = useWordValidation();
+  const { validateWord } = useWordValidation()
 
-  const handleWordSubmit = (word) => {
-    const validation = validateWord(word);
+  const handleWordSubmit = word => {
+    const validation = validateWord(word)
     if (validation.isValid) {
-      addWord(validation.word);
+      addWord(validation.word)
     }
-  };
+  }
 
   switch (gameStatus) {
     case 'welcome':
-      return <Welcome onStartGame={startGame} />;
+      return <Welcome onStartGame={startGame} />
 
     case 'playing':
     case 'roundComplete':
@@ -47,7 +47,7 @@ const GameScreen = () => {
           onWordSubmit={handleWordSubmit}
           onTimeUp={updateTime}
         />
-      );
+      )
 
     case 'roundEnd':
       return (
@@ -59,7 +59,7 @@ const GameScreen = () => {
           targetScore={targetScore}
           onNextRound={startNextRound}
         />
-      );
+      )
 
     case 'gameOver':
       return (
@@ -68,21 +68,21 @@ const GameScreen = () => {
           totalWords={allWords.length}
           onPlayAgain={playAgain}
         />
-      );
+      )
 
     default:
-      return null;
+      return null
   }
-};
+}
 
 const App = () => {
   return (
     <GameProvider>
-      <div className="min-h-screen bg-gray-100">
+      <div className='min-h-screen bg-gray-100'>
         <GameScreen />
       </div>
     </GameProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App
