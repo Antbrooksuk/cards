@@ -27,7 +27,7 @@ const MiniCard = ({ letter }) => {
       className={`${getCardStyle()} font-bold w-8 h-10 rounded shadow-sm flex items-center justify-center`}
     >
       <div className='relative w-full h-full flex flex-col items-center justify-center'>
-        <span className='text-lg'>{letter}</span>
+        <span className='text-lg'>{letter.toUpperCase()}</span>
         <span className='text-[10px] absolute bottom-0.5 right-0.5 opacity-75'>
           {calculateLetterScore(letter)}
         </span>

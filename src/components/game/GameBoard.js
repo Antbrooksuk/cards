@@ -25,39 +25,27 @@ const GameBoard = ({
       </div>
 
       <div className='space-y-4'>
-        {words.length > 0 && (
-          <div className='gap-4 p-4 border bg-gray-100 rounded-lg'>
-            <h3 className='text-lg font-semibold mb-2'>
-              Valid Words ({words.length})
-            </h3>
-            <div className='gap-2'>
-              {words.map((wordObj, index) => (
-                <PlayedWord
-                  key={index}
-                  word={wordObj.word}
-                  type={wordObj.type}
-                />
-              ))}
-            </div>
+        <div className='gap-4 p-4 border bg-gray-100 rounded-lg'>
+          <h3 className='text-lg font-semibold mb-2'>
+            Played Words ({words.length + invalidWords.length})
+          </h3>
+          <div className='flex flex-col gap-3'>
+            {words.map((wordObj, index) => (
+              <PlayedWord
+                key={`valid-${index}`}
+                word={wordObj.word}
+                type={wordObj.type}
+              />
+            ))}
+            {invalidWords.map((wordObj, index) => (
+              <PlayedWord
+                key={`invalid-${index}`}
+                word={typeof wordObj === 'string' ? wordObj : wordObj.word}
+                isInvalid={true}
+              />
+            ))}
           </div>
-        )}
-        {invalidWords.length > 0 && (
-          <div className='gap-4 p-4 border bg-gray-100 rounded-lg'>
-            <h3 className='text-lg font-semibold mb-2'>
-              Invalid Words ({invalidWords.length})
-            </h3>
-            <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
-              {invalidWords.map((wordObj, index) => (
-                <div
-                  key={index}
-                  className='bg-red-50 rounded px-3 py-1 text-sm text-red-800'
-                >
-                  {typeof wordObj === 'string' ? wordObj : wordObj.word}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )

@@ -31,7 +31,6 @@ export const RARE_CONSONANTS = [
   'D',
   'F',
   'G',
-  'H',
   'K',
   'L',
   'M',
@@ -40,7 +39,7 @@ export const RARE_CONSONANTS = [
   'W',
   'Y',
 ]
-export const UNCOMMON_CONSONANTS = ['R', 'T', 'N', 'S']
+export const UNCOMMON_CONSONANTS = ['H', 'R', 'T', 'N', 'S']
 export const VOWELS = ['A', 'E', 'I', 'O', 'U']
 
 // Deck configuration
@@ -64,13 +63,13 @@ export const MAX_LETTERS_PER_DISCARD = 5
 // Word type colors
 export const WORD_TYPE_COLORS = {
   noun: 'bg-white',
-  verb: 'bg-green-100',
-  adjective: 'bg-blue-100',
-  adverb: 'bg-purple-100',
-  preposition: 'bg-purple-100',
-  pronoun: 'bg-purple-100',
-  conjunction: 'bg-purple-100',
-  interjection: 'bg-purple-100',
+  verb: 'bg-green-500',
+  adjective: 'bg-blue-500',
+  adverb: 'bg-purple-500',
+  preposition: 'bg-purple-500',
+  pronoun: 'bg-purple-500',
+  conjunction: 'bg-purple-500',
+  interjection: 'bg-purple-500',
   unknown: 'bg-gray-500',
 }
 

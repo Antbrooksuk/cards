@@ -17,12 +17,29 @@ export const validateWordWithDictionary = async word => {
     }
 
     const data = await response.json()
-    const wordType = data[0]?.meanings[0]?.partOfSpeech || 'unknown'
+    
+    // Import word type multipliers
+    const { WORD_TYPE_MULTIPLIER } = await import('../constants/gameConfig.js')
+    
+    // Get all meanings
+    const meanings = data[0]?.meanings || []
+    let highestScore = 0
+    let dominantType = 'unknown'
+
+    // Find the part of speech with highest score multiplier
+    meanings.forEach(meaning => {
+      const wordType = meaning.partOfSpeech
+      const score = WORD_TYPE_MULTIPLIER[wordType] || 1
+      if (score > highestScore) {
+        highestScore = score
+        dominantType = wordType
+      }
+    })
 
     return {
       isValid: true,
       word: word,
-      wordType: wordType,
+      wordType: dominantType,
     }
   } catch (error) {
     return {
