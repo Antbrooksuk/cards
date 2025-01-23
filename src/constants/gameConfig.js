@@ -25,9 +25,10 @@ export const LEGENDARY_LETTERS = {
 export const INITIAL_TARGET_SCORE = 25000
 export const TARGET_SCORE_INCREMENT = 10000
 
-// Discard limits
+// Game limits
 export const MAX_DISCARDS_PER_ROUND = 2
 export const MAX_LETTERS_PER_DISCARD = 5
+export const MAX_PLAYS_PER_ROUND = 5
 
 // Action types
 export const ACTION_TYPES = {

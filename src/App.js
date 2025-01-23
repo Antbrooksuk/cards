@@ -10,7 +10,6 @@ const GameScreen = () => {
   const {
     gameStatus,
     currentRound,
-    timeLeft,
     score,
     roundScore,
     words,
@@ -20,7 +19,6 @@ const GameScreen = () => {
     addWord,
     startNextRound,
     playAgain,
-    updateTime,
   } = useGame()
 
   const { validateWord } = useWordValidation()
@@ -42,10 +40,8 @@ const GameScreen = () => {
         <Round
           words={words}
           score={score}
-          timeLeft={timeLeft}
           roundNumber={currentRound}
           onWordSubmit={handleWordSubmit}
-          onTimeUp={updateTime}
         />
       )
 

@@ -19,6 +19,8 @@ const GameBoard = ({
   targetScore,
   onWordSubmit,
 }) => {
+  // Filter words to only show current round's words
+  const currentRoundWords = allWords.filter(word => word.round === roundNumber)
   return (
     <div className={GAME_BOARD_STYLES.CONTAINER}>
       <DebugPanel onWordSubmit={onWordSubmit} />
@@ -37,7 +39,7 @@ const GameBoard = ({
       </div>
 
       <div className={GAME_BOARD_STYLES.CONTENT}>
-        <WordList allWords={allWords} />
+        <WordList allWords={currentRoundWords} />
       </div>
     </div>
   )

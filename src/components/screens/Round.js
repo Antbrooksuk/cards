@@ -33,6 +33,7 @@ const Round = ({ className = '' }) => {
     gameStatus,
     showRoundEnd,
     discardsUsed,
+    playsUsed,
     debugMode,
     clearNewFlags,
   } = useGame()
@@ -161,6 +162,7 @@ const Round = ({ className = '' }) => {
           isValidating={isValidating}
           selectedCards={selectedCards}
           discardsUsed={discardsUsed}
+          playsUsed={playsUsed}
           canReshuffle={canReshuffle}
           debugMode={debugMode}
           onPlayWord={handleWordSubmit}

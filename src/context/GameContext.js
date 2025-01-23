@@ -19,6 +19,7 @@ import {
   TARGET_SCORE_INCREMENT,
   MAX_DISCARDS_PER_ROUND,
   MAX_LETTERS_PER_DISCARD,
+  MAX_PLAYS_PER_ROUND,
   INITIAL_GAME_STATUS,
   GAME_STATUS,
   MAX_HAND_SIZE,
@@ -64,6 +65,7 @@ const handleWordValidation = (state, word, isValid, validation) => {
       word,
       type: isValid ? validation.wordType : null,
       timestamp: Date.now(),
+      round: state.currentRound,
     },
   ]
 
@@ -87,7 +89,7 @@ const canAddLetter = (state, letter) => {
 
 const GameContext = createContext()
 
-const initialState = {
+const getInitialState = () => ({
   // Game configuration
   minWordLength: WORD_LENGTH.MIN,
   maxWordLength: WORD_LENGTH.MAX,
@@ -99,6 +101,7 @@ const initialState = {
   score: 0,
   roundScore: 0,
   targetScore: INITIAL_TARGET_SCORE,
+  playsUsed: 0,
 
   // Word tracking
   wordHistory: {
@@ -118,7 +121,7 @@ const initialState = {
   canReshuffle: false,
   discardsUsed: 0,
   legendaryLetterPlayed: null,
-}
+})
 
 // Helper function to handle dealing new cards
 const handleCardDealing = (state, selectedIndices) => {
@@ -158,7 +161,7 @@ const gameReducer = (state, action) => {
         canReshuffle: startReshuffle,
       } = handleNewRound(createDeck())
       return {
-        ...initialState,
+        ...getInitialState(),
         gameStatus: GAME_STATUS.PLAYING,
         deck: startDeck,
         playerHand: startHand,
@@ -182,6 +185,32 @@ const gameReducer = (state, action) => {
       )
       const newScore = wordResult.score || state.score
       const newRoundScore = wordResult.roundScore || state.roundScore
+      const newPlaysUsed = state.playsUsed + 1
+
+      // Check if out of plays without reaching target
+      if (
+        newPlaysUsed >= MAX_PLAYS_PER_ROUND &&
+        newRoundScore < state.targetScore
+      ) {
+        return {
+          ...state,
+          gameStatus: GAME_STATUS.GAME_OVER,
+          score: newScore,
+          roundScore: newRoundScore,
+          playsUsed: newPlaysUsed,
+          wordHistory: {
+            ...state.wordHistory,
+            valid: wordResult.words || state.wordHistory.valid,
+            invalid: wordResult.invalidWords || state.wordHistory.invalid,
+            all: wordResult.all,
+            current: {
+              text: '',
+              selectedIndices: [],
+              hasLegendaryLetter: false,
+            },
+          },
+        }
+      }
 
       // Handle debug mode
       if (state.debugMode) {
@@ -189,6 +218,7 @@ const gameReducer = (state, action) => {
           ...state,
           score: newScore,
           roundScore: newRoundScore,
+          playsUsed: newPlaysUsed,
           wordHistory: {
             ...state.wordHistory,
             valid: wordResult.words || state.wordHistory.valid,
@@ -219,6 +249,7 @@ const gameReducer = (state, action) => {
         ...state,
         score: newScore,
         roundScore: newRoundScore,
+        playsUsed: newPlaysUsed,
         deck: updatedDeck,
         playerHand: newHand,
         canReshuffle: !hasVowels(newHand),
@@ -272,6 +303,7 @@ const gameReducer = (state, action) => {
         },
         roundScore: 0,
         targetScore: state.targetScore + TARGET_SCORE_INCREMENT,
+        playsUsed: 0,
         legendaryLetterPlayed: null,
         deck: nextDeck,
         playerHand: nextHand,
@@ -280,7 +312,7 @@ const gameReducer = (state, action) => {
       }
 
     case ACTION_TYPES.PLAY_AGAIN:
-      return initialState
+      return getInitialState()
 
     case ACTION_TYPES.TOGGLE_DEBUG:
       return {
@@ -419,7 +451,7 @@ const gameReducer = (state, action) => {
 }
 
 export const GameProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(gameReducer, initialState)
+  const [state, dispatch] = useReducer(gameReducer, getInitialState())
   const [error, setError] = React.useState(null)
 
   // Auto-start game if initial status is 'playing'
@@ -438,8 +470,8 @@ export const GameProvider = ({ children }) => {
   }, [error])
 
   const { validateWord } = useWordValidation({
-    minWordLength: initialState.minWordLength,
-    maxWordLength: initialState.maxWordLength,
+    minWordLength: state.minWordLength,
+    maxWordLength: state.maxWordLength,
   })
 
   const safeDispatch = useCallback(action => {
@@ -483,6 +515,7 @@ export const GameProvider = ({ children }) => {
       invalidWords: state.wordHistory.invalid,
       currentWord: state.wordHistory.current.text,
       selectedCards: state.wordHistory.current.selectedIndices,
+      allWords: state.wordHistory.all,
       // Actions
       startGame: () => safeDispatch({ type: ACTION_TYPES.START_GAME }),
       addWord,
