@@ -16,8 +16,8 @@ const GameBoard = ({
       <div className="flex justify-between items-center mb-6">
         <div className="text-xl font-bold">Round {roundNumber}</div>
         <div className="flex gap-8">
-          <ScoreDisplay score={roundScore} label="Round Score" />
-          <ScoreDisplay score={score} label="Total Score" targetScore={targetScore} />
+          <ScoreDisplay score={roundScore} label="Round Score" targetScore={targetScore} />
+          <ScoreDisplay score={score} label="Total Score" />
         </div>
       </div>
       

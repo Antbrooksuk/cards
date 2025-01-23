@@ -21,6 +21,8 @@ const PlayedWord = ({ word, type, className = '' }) => {
         {word.split('').reduce((score, letter) => score + calculateLetterScore(letter), 0)}
         <span className="text-xs opacity-75">×</span>
         {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']}
+        <span className="text-xs opacity-75">×</span>
+        {word.length}
         <span className="text-xs opacity-75">=</span>
         {calculateWordScore(word, type)}
       </span>

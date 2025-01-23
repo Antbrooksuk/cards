@@ -34,14 +34,14 @@ export const LEGENDARY_SETS = 1;            // 1 set of legendary letters
 export const EPIC_CONSONANTS_SETS = 2;      // 2 sets of epic consonants
 export const UNCOMMON_CONSONANTS_SETS = 8;   // 8 sets of uncommon consonants
 export const RARE_CONSONANTS_SETS = 2;       // 2 sets of rare consonants
-export const VOWEL_SETS = 5;                 // 5 sets of vowels
+export const VOWEL_SETS = 7;                 // 5 sets of vowels
 
 // Game state
 export const INITIAL_GAME_STATUS = 'playing'; // 'welcome' or 'playing'
 
 // Target scores
-export const INITIAL_TARGET_SCORE = 1000;
-export const TARGET_SCORE_INCREMENT = 500;
+export const INITIAL_TARGET_SCORE = 5000;
+export const TARGET_SCORE_INCREMENT = 2500;
 
 // Discard limits
 export const MAX_DISCARDS_PER_ROUND = 2;
