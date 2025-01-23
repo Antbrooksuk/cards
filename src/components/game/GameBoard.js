@@ -12,8 +12,7 @@ const GAME_BOARD_STYLES = {
 }
 
 const GameBoard = ({
-  words = [],
-  invalidWords = [],
+  allWords = [],
   score,
   roundScore,
   roundNumber,
@@ -38,7 +37,7 @@ const GameBoard = ({
       </div>
 
       <div className={GAME_BOARD_STYLES.CONTENT}>
-        <WordList words={words} invalidWords={invalidWords} />
+        <WordList allWords={allWords} />
       </div>
     </div>
   )

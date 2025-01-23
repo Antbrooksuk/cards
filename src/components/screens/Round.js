@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useGame } from '../../context/GameContext'
-import {
-  MAX_DISCARDS_PER_ROUND,
-  MAX_LETTERS_PER_DISCARD,
-} from '../../constants/gameConfig'
 import { LEGENDARY_LETTERS } from '../../constants/cardConstants'
 import GameBoard from '../game/GameBoard'
 import Hand from '../game/Hand'
@@ -18,8 +14,7 @@ const Round = ({ className = '' }) => {
   const [animatingIndices, setAnimatingIndices] = useState([])
 
   const {
-    words,
-    invalidWords,
+    wordHistory,
     score,
     roundScore,
     currentRound: roundNumber,
@@ -31,7 +26,6 @@ const Round = ({ className = '' }) => {
     addLetter,
     removeLetter,
     clearWord,
-    endRound,
     discardCards,
     canReshuffle,
     reshuffleHand,
@@ -142,8 +136,7 @@ const Round = ({ className = '' }) => {
   return (
     <div className={`min-h-screen py-4 ${className}`}>
       <GameBoard
-        words={words}
-        invalidWords={invalidWords}
+        allWords={wordHistory.all.sort((a, b) => a.timestamp - b.timestamp)}
         score={score}
         roundScore={roundScore}
         roundNumber={roundNumber}
@@ -164,7 +157,7 @@ const Round = ({ className = '' }) => {
         <Hand isValidating={isValidating} />
         <ActionBar
           gameStatus={gameStatus}
-          isAnimating={isAnimating}
+          isAnimating={isAnimating || animatingCards.size > 0}
           isValidating={isValidating}
           selectedCards={selectedCards}
           discardsUsed={discardsUsed}

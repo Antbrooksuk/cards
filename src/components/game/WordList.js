@@ -7,25 +7,19 @@ const WORD_LIST_STYLES = {
   WORDS_CONTAINER: 'flex flex-col gap-3',
 }
 
-const WordList = ({ words = [], invalidWords = [] }) => {
-  const totalWords = words.length + invalidWords.length
-
+const WordList = ({ allWords = [] }) => {
   return (
     <div className={WORD_LIST_STYLES.CONTAINER}>
-      <h3 className={WORD_LIST_STYLES.TITLE}>Played Words ({totalWords})</h3>
+      <h3 className={WORD_LIST_STYLES.TITLE}>
+        Played Words ({allWords.length})
+      </h3>
       <div className={WORD_LIST_STYLES.WORDS_CONTAINER}>
-        {words.map((wordObj, index) => (
+        {allWords.map((wordObj, index) => (
           <PlayedWord
-            key={`valid-${index}`}
+            key={index}
             word={wordObj.word}
             type={wordObj.type}
-          />
-        ))}
-        {invalidWords.map((wordObj, index) => (
-          <PlayedWord
-            key={`invalid-${index}`}
-            word={typeof wordObj === 'string' ? wordObj : wordObj.word}
-            isInvalid={true}
+            isInvalid={!wordObj.type}
           />
         ))}
       </div>

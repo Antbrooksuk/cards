@@ -19,7 +19,6 @@ const ActionBar = ({
   onDiscardCards,
   onShowRoundEnd,
 }) => {
-  console.log(canReshuffle, isValidating, isAnimating)
   if (gameStatus === 'roundComplete') {
     return (
       <div className='flex justify-center gap-4'>

@@ -40,20 +40,34 @@ const handleNewRound = (deck, handSize = MAX_HAND_SIZE) => {
 }
 
 const handleWordValidation = (state, word, isValid, validation) => {
+  const result = {
+    words: state.wordHistory.valid,
+    invalidWords: state.wordHistory.invalid,
+  }
+
   if (isValid) {
     const { score: wordScore } = calculateWordTotalScore(
       word,
       validation.wordType,
     )
-    return {
-      score: Number(state.score) + wordScore,
-      roundScore: Number(state.roundScore) + wordScore,
-      words: [...state.wordHistory.valid, { word, type: validation.wordType }],
-    }
+    result.score = Number(state.score) + wordScore
+    result.roundScore = Number(state.roundScore) + wordScore
+    result.words = [...result.words, { word, type: validation.wordType }]
+  } else {
+    result.invalidWords = [...result.invalidWords, word]
   }
-  return {
-    invalidWords: [...state.wordHistory.invalid, word],
-  }
+
+  // Store the word in chronological order
+  result.all = [
+    ...state.wordHistory.all,
+    {
+      word,
+      type: isValid ? validation.wordType : null,
+      timestamp: Date.now(),
+    },
+  ]
+
+  return result
 }
 
 const isValidDiscard = state => {
@@ -179,10 +193,7 @@ const gameReducer = (state, action) => {
             ...state.wordHistory,
             valid: wordResult.words || state.wordHistory.valid,
             invalid: wordResult.invalidWords || state.wordHistory.invalid,
-            all: [
-              ...state.wordHistory.all,
-              { word: normalizedWord, type: validation?.wordType },
-            ],
+            all: wordResult.all,
             current: {
               text: '',
               selectedIndices: [],
@@ -215,10 +226,7 @@ const gameReducer = (state, action) => {
           ...state.wordHistory,
           valid: wordResult.words || state.wordHistory.valid,
           invalid: wordResult.invalidWords || state.wordHistory.invalid,
-          all: [
-            ...state.wordHistory.all,
-            { word: normalizedWord, type: validation?.wordType },
-          ],
+          all: wordResult.all,
           current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
         },
         gameStatus:
@@ -469,7 +477,8 @@ export const GameProvider = ({ children }) => {
     () => ({
       ...state,
       error,
-      // Backward compatibility layer
+      // Expose word history and maintain backward compatibility
+      wordHistory: state.wordHistory,
       words: state.wordHistory.valid,
       invalidWords: state.wordHistory.invalid,
       currentWord: state.wordHistory.current.text,
