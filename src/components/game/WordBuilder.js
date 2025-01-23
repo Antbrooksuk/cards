@@ -1,6 +1,6 @@
 import React from 'react'
 import { useGame } from '../../context/GameContext'
-import { calculateLetterScore } from '../../utils/cardUtils'
+import { calculateLetterScore } from '../../utils/scoreUtils'
 import Card from './Card'
 import ScoreAnimation from './ScoreAnimation'
 

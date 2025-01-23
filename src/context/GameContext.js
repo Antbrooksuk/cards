@@ -8,13 +8,12 @@ import {
   createDeck,
   shuffleArray,
   dealCards,
-  calculateWordScore,
   hasVowels,
 } from '../utils/cardUtils'
+import { calculateWordTotalScore } from '../utils/scoreUtils'
 import useWordValidation from '../hooks/useWordValidation'
+import { WORD_LENGTH } from '../constants/wordConstants'
 import {
-  MIN_WORD_LENGTH,
-  MAX_WORD_LENGTH,
   INITIAL_TARGET_SCORE,
   TARGET_SCORE_INCREMENT,
   MAX_DISCARDS_PER_ROUND,
@@ -26,8 +25,9 @@ const GameContext = createContext()
 
 const initialState = {
   // Game configuration
-  minWordLength: MIN_WORD_LENGTH,
-  maxWordLength: MAX_WORD_LENGTH,
+  minWordLength: WORD_LENGTH.MIN,
+  maxWordLength: WORD_LENGTH.MAX,
+  debugMode: false,
 
   // Game state
   gameStatus: INITIAL_GAME_STATUS, // welcome, playing, roundComplete, roundEnd, gameOver
@@ -107,14 +107,37 @@ const gameReducer = (state, action) => {
       }
 
       if (isValid) {
-        const wordScore = calculateWordScore(
+        const { score: wordScore } = calculateWordTotalScore(
           normalizedWord,
-          validation.wordType,
+          validation.wordType || 'unknown',
         )
-        const newScore = state.score + wordScore
-        const newRoundScore = state.roundScore + wordScore
+        const newScore = Number(state.score) + wordScore
+        const newRoundScore = Number(state.roundScore) + wordScore
 
-        // Check if round target score is reached
+        // In debug mode, just add the word without dealing with cards
+        if (state.debugMode) {
+          const updatedState = {
+            ...state,
+            words: [
+              ...state.words,
+              { word: normalizedWord, type: validation.wordType },
+            ],
+            allWords: [
+              ...state.allWords,
+              { word: normalizedWord, type: validation.wordType },
+            ],
+            score: newScore,
+            roundScore: newRoundScore,
+          }
+
+          if (newRoundScore >= state.targetScore) {
+            updatedState.gameStatus = 'roundComplete'
+          }
+
+          return updatedState
+        }
+
+        // Normal mode - handle cards
         if (newRoundScore >= state.targetScore) {
           // Remove used cards from hand but don't deal new ones
           const remainingHand = state.playerHand.filter(
@@ -166,7 +189,16 @@ const gameReducer = (state, action) => {
           canReshuffle: !hasVowelsAfterWord,
         }
       } else {
-        // Add invalid word with no score and deal new cards
+        // In debug mode, just add the invalid word without dealing with cards
+        if (state.debugMode) {
+          return {
+            ...state,
+            invalidWords: [...state.invalidWords, normalizedWord],
+            allWords: [...state.allWords, { word: normalizedWord }],
+          }
+        }
+
+        // Normal mode - handle cards for invalid word
         const { deck: updatedDeckInvalid, playerHand: newHandInvalid } =
           handleCardDealing(state, state.selectedCards)
         const hasVowelsAfterInvalid = hasVowels(newHandInvalid)
@@ -223,6 +255,12 @@ const gameReducer = (state, action) => {
 
     case 'PLAY_AGAIN':
       return initialState
+
+    case 'TOGGLE_DEBUG':
+      return {
+        ...state,
+        debugMode: !state.debugMode,
+      }
 
     case 'CLEAR_NEW_FLAGS':
       return {
@@ -304,15 +342,32 @@ const gameReducer = (state, action) => {
         return state
       }
 
+      // Only shuffle the cards in hand
+      const shuffledHand = shuffleArray([...state.playerHand])
+
+      return {
+        ...state,
+        playerHand: shuffledHand,
+        selectedCards: [],
+        currentWord: '',
+      }
+
+    case 'RESHUFFLE_DECK':
+      // Don't allow reshuffle if round target is reached
+      if (state.roundScore >= state.targetScore) {
+        return state
+      }
+
       // Create a new shuffled deck with all cards
       const reshuffledDeck = shuffleArray([...state.deck, ...state.playerHand])
       const reshuffledHand = dealCards(reshuffledDeck, 10)
+      const hasVowelsAfterReshuffle = hasVowels(reshuffledHand.dealtCards)
 
       return {
         ...state,
         deck: reshuffledHand.remainingDeck,
         playerHand: reshuffledHand.dealtCards,
-        canReshuffle: false, // Reset reshuffle ability
+        canReshuffle: !hasVowelsAfterReshuffle,
         selectedCards: [],
         currentWord: '',
       }
@@ -356,6 +411,7 @@ export const GameProvider = ({ children }) => {
     ...state,
     startGame: () => dispatch({ type: 'START_GAME' }),
     addWord,
+    toggleDebug: () => dispatch({ type: 'TOGGLE_DEBUG' }),
     addLetter: (letter, cardIndex) =>
       dispatch({ type: 'ADD_LETTER', payload: { letter, cardIndex } }),
     removeLetter: () => dispatch({ type: 'REMOVE_LETTER' }),
@@ -366,6 +422,7 @@ export const GameProvider = ({ children }) => {
     playAgain: () => dispatch({ type: 'PLAY_AGAIN' }),
     discardCards: () => dispatch({ type: 'DISCARD_CARDS' }),
     reshuffleHand: () => dispatch({ type: 'RESHUFFLE_HAND' }),
+    reshuffleDeck: () => dispatch({ type: 'RESHUFFLE_DECK' }),
     clearNewFlags: () => dispatch({ type: 'CLEAR_NEW_FLAGS' }),
     // Expose deck and hand for components
     deck: state.deck,

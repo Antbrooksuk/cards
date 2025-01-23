@@ -10,7 +10,9 @@ const ScoreDisplay = ({
     <div className={`text-center ${className}`}>
       <div className='text-lg font-semibold text-gray-600'>{label}</div>
       <div className='text-3xl font-bold'>
-        <span className='text-blue-600'>{score}</span>
+        <span className='text-blue-600'>
+          {Number(typeof score === 'object' ? score.score : score) || 0}
+        </span>
         {targetScore && (
           <>
             <span className='text-gray-400'>/</span>

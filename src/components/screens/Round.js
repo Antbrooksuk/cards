@@ -3,8 +3,8 @@ import { useGame } from '../../context/GameContext'
 import {
   MAX_DISCARDS_PER_ROUND,
   MAX_LETTERS_PER_DISCARD,
-  LEGENDARY_LETTERS,
 } from '../../constants/gameConfig'
+import { LEGENDARY_LETTERS } from '../../constants/cardConstants'
 import GameBoard from '../game/GameBoard'
 import Hand from '../game/Hand'
 import DeckDisplay from '../game/DeckDisplay'
@@ -33,14 +33,17 @@ const Round = ({ className = '' }) => {
     discardCards,
     canReshuffle,
     reshuffleHand,
+    reshuffleDeck,
     gameStatus,
     showRoundEnd,
     discardsUsed,
+    debugMode,
   } = useGame()
 
   useEffect(() => {
     const handleKeyDown = async e => {
-      if (gameStatus !== 'playing' || isValidating || isAnimating) return
+      if (gameStatus !== 'playing' || isValidating || isAnimating || debugMode)
+        return
 
       if (e.key === 'Enter' && currentWord) {
         await handleWordSubmit()
@@ -76,11 +79,24 @@ const Round = ({ className = '' }) => {
     isValidating,
     isAnimating,
     gameStatus,
+    debugMode,
   ])
 
-  const handleWordSubmit = async () => {
-    if (currentWord.length === 0 || isAnimating) return
+  const handleWordSubmit = async debugWord => {
+    // Early returns for invalid states
+    if (debugMode) {
+      if (!debugWord || !debugWord.length) return
+      setIsValidating(true)
+      const validation = await addWord(debugWord)
+      setIsValidating(false)
+      if (!validation.isValid) {
+        console.log('Invalid word:', validation.reason)
+      }
+      return
+    }
 
+    // Normal mode handling
+    if (!currentWord.length || isAnimating) return
     setIsAnimating(true)
 
     // Start animations for each letter sequentially
@@ -98,11 +114,8 @@ const Round = ({ className = '' }) => {
     setIsAnimating(false)
     setIsValidating(true)
 
-    // Store the word
-    const wordToValidate = currentWord
-
     // Submit the word and get validation
-    const validation = await addWord(wordToValidate)
+    const validation = await addWord(currentWord)
     setIsValidating(false)
 
     // Only clear word after validation (so selectedCards are available for invalid words)
@@ -122,6 +135,7 @@ const Round = ({ className = '' }) => {
         roundScore={roundScore}
         roundNumber={roundNumber}
         targetScore={targetScore}
+        onWordSubmit={handleWordSubmit}
       />
 
       <div className='game-container mt-8 flex flex-col gap-4'>
@@ -141,11 +155,31 @@ const Round = ({ className = '' }) => {
               <button
                 className='px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600'
                 disabled={
-                  selectedCards.length === 0 || isAnimating || isValidating
+                  (!debugMode && selectedCards.length === 0) ||
+                  isAnimating ||
+                  isValidating
                 }
                 onClick={handleWordSubmit}
               >
                 Play Word
+              </button>
+              <button
+                className='px-4 py-2 bg-gray-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600'
+                onClick={reshuffleHand}
+                disabled={isValidating || isAnimating}
+              >
+                Shuffle Hand
+              </button>
+              <button
+                onClick={reshuffleDeck}
+                disabled={!canReshuffle || isValidating}
+                className={`px-4 py-2 rounded-lg ${
+                  canReshuffle
+                    ? 'bg-yellow-500 hover:bg-yellow-600 text-white cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                Reshuffle
               </button>
               <button
                 className='px-4 py-2 bg-gray-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600'
@@ -156,20 +190,11 @@ const Round = ({ className = '' }) => {
                   isValidating
                 }
                 onClick={discardCards}
-                title={`${MAX_LETTERS_PER_DISCARD} letters max, ${MAX_DISCARDS_PER_ROUND - discardsUsed} discards remaining`}
+                title={`${MAX_LETTERS_PER_DISCARD} letters max, ${
+                  MAX_DISCARDS_PER_ROUND - discardsUsed
+                } discards remaining`}
               >
                 Discard ({MAX_DISCARDS_PER_ROUND - discardsUsed})
-              </button>
-              <button
-                onClick={reshuffleHand}
-                disabled={!canReshuffle || isValidating}
-                className={`px-4 py-2 rounded-lg ${
-                  canReshuffle
-                    ? 'bg-yellow-500 hover:bg-yellow-600 text-white cursor-pointer'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-              >
-                Reshuffle
               </button>
             </>
           ) : (

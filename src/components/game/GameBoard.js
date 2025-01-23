@@ -1,6 +1,15 @@
 import React from 'react'
 import ScoreDisplay from '../common/ScoreDisplay'
-import PlayedWord from './PlayedWord'
+import DebugPanel from './DebugPanel'
+import WordList from './WordList'
+
+const GAME_BOARD_STYLES = {
+  CONTAINER: 'game-container',
+  HEADER: 'flex justify-between items-center mb-6',
+  ROUND_NUMBER: 'text-xl font-bold',
+  SCORES_CONTAINER: 'flex gap-8',
+  CONTENT: 'space-y-4',
+}
 
 const GameBoard = ({
   words = [],
@@ -9,12 +18,16 @@ const GameBoard = ({
   roundScore,
   roundNumber,
   targetScore,
+  onWordSubmit,
 }) => {
   return (
-    <div className={`game-container`}>
-      <div className='flex justify-between items-center mb-6'>
-        <div className='text-xl font-bold'>Round {roundNumber}</div>
-        <div className='flex gap-8'>
+    <div className={GAME_BOARD_STYLES.CONTAINER}>
+      <div className={GAME_BOARD_STYLES.HEADER}>
+        <DebugPanel onWordSubmit={onWordSubmit} />
+        <div className={GAME_BOARD_STYLES.ROUND_NUMBER}>
+          Round {roundNumber}
+        </div>
+        <div className={GAME_BOARD_STYLES.SCORES_CONTAINER}>
           <ScoreDisplay
             score={roundScore}
             label='Round Score'
@@ -24,28 +37,8 @@ const GameBoard = ({
         </div>
       </div>
 
-      <div className='space-y-4'>
-        <div className='gap-4 p-4 border bg-gray-100 rounded-lg'>
-          <h3 className='text-lg font-semibold mb-2'>
-            Played Words ({words.length + invalidWords.length})
-          </h3>
-          <div className='flex flex-col gap-3'>
-            {words.map((wordObj, index) => (
-              <PlayedWord
-                key={`valid-${index}`}
-                word={wordObj.word}
-                type={wordObj.type}
-              />
-            ))}
-            {invalidWords.map((wordObj, index) => (
-              <PlayedWord
-                key={`invalid-${index}`}
-                word={typeof wordObj === 'string' ? wordObj : wordObj.word}
-                isInvalid={true}
-              />
-            ))}
-          </div>
-        </div>
+      <div className={GAME_BOARD_STYLES.CONTENT}>
+        <WordList words={words} invalidWords={invalidWords} />
       </div>
     </div>
   )

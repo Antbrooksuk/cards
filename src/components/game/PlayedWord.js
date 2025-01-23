@@ -1,19 +1,27 @@
 import React from 'react'
+import { WORD_TYPE_COLORS } from '../../constants/colorPalette'
 import {
-  WORD_TYPE_COLORS,
   WORD_TYPE_MULTIPLIER,
-} from '../../constants/gameConfig'
-import { calculateWordScore, calculateLetterScore } from '../../utils/cardUtils'
+  DISGUSTING_WORD_STYLE,
+} from '../../constants/wordConstants'
+import {
+  calculateWordTotalScore,
+  calculateLetterScore,
+} from '../../utils/scoreUtils'
+import { getWordLengthClass } from '../../utils/cardUtils'
 import MiniCard from './MiniCard'
 
 const PlayedWord = ({ word, type, isInvalid = false, className = '' }) => {
   const typeColor = isInvalid
     ? 'text-red-600'
     : WORD_TYPE_COLORS[type?.toLowerCase() || 'unknown']
-  const wordScore = isInvalid ? null : calculateWordScore(word, type)
+  const wordScoreResult = isInvalid ? null : calculateWordTotalScore(word, type)
+  const wordScore = wordScoreResult?.score
+  const isDisgusting = wordScoreResult?.isDisgusting
   const totalLetterScore = word
     .split('')
     .reduce((total, letter) => total + calculateLetterScore(letter), 0)
+  const wordLengthClass = getWordLengthClass(word.length)
 
   return (
     <div
@@ -39,7 +47,9 @@ const PlayedWord = ({ word, type, isInvalid = false, className = '' }) => {
         </div>
       ) : (
         <div className='flex items-center gap-2 text-sm'>
-          <span className='flex h-10 font-bold text-lg items-center bg-gray-200 px-2 py-0.5 rounded-md'>
+          <span
+            className={`flex h-10 font-bold text-lg items-center ${wordLengthClass} px-2 py-0.5 rounded-md`}
+          >
             LETTERS × {word.length}
           </span>
           <span>x</span>
@@ -49,6 +59,16 @@ const PlayedWord = ({ word, type, isInvalid = false, className = '' }) => {
             {type.toUpperCase()} ×{' '}
             {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']}
           </span>
+          {isDisgusting && (
+            <>
+              <span>x</span>
+              <span
+                className={`flex h-10 font-bold text-lg items-center ${DISGUSTING_WORD_STYLE.COLOR} px-2 py-0.5 rounded-md`}
+              >
+                DISGUSTING × {DISGUSTING_WORD_STYLE.MULTIPLIER}
+              </span>
+            </>
+          )}
           <span>=</span>
           <span className='flex h-10 font-bold text-lg items-center bg-gray-200 px-2 py-0.5 rounded-md font-bold'>
             {wordScore}

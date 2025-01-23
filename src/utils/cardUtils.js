@@ -5,53 +5,52 @@ import {
   UNCOMMON_CONSONANTS,
   RARE_CONSONANTS,
   VOWELS,
-  WORD_TYPE_MULTIPLIER,
-  VOWEL_SCORE,
-  LEGENDARY_SCORE,
-  EPIC_SCORE,
-  UNCOMMON_SCORE,
-  RARE_SCORE,
-  LEGENDARY_SETS,
-  EPIC_CONSONANTS_SETS,
-  UNCOMMON_CONSONANTS_SETS,
-  RARE_CONSONANTS_SETS,
-  VOWEL_SETS,
-} from '../constants/gameConfig'
+  DECK_CONFIG,
+  CARD_STYLES,
+} from '../constants/cardConstants'
+
+import { WORD_LENGTH, WORD_LENGTH_CLASSES } from '../constants/wordConstants'
 
 // Static ID counter for generating unique card IDs
 let cardIdCounter = 0
 
 /**
- * Calculate score for a single letter
- * @param {string} letter - The letter to score
- * @returns {number} The score for the letter
+ * Get the style class for a card based on its type and selection state
+ * @param {CardType} type - The type of card
+ * @param {boolean} isSelected - Whether the card is selected
+ * @returns {string} The CSS class for the card style
  */
-export const calculateLetterScore = letter => {
-  const upperLetter = letter.toUpperCase()
-  if (LEGENDARY_LETTERS.includes(upperLetter)) return LEGENDARY_SCORE
-  if (VOWELS.includes(upperLetter)) return VOWEL_SCORE
-  if (EPIC_CONSONANTS.includes(upperLetter)) return EPIC_SCORE
-  if (UNCOMMON_CONSONANTS.includes(upperLetter)) return UNCOMMON_SCORE
-  if (RARE_CONSONANTS.includes(upperLetter)) return RARE_SCORE
-  return 0 // Should never happen
+export const getCardStyle = (type, isSelected) => {
+  if (isSelected) return CARD_STYLES.SELECTED
+  switch (type) {
+    case CARD_TYPE.LEGENDARY:
+      return CARD_STYLES.LEGENDARY
+    case CARD_TYPE.EPIC:
+      return CARD_STYLES.EPIC
+    case CARD_TYPE.UNCOMMON:
+      return CARD_STYLES.UNCOMMON
+    case CARD_TYPE.RARE:
+      return CARD_STYLES.RARE
+    case CARD_TYPE.VOWEL:
+      return CARD_STYLES.VOWEL
+    default:
+      return CARD_STYLES.DEFAULT
+  }
 }
 
 /**
- * Calculate total score for a word
- * @param {string} word - The word to score
- * @param {string} wordType - The type of word (noun, verb, etc.)
- * @returns {number} The total score for the word
+ * Get the CSS class for a word based on its length
+ * @param {number} length - The length of the word
+ * @returns {string} The CSS class for the word length category
  */
-export const calculateWordScore = (word, wordType) => {
-  // Calculate base score from letters
-  const baseScore = word
-    .split('')
-    .reduce((score, letter) => score + calculateLetterScore(letter), 0)
-
-  // Apply word type multiplier and word length
-  const multiplier =
-    WORD_TYPE_MULTIPLIER[wordType.toLowerCase()] || WORD_TYPE_MULTIPLIER.unknown
-  return baseScore * multiplier * word.length
+export const getWordLengthClass = length => {
+  if (length === WORD_LENGTH.LEGENDARY) return WORD_LENGTH_CLASSES.LEGENDARY
+  if (length === WORD_LENGTH.EPIC) return WORD_LENGTH_CLASSES.EPIC
+  if (length >= WORD_LENGTH.RARE_MIN && length <= WORD_LENGTH.RARE_MAX)
+    return WORD_LENGTH_CLASSES.RARE
+  if (length >= WORD_LENGTH.UNCOMMON_MIN && length <= WORD_LENGTH.UNCOMMON_MAX)
+    return WORD_LENGTH_CLASSES.UNCOMMON
+  return WORD_LENGTH_CLASSES.COMMON
 }
 
 /**
@@ -66,12 +65,12 @@ export const createCard = (letter, type) => ({
   type: LEGENDARY_LETTERS.includes(letter.toUpperCase())
     ? CARD_TYPE.LEGENDARY
     : VOWELS.includes(letter.toUpperCase())
-      ? CARD_TYPE.VOWEL
-      : EPIC_CONSONANTS.includes(letter.toUpperCase())
-        ? CARD_TYPE.EPIC
-        : UNCOMMON_CONSONANTS.includes(letter.toUpperCase())
-          ? CARD_TYPE.UNCOMMON
-          : CARD_TYPE.RARE,
+    ? CARD_TYPE.VOWEL
+    : EPIC_CONSONANTS.includes(letter.toUpperCase())
+    ? CARD_TYPE.EPIC
+    : UNCOMMON_CONSONANTS.includes(letter.toUpperCase())
+    ? CARD_TYPE.UNCOMMON
+    : CARD_TYPE.RARE,
 })
 
 /**
@@ -82,35 +81,35 @@ export const createDeck = () => {
   const deck = []
 
   // Add legendary sets
-  for (let i = 0; i < LEGENDARY_SETS; i++) {
+  for (let i = 0; i < DECK_CONFIG.LEGENDARY_SETS; i++) {
     LEGENDARY_LETTERS.forEach(letter => {
       deck.push(createCard(letter, CARD_TYPE.LEGENDARY))
     })
   }
 
   // Add epic consonant sets
-  for (let i = 0; i < EPIC_CONSONANTS_SETS; i++) {
+  for (let i = 0; i < DECK_CONFIG.EPIC_CONSONANTS_SETS; i++) {
     EPIC_CONSONANTS.forEach(letter => {
       deck.push(createCard(letter, CARD_TYPE.EPIC))
     })
   }
 
   // Add uncommon consonant sets
-  for (let i = 0; i < UNCOMMON_CONSONANTS_SETS; i++) {
+  for (let i = 0; i < DECK_CONFIG.UNCOMMON_CONSONANTS_SETS; i++) {
     UNCOMMON_CONSONANTS.forEach(letter => {
       deck.push(createCard(letter, CARD_TYPE.UNCOMMON))
     })
   }
 
   // Add rare consonant sets
-  for (let i = 0; i < RARE_CONSONANTS_SETS; i++) {
+  for (let i = 0; i < DECK_CONFIG.RARE_CONSONANTS_SETS; i++) {
     RARE_CONSONANTS.forEach(letter => {
       deck.push(createCard(letter, CARD_TYPE.RARE))
     })
   }
 
   // Add vowel sets
-  for (let i = 0; i < VOWEL_SETS; i++) {
+  for (let i = 0; i < DECK_CONFIG.VOWEL_SETS; i++) {
     VOWELS.forEach(letter => {
       deck.push(createCard(letter, CARD_TYPE.VOWEL))
     })
@@ -160,4 +159,19 @@ export const dealCards = (deck, count) => {
     dealtCards,
     remainingDeck,
   }
+}
+
+/**
+ * Get the style class for a mini card based on its letter
+ * @param {string} letter - The letter on the card
+ * @returns {string} The CSS class for the card style
+ */
+export const getMiniCardStyle = letter => {
+  const upperLetter = letter.toUpperCase()
+  if (LEGENDARY_LETTERS.includes(upperLetter)) return CARD_STYLES.LEGENDARY
+  if (EPIC_CONSONANTS.includes(upperLetter)) return CARD_STYLES.EPIC
+  if (RARE_CONSONANTS.includes(upperLetter)) return CARD_STYLES.RARE
+  if (UNCOMMON_CONSONANTS.includes(upperLetter)) return CARD_STYLES.UNCOMMON
+  if (VOWELS.includes(upperLetter)) return CARD_STYLES.VOWEL
+  return CARD_STYLES.DEFAULT
 }

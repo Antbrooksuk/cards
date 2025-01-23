@@ -17,10 +17,12 @@ export const validateWordWithDictionary = async word => {
     }
 
     const data = await response.json()
-    
-    // Import word type multipliers
-    const { WORD_TYPE_MULTIPLIER } = await import('../constants/gameConfig.js')
-    
+
+    // Import word type multipliers and disgusting words
+    const { WORD_TYPE_MULTIPLIER, DISGUSTING_WORDS } = await import(
+      '../constants/gameConfig.js'
+    )
+
     // Get all meanings
     const meanings = data[0]?.meanings || []
     let highestScore = 0
@@ -40,6 +42,7 @@ export const validateWordWithDictionary = async word => {
       isValid: true,
       word: word,
       wordType: dominantType,
+      isDisgusting: DISGUSTING_WORDS.includes(word.toUpperCase()),
     }
   } catch (error) {
     return {

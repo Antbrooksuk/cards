@@ -1,6 +1,6 @@
 import React from 'react'
 import { useGame } from '../../context/GameContext'
-import { CARD_TYPE } from '../../constants/gameConfig'
+import { CARD_TYPE } from '../../constants/cardConstants'
 
 const DeckDisplay = () => {
   const { deck, playerHand, selectedCards } = useGame()
