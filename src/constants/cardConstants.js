@@ -17,6 +17,7 @@ export const CARD_ANIMATION = {
   BASE: 'transform transition-all duration-300',
   DEAL: 'animate-dealCard',
   NEW: 'opacity-0',
+  EXIT: 'opacity-0 -translate-y-full rotate-180 scale-0',
 }
 
 export const CARD_LAYOUT = {
@@ -58,21 +59,9 @@ export const CARD_SCORES = {
  * Letter categories
  */
 export const LEGENDARY_LETTERS = ['!', '?']
-export const EPIC_CONSONANTS = ['Q', 'Z', 'X', 'J']
-export const RARE_CONSONANTS = [
-  'B',
-  'C',
-  'D',
-  'F',
-  'G',
-  'K',
-  'L',
-  'P',
-  'V',
-  'W',
-  'Y',
-]
-export const UNCOMMON_CONSONANTS = ['M', 'H', 'R', 'T', 'N', 'S']
+export const EPIC_CONSONANTS = ['Q', 'Z', 'Z', 'Z', 'X', 'X', 'J']
+export const RARE_CONSONANTS = ['B', 'C', 'F', 'G', 'K', 'P', 'V', 'W', 'Y']
+export const UNCOMMON_CONSONANTS = ['L', 'D', 'M', 'H', 'R', 'T', 'N', 'S']
 export const VOWELS = ['A', 'E', 'I', 'O', 'U']
 
 /**

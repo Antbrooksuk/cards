@@ -6,14 +6,16 @@ import { COLOR_PALETTE, WORD_TYPE_COLORS } from './colorPalette'
 export const WORD_LENGTH = {
   MIN: 2,
   MAX: 15,
-  LEGENDARY: 10,
-  EPIC: 9,
-  RARE_MIN: 6,
-  RARE_MAX: 8,
-  UNCOMMON_MIN: 4,
-  UNCOMMON_MAX: 5,
+  LEGENDARY_MIN: 9,
+  LEGENDARY_MAX: 10,
+  EPIC_MIN: 7,
+  EPIC_MAX: 8,
+  RARE_MIN: 5,
+  RARE_MAX: 6,
+  UNCOMMON_MIN: 3,
+  UNCOMMON_MAX: 4,
   COMMON_MIN: 2,
-  COMMON_MAX: 3,
+  COMMON_MAX: 2,
 }
 
 export const WORD_LENGTH_CLASSES = {

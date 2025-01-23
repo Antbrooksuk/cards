@@ -11,13 +11,16 @@ const Card = ({
   isSelected,
   isAnimating,
   isNew,
+  isExiting,
   onClick,
 }) => {
-  const animationClass = isAnimating
+  const animationClass = isExiting
+    ? CARD_CLASSES.animation.exit
+    : isAnimating
     ? CARD_CLASSES.animation.deal
     : isNew
-      ? CARD_CLASSES.animation.new
-      : ''
+    ? CARD_CLASSES.animation.new
+    : ''
 
   return (
     <div

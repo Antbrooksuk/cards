@@ -60,8 +60,13 @@ export const getCardStyle = (type, isSelected = false, isMini = false) => {
  * @returns {string} The CSS class for the word length category
  */
 export const getWordLengthClass = length => {
-  if (length === WORD_LENGTH.LEGENDARY) return WORD_LENGTH_CLASSES.LEGENDARY
-  if (length === WORD_LENGTH.EPIC) return WORD_LENGTH_CLASSES.EPIC
+  if (
+    length >= WORD_LENGTH.LEGENDARY_MIN &&
+    length <= WORD_LENGTH.LEGENDARY_MAX
+  )
+    return WORD_LENGTH_CLASSES.LEGENDARY
+  if (length >= WORD_LENGTH.EPIC_MIN && length <= WORD_LENGTH.EPIC_MAX)
+    return WORD_LENGTH_CLASSES.EPIC
   if (length >= WORD_LENGTH.RARE_MIN && length <= WORD_LENGTH.RARE_MAX)
     return WORD_LENGTH_CLASSES.RARE
   if (length >= WORD_LENGTH.UNCOMMON_MIN && length <= WORD_LENGTH.UNCOMMON_MAX)

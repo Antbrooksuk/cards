@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useGame } from '../../context/GameContext'
 import { calculateLetterScore } from '../../utils/scoreUtils'
+import { getLetterType } from '../../utils/cardUtils'
 import Card from './Card'
 import ScoreAnimation from './ScoreAnimation'
+import { CONGRATULATORY_MESSAGES } from '../../constants/messageConstants'
+import { ANIMATION_TIMING, CARD_ANIMATION } from '../../constants/cardConstants'
 
 const Spinner = () => (
   <div className='flex justify-center items-center h-[100px]'>
@@ -16,13 +19,59 @@ const WordBuilder = ({
   isValidating,
   animatingIndices,
 }) => {
-  const { currentWord, playerHand, selectedCards, removeLetter } = useGame()
+  const { playerHand, selectedCards, removeLetter, roundScore, targetScore } =
+    useGame()
+
+  const [congratsMessage, setCongratsMessage] = useState('')
+  const [congratsAnimatingIndices, setCongratsAnimatingIndices] = useState(
+    new Set(),
+  )
+
+  useEffect(() => {
+    if (roundScore >= targetScore) {
+      const randomIndex = Math.floor(
+        Math.random() * CONGRATULATORY_MESSAGES.length,
+      )
+      const message = CONGRATULATORY_MESSAGES[randomIndex]
+      setCongratsMessage(message)
+
+      // Clear any existing animations
+      setCongratsAnimatingIndices(new Set())
+
+      // Stagger the animations for each letter
+      message.split('').forEach((_, index) => {
+        setTimeout(() => {
+          setCongratsAnimatingIndices(prev => new Set([...prev, index]))
+        }, index * ANIMATION_TIMING.CARD_STAGGER_DELAY)
+      })
+    } else {
+      setCongratsMessage('')
+      setCongratsAnimatingIndices(new Set())
+    }
+  }, [roundScore, targetScore])
 
   return (
     <div className='flex flex-col items-center gap-4'>
       <div className='flex border bg-gray-100 flex-wrap gap-4 justify-center items-center rounded-lg min-h-[100px] w-full'>
         {isValidating ? (
           <Spinner />
+        ) : congratsMessage ? (
+          <div className='flex gap-4 justify-center py-6'>
+            {congratsMessage.split('').map((char, index) => (
+              <div
+                key={index}
+                className={`${
+                  !congratsAnimatingIndices.has(index) ? CARD_ANIMATION.NEW : ''
+                } ${CARD_ANIMATION.BASE}`}
+              >
+                <Card
+                  id={`congrats-${index}`}
+                  letter={char.toUpperCase()}
+                  type={getLetterType(char)}
+                />
+              </div>
+            ))}
+          </div>
         ) : (
           selectedCards.map((cardIndex, index) => {
             const card = playerHand[cardIndex]

@@ -59,6 +59,7 @@ export const CARD_CLASSES = {
   animation: {
     deal: 'animate-dealCard',
     new: 'opacity-0',
+    exit: 'opacity-0 -translate-y-full rotate-180 scale-0',
   },
 }
 

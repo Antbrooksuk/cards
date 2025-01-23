@@ -240,10 +240,20 @@ const gameReducer = (state, action) => {
       }
 
       // Handle normal mode
-      const { deck: updatedDeck, playerHand: newHand } = handleCardDealing(
-        state,
-        state.wordHistory.current.selectedIndices,
-      )
+      let updatedDeck = state.deck
+      let newHand = state.playerHand
+      let canReshuffleHand = state.canReshuffle
+
+      // Only deal new cards if we haven't reached the target score
+      if (newRoundScore < state.targetScore) {
+        const dealResult = handleCardDealing(
+          state,
+          state.wordHistory.current.selectedIndices,
+        )
+        updatedDeck = dealResult.deck
+        newHand = dealResult.playerHand
+        canReshuffleHand = !hasVowels(newHand)
+      }
 
       return {
         ...state,
@@ -252,7 +262,7 @@ const gameReducer = (state, action) => {
         playsUsed: newPlaysUsed,
         deck: updatedDeck,
         playerHand: newHand,
-        canReshuffle: !hasVowels(newHand),
+        canReshuffle: canReshuffleHand,
         wordHistory: {
           ...state.wordHistory,
           valid: wordResult.words || state.wordHistory.valid,
