@@ -135,22 +135,16 @@ const HandBuilder = ({
       const width = window.innerWidth
       return {
         xSpacing: Math.min(width / 11, 70),
-        yOffset: Math.min(width / 1000, 0.25),
         baseScale: Math.min(width / 500, 0.95),
-        yBase: Math.min(width / 100, 20),
       }
     }
 
-    const { xSpacing, yOffset, baseScale, yBase } = getResponsiveValues()
+    const { xSpacing, baseScale } = getResponsiveValues()
     const xOffset = offset * xSpacing
-    // Calculate y offset in pixels, keeping the arc within the bottom half
-    const yOffsetValue = -Math.pow(offset / (totalCards / 4), 2) * yOffset * 20
 
     return {
       transform: `
-        translate(calc(${xOffset}px - 50%), ${
-        BOTTOM_HALF_CENTER + yOffsetValue
-      }px)
+        translate(calc(${xOffset}px - 50%), ${BOTTOM_HALF_CENTER}px)
         scale(${baseScale})
       `,
     }
@@ -230,12 +224,12 @@ const HandBuilder = ({
             return (
               <div
                 key={card.id}
-                className={`absolute left-[50%] top-0 transition-all duration-300 ${
+                className={`absolute left-[50%] top-0 ${
                   cardAnimationStates[index] ===
                     ANIMATION_STATE.ENTERING_WORD ||
                   cardAnimationStates[index] === ANIMATION_STATE.EXITING_WORD
                     ? 'transition-transform duration-300'
-                    : ''
+                    : 'duration-0'
                 }`}
                 style={
                   isInWord

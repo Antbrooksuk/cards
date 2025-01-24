@@ -82,28 +82,23 @@ const Hand = ({ isValidating }) => {
     const { xSpacing, yOffset, baseScale, yBase, spreadFactor } =
       getResponsiveValues()
 
-    // Add some randomness to the spread during shuffle animation
-    const shuffleRandomness = animatingCards.has(index)
-      ? {
-          x: Math.sin(index * 0.5) * 15,
-          y: Math.cos(index * 0.7) * 10,
-          rotate: (Math.random() - 0.5) * 20,
-        }
-      : { x: 0, y: 0, rotate: 0 }
+    // Don't apply position transforms during initial deal animation
+    if (animatingCards.has(index)) {
+      return {
+        zIndex: totalCards - Math.abs(offset),
+      }
+    }
 
-    const xOffset =
-      offset * xSpacing * (animatingCards.has(index) ? spreadFactor : 1)
+    const xOffset = offset * xSpacing
     const yOffsetValue = -Math.pow(offset / (totalCards / 4), 2) * yOffset * 8
 
     return {
       transform: `
-        translateX(${xOffset + shuffleRandomness.x}px)
-        translateY(calc(${yBase}px + ${yOffsetValue + shuffleRandomness.y}px))
-        rotate(${shuffleRandomness.rotate}deg)
+        translateX(${xOffset}px)
+        translateY(calc(${yBase}px + ${yOffsetValue}px))
         scale(${baseScale})
       `,
       zIndex: totalCards - Math.abs(offset),
-      transition: 'transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
     }
   }
 
@@ -122,7 +117,11 @@ const Hand = ({ isValidating }) => {
       {playerHand.map((card, index) => (
         <div
           key={card.id}
-          className={HAND_STYLES.CARD_WRAPPER}
+          className={`${HAND_STYLES.CARD_WRAPPER} ${
+            !animatingCards.has(index)
+              ? HAND_STYLES.CARD_WRAPPER_POSITIONED
+              : ''
+          }`}
           style={getCardPosition(index, playerHand.length)}
         >
           <Card

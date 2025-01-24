@@ -5,8 +5,9 @@ module.exports = {
     extend: {
       keyframes: {
         dealCard: {
-          '0%': { transform: 'translateY(-200px) scale(0.3)' },
-          '100%': { transform: 'translateY(0) scale(1)' },
+          '0%': { transform: 'translateY(30px) scale(0.3)', opacity: '0' },
+          '50%': { transform: 'translateY(-3px) scale(1.05)', opacity: '1' },
+          '100%': { transform: 'translateY(0) scale(1)', opacity: '1' },
         },
         shuffle: {
           '0%': { transform: 'rotate(0deg) translateX(0) translateY(0)' },
@@ -77,7 +78,7 @@ module.exports = {
         },
       },
       animation: {
-        dealCard: 'dealCard 0.5s ease-out forwards',
+        dealCard: 'dealCard 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
         shuffle: 'shuffle 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
         shuffleInLeft: 'shuffleInLeft 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
         shuffleInRight: 'shuffleInRight 1s cubic-bezier(0.34, 1.56, 0.64, 1)',

@@ -423,9 +423,13 @@ const gameReducer = (state, action) => {
         return state
       }
 
+      // Simple shuffle without animation
       return {
         ...state,
-        playerHand: shuffleArray([...state.playerHand]),
+        playerHand: shuffleArray([...state.playerHand]).map(card => ({
+          ...card,
+          isNew: false,
+        })),
         wordHistory: {
           ...state.wordHistory,
           current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
