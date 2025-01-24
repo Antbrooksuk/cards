@@ -14,7 +14,7 @@ import { CARD_TYPE } from '../../constants/cardConstants'
 
 const CONTAINER_HEIGHT = 200
 const CARD_HEIGHT = 72 // 4.5rem
-const TOP_HALF_CENTER = CONTAINER_HEIGHT / 2 - CARD_HEIGHT // 39px
+const TOP_HALF_CENTER = CONTAINER_HEIGHT / 2 - CARD_HEIGHT * 1.35 // 39px
 const BOTTOM_HALF_CENTER =
   CONTAINER_HEIGHT / 2 + (CONTAINER_HEIGHT / 2 - CARD_HEIGHT) // 189px
 
@@ -28,6 +28,7 @@ const HandBuilder = ({
   isValidating,
   onAnimationComplete,
   animatingIndices = [],
+  forceHandAnimating = false,
 }) => {
   const {
     playerHand,
@@ -42,6 +43,7 @@ const HandBuilder = ({
 
   const [exitingCards, setExitingCards] = useState(new Set())
   const [cardAnimationStates, setCardAnimationStates] = useState({})
+  const [handAnimating, setHandAnimating] = useState(false)
   const [congratsMessage, setCongratsMessage] = useState('')
   const [congratsAnimatingIndices, setCongratsAnimatingIndices] = useState(
     new Set(),
@@ -109,6 +111,7 @@ const HandBuilder = ({
         ...prev,
         [index]: ANIMATION_STATE.ENTERING_WORD,
       }))
+      setHandAnimating(true)
       addLetter(letter, index)
     }
   }
@@ -142,9 +145,14 @@ const HandBuilder = ({
     const { xSpacing, baseScale } = getResponsiveValues()
     const xOffset = offset * xSpacing
 
+    // Calculate vertical curve using a parabolic function
+    const curveHeight = 40 // Maximum height of the curve
+    const yOffset =
+      ((offset * offset) / (centerIndex * centerIndex)) * curveHeight
+
     return {
       transform: `
-        translate(calc(${xOffset}px - 50%), ${BOTTOM_HALF_CENTER}px)
+        translate(calc(${xOffset}px - 50%), ${BOTTOM_HALF_CENTER - yOffset}px)
         scale(${baseScale})
       `,
     }
@@ -164,6 +172,11 @@ const HandBuilder = ({
       zIndex: index + 1, // Ensure increasing z-index from left to right
     }
   }
+
+  // Reset animation state when hand changes
+  useEffect(() => {
+    setHandAnimating(false)
+  }, [playerHand])
 
   // Update positions on window resize
   useEffect(() => {
@@ -227,7 +240,9 @@ const HandBuilder = ({
                 className={`absolute left-[50%] top-0 ${
                   cardAnimationStates[index] ===
                     ANIMATION_STATE.ENTERING_WORD ||
-                  cardAnimationStates[index] === ANIMATION_STATE.EXITING_WORD
+                  cardAnimationStates[index] === ANIMATION_STATE.EXITING_WORD ||
+                  handAnimating ||
+                  forceHandAnimating
                     ? 'transition-transform duration-300'
                     : 'duration-0'
                 }`}

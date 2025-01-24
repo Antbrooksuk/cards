@@ -13,6 +13,7 @@ const Round = ({ className = '' }) => {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [animatingIndices, setAnimatingIndices] = useState([])
+  const [keyboardAnimating, setKeyboardAnimating] = useState(false)
 
   const {
     wordHistory,
@@ -40,6 +41,11 @@ const Round = ({ className = '' }) => {
   } = useGame()
 
   const animatingCards = useCardAnimation(playerHand, clearNewFlags)
+
+  // Reset keyboard animation state when hand changes
+  useEffect(() => {
+    setKeyboardAnimating(false)
+  }, [playerHand])
 
   useEffect(() => {
     const handleKeyDown = async e => {
@@ -69,6 +75,7 @@ const Round = ({ className = '' }) => {
             card.letter.toLowerCase() === letter,
         )
         if (cardIndex !== -1) {
+          setKeyboardAnimating(true)
           addLetter(letter, cardIndex)
         }
       }
@@ -150,6 +157,7 @@ const Round = ({ className = '' }) => {
             isAnimating={isAnimating}
             isValidating={isValidating}
             animatingIndices={animatingIndices}
+            forceHandAnimating={keyboardAnimating}
             onAnimationComplete={() => {
               setAnimatingIndices([])
               // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
