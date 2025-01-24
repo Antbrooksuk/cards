@@ -55,7 +55,8 @@ const Hand = ({ isValidating }) => {
           xSpacing: 32,
           yOffset: 0.8,
           baseScale: 0.85,
-          yBase: 18, // Base vertical position
+          yBase: 18,
+          spreadFactor: 1.2, // Controls how much cards spread during shuffle
         }
       } else if (width < 768) {
         // md
@@ -64,6 +65,7 @@ const Hand = ({ isValidating }) => {
           yOffset: 1.0,
           baseScale: 0.9,
           yBase: 20,
+          spreadFactor: 1.4,
         }
       } else {
         // lg and above
@@ -72,22 +74,36 @@ const Hand = ({ isValidating }) => {
           yOffset: 1.2,
           baseScale: 0.95,
           yBase: 22,
+          spreadFactor: 1.6,
         }
       }
     }
 
-    const { xSpacing, yOffset, baseScale, yBase } = getResponsiveValues()
-    const xOffset = offset * xSpacing
-    // Gentler quadratic curve for smile shape
+    const { xSpacing, yOffset, baseScale, yBase, spreadFactor } =
+      getResponsiveValues()
+
+    // Add some randomness to the spread during shuffle animation
+    const shuffleRandomness = animatingCards.has(index)
+      ? {
+          x: Math.sin(index * 0.5) * 15,
+          y: Math.cos(index * 0.7) * 10,
+          rotate: (Math.random() - 0.5) * 20,
+        }
+      : { x: 0, y: 0, rotate: 0 }
+
+    const xOffset =
+      offset * xSpacing * (animatingCards.has(index) ? spreadFactor : 1)
     const yOffsetValue = -Math.pow(offset / (totalCards / 4), 2) * yOffset * 8
 
     return {
       transform: `
-        translateX(${xOffset}px)
-        translateY(calc(${yBase}px + ${yOffsetValue}px))
+        translateX(${xOffset + shuffleRandomness.x}px)
+        translateY(calc(${yBase}px + ${yOffsetValue + shuffleRandomness.y}px))
+        rotate(${shuffleRandomness.rotate}deg)
         scale(${baseScale})
       `,
       zIndex: totalCards - Math.abs(offset),
+      transition: 'transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
     }
   }
 

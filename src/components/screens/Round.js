@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useGame } from '../../context/GameContext'
 import { LEGENDARY_LETTERS } from '../../constants/cardConstants'
-import Hand from '../game/Hand'
+import HandBuilder from '../game/HandBuilder'
 import Header from '../common/Header'
 import DebugPanel from '../game/DebugPanel'
 import WordList from '../game/WordList'
 import DeckDisplay from '../game/DeckDisplay'
-import WordBuilder from '../game/WordBuilder'
 import ActionBar from '../game/ActionBar'
 import useCardAnimation from '../../hooks/useCardAnimation'
 
@@ -140,14 +139,14 @@ const Round = ({ className = '' }) => {
     <>
       <DebugPanel onWordSubmit={handleWordSubmit} />
       <>
-        <Header
-          roundNumber={roundNumber}
-          roundScore={roundScore}
-          targetScore={targetScore}
-          totalScore={score}
-        />
         <div className='game-container flex flex-col gap-4'>
-          <WordBuilder
+          <Header
+            roundNumber={roundNumber}
+            roundScore={roundScore}
+            targetScore={targetScore}
+            totalScore={score}
+          />
+          <HandBuilder
             isAnimating={isAnimating}
             isValidating={isValidating}
             animatingIndices={animatingIndices}
@@ -156,7 +155,6 @@ const Round = ({ className = '' }) => {
               // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
             }}
           />
-          <Hand isValidating={isValidating} />
           <ActionBar
             gameStatus={gameStatus}
             isAnimating={isAnimating || animatingCards.size > 0}

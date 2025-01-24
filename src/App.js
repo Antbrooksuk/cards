@@ -60,7 +60,7 @@ const GameScreen = () => {
 const App = () => {
   return (
     <GameProvider>
-      <div className='min-h-screen bg-white'>
+      <div className='bg-white'>
         <GameScreen />
       </div>
     </GameProvider>

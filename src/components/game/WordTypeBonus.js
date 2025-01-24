@@ -9,24 +9,22 @@ const WordTypeBonus = ({ word, type, wordScoreResult }) => {
   const specialBonus = getSpecialWordBonus(wordScoreResult)
 
   return (
-    <div className='flex items-center gap-2 text-sm'>
+    <div className='flex items-center gap-4 text-sm'>
       <span
-        className={`flex h-10 font-bold text-lg items-center ${wordLengthClass} px-2 py-0.5 rounded-md`}
+        className={`flex h-10 font-bold text-md items-center ${wordLengthClass} px-2 py-0.5 rounded-md`}
       >
         LETTERS × {word.length}
       </span>
-      <span>x</span>
       <span
-        className={`flex h-10 font-bold text-lg items-center ${typeColor} px-2 py-0.5 rounded-md`}
+        className={`flex h-10 font-bold text-md items-center ${typeColor} px-2 py-0.5 rounded-md`}
       >
         {type.toUpperCase()} ×{' '}
         {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']}
       </span>
       {specialBonus && (
         <>
-          <span>x</span>
           <span
-            className={`flex h-10 font-bold text-lg items-center ${specialBonus.style.COLOR} px-2 py-0.5 rounded-md`}
+            className={`flex h-10 font-bold text-md items-center ${specialBonus.style.COLOR} px-2 py-0.5 rounded-md`}
           >
             {specialBonus.text} × {specialBonus.multiplier}
           </span>

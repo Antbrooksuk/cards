@@ -33,8 +33,8 @@ export const TEXT_CLASSES = {
  */
 export const BUTTON_CLASSES = {
   base: 'px-4 py-2 rounded-lg font-semibold transition-colors',
-  primary: 'bg-blue-500 text-white hover:bg-blue-600',
-  secondary: 'bg-gray-500 text-white hover:bg-gray-600',
+  primary: 'bg-blue-500 text-white',
+  secondary: 'bg-gray-500 text-white',
   disabled: 'opacity-50 cursor-not-allowed',
 }
 
@@ -51,7 +51,7 @@ export const INPUT_CLASSES = {
  * Tailwind CSS classes for card components
  */
 export const CARD_CLASSES = {
-  base: 'w-14 h-[4.5rem] rounded-lg shadow-md flex items-center justify-center font-bold text-xl transform transition-all duration-300 hover:scale-110',
+  base: 'w-14 h-[4.5rem] rounded-lg shadow-md flex items-center justify-center font-bold text-xl transform transition-all duration-300',
   content: 'relative w-full h-full flex flex-col items-center justify-center',
   id: 'text-[0.6rem] absolute top-1 left-1 opacity-50',
   letter: 'text-4xl',
@@ -60,6 +60,9 @@ export const CARD_CLASSES = {
     deal: 'animate-dealCard scale-100',
     new: 'opacity-0 scale-75',
     exit: 'opacity-0 -translate-y-16 rotate-180 scale-0',
+    shuffle: 'animate-shuffle hover:animate-none',
+    shuffleIn: 'animate-shuffleIn',
+    glow: 'animate-glow',
   },
 }
 

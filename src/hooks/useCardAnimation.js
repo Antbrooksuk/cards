@@ -15,21 +15,45 @@ const useCardAnimation = (cards, clearNewFlags) => {
       // Clear any existing animations
       setAnimatingCards(new Set())
 
-      // Stagger the animations
-      newCards.forEach((cardIndex, i) => {
+      // Initial delay before starting animations
+      const initialDelay = 100
+
+      // Randomize the order of animations
+      const shuffledIndices = [...newCards]
+      for (let i = shuffledIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[shuffledIndices[i], shuffledIndices[j]] = [
+          shuffledIndices[j],
+          shuffledIndices[i],
+        ]
+      }
+
+      // Stagger the animations with randomized delays
+      shuffledIndices.forEach((cardIndex, i) => {
+        // Add some randomness to the stagger delay
+        const randomDelay = Math.random() * 100 // Random delay between 0-100ms
+        const baseStaggerDelay = i * ANIMATION_TIMING.SHUFFLE_STAGGER_DELAY
+        const totalDelay = initialDelay + baseStaggerDelay + randomDelay
+
         setTimeout(() => {
           setAnimatingCards(prev => new Set([...prev, cardIndex]))
-        }, i * ANIMATION_TIMING.CARD_STAGGER_DELAY)
+        }, totalDelay)
       })
 
-      // Remove animation classes and isNew flags after they complete
+      // Calculate total duration including all animations and random delays
       const totalDuration =
-        newCards.length * ANIMATION_TIMING.CARD_STAGGER_DELAY +
-        ANIMATION_TIMING.CARD_ANIMATION_DURATION
+        initialDelay +
+        (shuffledIndices.length - 1) * ANIMATION_TIMING.SHUFFLE_STAGGER_DELAY +
+        100 + // Account for max random delay
+        ANIMATION_TIMING.SHUFFLE_ANIMATION_DURATION
+
+      // Add extra buffer time to ensure animations complete
+      const cleanupDelay = totalDuration + 100
+
       setTimeout(() => {
         setAnimatingCards(new Set())
         clearNewFlags()
-      }, totalDuration)
+      }, cleanupDelay)
     }
   }, [cards, clearNewFlags])
 

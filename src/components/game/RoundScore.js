@@ -1,7 +1,7 @@
 import React from 'react'
 
 const ROUND_SCORE_STYLES = {
-  CONTAINER: 'text-center',
+  CONTAINER: 'text-center flex-1',
   LABEL: 'text-lg font-semibold text-gray-600',
   SCORE_CONTAINER: 'text-3xl font-bold flex items-center justify-center gap-2',
   CURRENT_SCORE: 'text-blue-600',
@@ -11,7 +11,12 @@ const ROUND_SCORE_STYLES = {
   PROGRESS_FILL: 'h-full bg-blue-600 transition-all duration-300 ease-in-out',
 }
 
-const RoundScore = ({ score = 0, targetScore, className = '' }) => {
+const RoundScore = ({
+  score = 0,
+  roundNumber,
+  targetScore,
+  className = '',
+}) => {
   const progressPercentage = Math.min((score / targetScore) * 100, 100)
 
   return (
@@ -19,7 +24,7 @@ const RoundScore = ({ score = 0, targetScore, className = '' }) => {
       id='roundScore'
       className={`${ROUND_SCORE_STYLES.CONTAINER} ${className}`}
     >
-      <div className={ROUND_SCORE_STYLES.LABEL}>Round Score</div>
+      <div className={ROUND_SCORE_STYLES.LABEL}>Round {roundNumber} Score</div>
       <div className={ROUND_SCORE_STYLES.SCORE_CONTAINER}>
         <span className={ROUND_SCORE_STYLES.CURRENT_SCORE}>
           {Number(typeof score === 'object' ? score.score : score)}

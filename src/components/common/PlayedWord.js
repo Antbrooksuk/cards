@@ -8,29 +8,27 @@ const PlayedWord = ({ word, type, isInvalid = false, className = '' }) => {
   const wordScore = wordScoreResult?.score
 
   return (
-    <div
-      className={`bg-gray-100 rounded-lg px-3 py-2 flex items-center gap-3 ${className}`}
-    >
+    <div className={`flex items-center gap-4 ${className}`}>
       {isInvalid ? (
-        <div className='flex items-center'>
+        <>
           <WordScoreBreakdown word={word} />
-          <span className='text-red-600 text-sm font-semibold ml-2'>
+          <span className='text-red-600 text-sm font-semibold'>
             Invalid Word
           </span>
-        </div>
+        </>
       ) : (
-        <div className='flex items-center gap-2'>
+        <div className='flex flex-col gap-4 x items-center'>
           <WordScoreBreakdown word={word} />
-          <span>x</span>
-          <WordTypeBonus
-            word={word}
-            type={type}
-            wordScoreResult={wordScoreResult}
-          />
-          <span>=</span>
-          <span className='flex h-10 font-bold text-lg items-center bg-gray-200 px-2 py-0.5 rounded-md'>
-            {wordScore}
-          </span>
+          <div className='flex flex-col gap-4 x items-center'>
+            <WordTypeBonus
+              word={word}
+              type={type}
+              wordScoreResult={wordScoreResult}
+            />
+            <span className='flex h-10 font-bold text-lg items-center bg-gray-200 px-2 py-0.5 rounded-md'>
+              {wordScore}
+            </span>
+          </div>
         </div>
       )}
     </div>

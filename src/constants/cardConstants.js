@@ -30,8 +30,10 @@ export const VOWELS = ['A', 'E', 'I', 'O', 'U']
  * Animation timing
  */
 export const ANIMATION_TIMING = {
-  CARD_STAGGER_DELAY: 100, // ms between each card animation
+  CARD_STAGGER_DELAY: 150, // ms between each card animation
   CARD_ANIMATION_DURATION: 500, // total animation duration for cards
+  SHUFFLE_ANIMATION_DURATION: 1000, // duration for shuffle animation
+  SHUFFLE_STAGGER_DELAY: 80, // stagger for shuffle animations
 }
 
 /**

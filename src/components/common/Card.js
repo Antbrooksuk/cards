@@ -14,13 +14,21 @@ const Card = ({
   isExiting,
   onClick,
 }) => {
-  const animationClass = isExiting
-    ? CARD_CLASSES.animation.exit
-    : isAnimating
-    ? CARD_CLASSES.animation.deal
-    : isNew
-    ? CARD_CLASSES.animation.new
-    : ''
+  const getAnimationClass = () => {
+    if (isExiting) return CARD_CLASSES.animation.exit
+    if (isAnimating) {
+      return `${CARD_CLASSES.animation.deal} ${CARD_CLASSES.animation.glow}`
+    }
+    if (isNew) {
+      // Randomly choose between left and right shuffle animations
+      const shuffleDirection =
+        Math.random() < 0.5 ? 'shuffleInLeft' : 'shuffleInRight'
+      return `animate-${shuffleDirection} ${CARD_CLASSES.animation.glow}`
+    }
+    return ''
+  }
+
+  const animationClass = getAnimationClass()
 
   return (
     <div
