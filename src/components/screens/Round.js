@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useGame } from '../../context/GameContext'
 import { LEGENDARY_LETTERS } from '../../constants/cardConstants'
-import GameBoard from '../game/GameBoard'
 import Hand from '../game/Hand'
+import Header from '../common/Header'
+import DebugPanel from '../game/DebugPanel'
+import WordList from '../game/WordList'
 import DeckDisplay from '../game/DeckDisplay'
 import WordBuilder from '../game/WordBuilder'
 import ActionBar from '../game/ActionBar'
@@ -135,45 +137,50 @@ const Round = ({ className = '' }) => {
   }
 
   return (
-    <div className={`min-h-screen py-4 ${className}`}>
-      <GameBoard
-        allWords={wordHistory.all.sort((a, b) => a.timestamp - b.timestamp)}
-        score={score}
-        roundScore={roundScore}
-        roundNumber={roundNumber}
-        targetScore={targetScore}
-        onWordSubmit={handleWordSubmit}
-      />
-
-      <div className='game-container mt-8 flex flex-col gap-4'>
-        <WordBuilder
-          isAnimating={isAnimating}
-          isValidating={isValidating}
-          animatingIndices={animatingIndices}
-          onAnimationComplete={() => {
-            setAnimatingIndices([])
-            // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
-          }}
+    <>
+      <DebugPanel onWordSubmit={handleWordSubmit} />
+      <>
+        <Header
+          roundNumber={roundNumber}
+          roundScore={roundScore}
+          targetScore={targetScore}
+          totalScore={score}
         />
-        <Hand isValidating={isValidating} />
-        <ActionBar
-          gameStatus={gameStatus}
-          isAnimating={isAnimating || animatingCards.size > 0}
-          isValidating={isValidating}
-          selectedCards={selectedCards}
-          discardsUsed={discardsUsed}
-          playsUsed={playsUsed}
-          canReshuffle={canReshuffle}
-          debugMode={debugMode}
-          onPlayWord={handleWordSubmit}
-          onShuffleHand={reshuffleHand}
-          onReshuffleDeck={reshuffleDeck}
-          onDiscardCards={discardCards}
-          onShowRoundEnd={showRoundEnd}
-        />
+        <div className='game-container flex flex-col gap-4'>
+          <WordBuilder
+            isAnimating={isAnimating}
+            isValidating={isValidating}
+            animatingIndices={animatingIndices}
+            onAnimationComplete={() => {
+              setAnimatingIndices([])
+              // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
+            }}
+          />
+          <Hand isValidating={isValidating} />
+          <ActionBar
+            gameStatus={gameStatus}
+            isAnimating={isAnimating || animatingCards.size > 0}
+            isValidating={isValidating}
+            selectedCards={selectedCards}
+            discardsUsed={discardsUsed}
+            playsUsed={playsUsed}
+            canReshuffle={canReshuffle}
+            debugMode={debugMode}
+            onPlayWord={handleWordSubmit}
+            onShuffleHand={reshuffleHand}
+            onReshuffleDeck={reshuffleDeck}
+            onDiscardCards={discardCards}
+            onShowRoundEnd={showRoundEnd}
+          />
+          <WordList
+            allWords={wordHistory.all
+              .filter(word => word.round === roundNumber)
+              .sort((a, b) => a.timestamp - b.timestamp)}
+          />
+        </div>
         <DeckDisplay />
-      </div>
-    </div>
+      </>
+    </>
   )
 }
 

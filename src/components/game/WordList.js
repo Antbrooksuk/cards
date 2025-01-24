@@ -1,5 +1,5 @@
 import React from 'react'
-import PlayedWord from './PlayedWord'
+import PlayedWord from '../common/PlayedWord'
 
 const WORD_LIST_STYLES = {
   CONTAINER: 'gap-4 p-4 border bg-gray-100 rounded-lg',
@@ -9,7 +9,7 @@ const WORD_LIST_STYLES = {
 
 const WordList = ({ allWords = [] }) => {
   return (
-    <div className={WORD_LIST_STYLES.CONTAINER}>
+    <div id='playedWords' className={WORD_LIST_STYLES.CONTAINER}>
       <h3 className={WORD_LIST_STYLES.TITLE}>
         Played Words ({allWords.length})
       </h3>

@@ -1,4 +1,4 @@
-import { COLOR_PALETTE, WORD_TYPE_COLORS } from './colorPalette'
+import { CARD_COLORS, THEME_COLORS } from './tailwindClasses'
 
 /**
  * Word length constraints and categories
@@ -19,11 +19,11 @@ export const WORD_LENGTH = {
 }
 
 export const WORD_LENGTH_CLASSES = {
-  LEGENDARY: COLOR_PALETTE.LEGENDARY,
-  EPIC: COLOR_PALETTE.EPIC,
-  RARE: COLOR_PALETTE.RARE,
-  UNCOMMON: COLOR_PALETTE.UNCOMMON,
-  COMMON: COLOR_PALETTE.COMMON,
+  LEGENDARY: CARD_COLORS.legendary,
+  EPIC: CARD_COLORS.epic,
+  RARE: CARD_COLORS.rare,
+  UNCOMMON: CARD_COLORS.uncommon,
+  COMMON: CARD_COLORS.common,
 }
 
 /**
@@ -61,7 +61,7 @@ export const DISGUSTING_WORDS = [
 ]
 
 export const DISGUSTING_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.DISGUSTING,
+  COLOR: THEME_COLORS.disgusting,
   MULTIPLIER: 1.5, // Reduces score by half
 }
 
@@ -85,7 +85,7 @@ export const GENZ_WORDS = [
 ]
 
 export const GENZ_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.GENZ,
+  COLOR: THEME_COLORS.genz,
   MULTIPLIER: 1.5, // Increases score by 50%
 }
 
@@ -111,7 +111,7 @@ export const MILLENNIAL_WORDS = [
 ]
 
 export const MILLENNIAL_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.MILLENNIAL,
+  COLOR: THEME_COLORS.millennial,
   MULTIPLIER: 1.5, // Increases score by 25%
 }
 
@@ -132,7 +132,7 @@ export const TECH_WORDS = [
 ]
 
 export const TECH_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.TECH,
+  COLOR: THEME_COLORS.tech,
   MULTIPLIER: 1.5, // Increases score by 75%
 }
 
@@ -152,7 +152,7 @@ export const FOOD_WORDS = [
 ]
 
 export const FOOD_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.FOOD,
+  COLOR: THEME_COLORS.food,
   MULTIPLIER: 1.5, // Increases score by 25%
 }
 
@@ -172,7 +172,7 @@ export const NATURE_WORDS = [
 ]
 
 export const NATURE_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.NATURE,
+  COLOR: THEME_COLORS.nature,
   MULTIPLIER: 1.5, // Increases score by 50%
 }
 
@@ -190,7 +190,7 @@ export const RETRO_WORDS = [
 ]
 
 export const RETRO_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.RETRO,
+  COLOR: THEME_COLORS.retro,
   MULTIPLIER: 1.5, // Doubles the score
 }
 
@@ -209,7 +209,7 @@ export const INTERNET_WORDS = [
 ]
 
 export const INTERNET_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.INTERNET,
+  COLOR: THEME_COLORS.internet,
   MULTIPLIER: 1.5, // Increases score by 50%
 }
 
@@ -237,6 +237,6 @@ export const LOVE_WORDS = [
 ]
 
 export const LOVE_WORD_STYLE = {
-  COLOR: COLOR_PALETTE.LOVE,
+  COLOR: THEME_COLORS.love,
   MULTIPLIER: 1.5, // Increases score by 75%
 }

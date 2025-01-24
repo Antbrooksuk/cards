@@ -15,7 +15,7 @@ export const GAME_STATUS = {
 export const INITIAL_GAME_STATUS = GAME_STATUS.PLAYING
 
 // Game mechanics
-export const MAX_HAND_SIZE = 10
+export const MAX_HAND_SIZE = 9
 export const LEGENDARY_LETTERS = {
   WILD: '!',
   SPECIAL: '?',

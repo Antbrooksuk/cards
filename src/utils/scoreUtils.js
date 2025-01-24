@@ -1,6 +1,6 @@
 import { CARD_SCORES } from '../constants/cardConstants'
 import { getLetterType } from './cardUtils'
-import { WORD_TYPE_COLORS } from '../constants/colorPalette'
+import { WORD_TYPE_COLORS } from '../constants/tailwindClasses'
 import {
   WORD_TYPE_MULTIPLIER,
   DISGUSTING_WORDS,

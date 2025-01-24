@@ -2,7 +2,7 @@ import React from 'react'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 import { CARD_CLASSES } from '../../constants/tailwindClasses'
 import { getCardStyle } from '../../utils/cardUtils'
-import CardLayout from './CardLayout'
+import CardLayout from '../game/CardLayout'
 
 const Card = ({
   id,

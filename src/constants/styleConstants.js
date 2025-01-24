@@ -1,7 +1,8 @@
 export const HAND_STYLES = {
   CONTAINER:
-    'w-full border flex flex-wrap gap-4 justify-center p-4 bg-gray-100 rounded-lg',
+    'w-full flex justify-center items-center relative overflow-hidden h-36 sm:h-40 md:h-44',
   DISABLED: 'cursor-not-allowed opacity-50',
+  CARD_WRAPPER: 'absolute transform transition-all duration-300',
 }
 
 export const LAYOUT_STYLES = {

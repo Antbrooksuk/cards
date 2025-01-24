@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useGame } from '../../context/GameContext'
-import Card from './Card'
+import Card from '../common/Card'
 import useCardAnimation from '../../hooks/useCardAnimation'
 import { canSelectCard, HAND_STYLES } from '../../utils/handUtils'
 import { GAME_STATUS } from '../../constants/gameConfig'
@@ -42,21 +42,85 @@ const Hand = ({ isValidating }) => {
     }
   }
 
+  const getCardPosition = (index, totalCards) => {
+    const centerIndex = (totalCards - 1) / 2
+    const offset = index - centerIndex
+
+    // Responsive values based on screen width
+    const getResponsiveValues = () => {
+      const width = window.innerWidth
+      if (width < 640) {
+        // sm
+        return {
+          xSpacing: 32,
+          yOffset: 0.8,
+          baseScale: 0.85,
+          yBase: 18, // Base vertical position
+        }
+      } else if (width < 768) {
+        // md
+        return {
+          xSpacing: 38,
+          yOffset: 1.0,
+          baseScale: 0.9,
+          yBase: 20,
+        }
+      } else {
+        // lg and above
+        return {
+          xSpacing: 44,
+          yOffset: 1.2,
+          baseScale: 0.95,
+          yBase: 22,
+        }
+      }
+    }
+
+    const { xSpacing, yOffset, baseScale, yBase } = getResponsiveValues()
+    const xOffset = offset * xSpacing
+    // Gentler quadratic curve for smile shape
+    const yOffsetValue = -Math.pow(offset / (totalCards / 4), 2) * yOffset * 8
+
+    return {
+      transform: `
+        translateX(${xOffset}px)
+        translateY(calc(${yBase}px + ${yOffsetValue}px))
+        scale(${baseScale})
+      `,
+      zIndex: totalCards - Math.abs(offset),
+    }
+  }
+
+  // Update positions on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      // Force a re-render to update card positions
+      setExitingCards(prev => new Set([...prev]))
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
-    <div className={HAND_STYLES.CONTAINER}>
+    <div id='hand' className={HAND_STYLES.CONTAINER}>
       {playerHand.map((card, index) => (
-        <Card
+        <div
           key={card.id}
-          id={card.id}
-          letter={card.letter}
-          type={card.type}
-          isSelected={selectedCards.includes(index)}
-          isAnimating={animatingCards.has(index)}
-          isNew={card.isNew}
-          isExiting={exitingCards.has(index)}
-          onClick={() => handleCardClick(card.letter, index)}
-          className={isValidating ? HAND_STYLES.DISABLED : ''}
-        />
+          className={HAND_STYLES.CARD_WRAPPER}
+          style={getCardPosition(index, playerHand.length)}
+        >
+          <Card
+            id={card.id}
+            letter={card.letter}
+            type={card.type}
+            isSelected={selectedCards.includes(index)}
+            isAnimating={animatingCards.has(index)}
+            isNew={card.isNew}
+            isExiting={exitingCards.has(index)}
+            onClick={() => handleCardClick(card.letter, index)}
+            className={isValidating ? HAND_STYLES.DISABLED : ''}
+          />
+        </div>
       ))}
     </div>
   )

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useGame } from '../../context/GameContext'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 import { getLetterType } from '../../utils/cardUtils'
-import Card from './Card'
+import Card from '../common/Card'
 import ScoreAnimation from './ScoreAnimation'
 import { CONGRATULATORY_MESSAGES } from '../../constants/messageConstants'
-import { ANIMATION_TIMING, CARD_ANIMATION } from '../../constants/cardConstants'
+import { ANIMATION_TIMING } from '../../constants/cardConstants'
+import { CARD_CLASSES } from '../../constants/tailwindClasses'
 
 const Spinner = () => (
   <div className='flex justify-center items-center h-[100px]'>
@@ -51,7 +52,7 @@ const WordBuilder = ({
   }, [roundScore, targetScore])
 
   return (
-    <div className='flex flex-col items-center gap-4'>
+    <div id='wordBuilder' className='flex flex-col items-center gap-4'>
       <div className='flex border bg-gray-100 flex-wrap gap-4 justify-center items-center rounded-lg min-h-[100px] w-full'>
         {isValidating ? (
           <Spinner />
@@ -61,8 +62,10 @@ const WordBuilder = ({
               <div
                 key={index}
                 className={`${
-                  !congratsAnimatingIndices.has(index) ? CARD_ANIMATION.NEW : ''
-                } ${CARD_ANIMATION.BASE}`}
+                  !congratsAnimatingIndices.has(index)
+                    ? CARD_CLASSES.animation.new
+                    : ''
+                } transform transition-all duration-300`}
               >
                 <Card
                   id={`congrats-${index}`}

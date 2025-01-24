@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useGame } from '../../context/GameContext'
 
 const DEBUG_STYLES = {
-  CONTAINER: 'flex items-center gap-4',
+  CONTAINER: 'flex items-center h-12 p-2 bg-gray-800 gap-4',
   TOGGLE_BUTTON: 'px-2 py-1 rounded text-sm',
   TOGGLE_ACTIVE: 'bg-amber-500 text-white',
   TOGGLE_INACTIVE: 'bg-gray-200',
@@ -24,7 +24,7 @@ const DebugPanel = ({ onWordSubmit }) => {
   }
 
   return (
-    <div className={DEBUG_STYLES.CONTAINER}>
+    <div id='debug' className={DEBUG_STYLES.CONTAINER}>
       <button
         onClick={toggleDebug}
         className={`${DEBUG_STYLES.TOGGLE_BUTTON} ${

@@ -23,27 +23,13 @@ const GameScreen = () => {
 
   const { validateWord } = useWordValidation()
 
-  const handleWordSubmit = word => {
-    const validation = validateWord(word)
-    if (validation.isValid) {
-      addWord(validation.word)
-    }
-  }
-
   switch (gameStatus) {
     case 'welcome':
       return <Welcome onStartGame={startGame} />
 
     case 'playing':
     case 'roundComplete':
-      return (
-        <Round
-          words={words}
-          score={score}
-          roundNumber={currentRound}
-          onWordSubmit={handleWordSubmit}
-        />
-      )
+      return <Round />
 
     case 'roundEnd':
       return (

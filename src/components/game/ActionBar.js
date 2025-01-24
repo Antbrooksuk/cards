@@ -38,7 +38,7 @@ const ActionBar = ({
   }
 
   return (
-    <div className='flex justify-center gap-4'>
+    <div id='actionBar' className='flex flex-col gap-4'>
       <Tooltip content={`${MAX_PLAYS_PER_ROUND - playsUsed} plays remaining`}>
         <Button
           onClick={onPlayWord}

@@ -1,43 +1,5 @@
-import { COLOR_PALETTE } from './colorPalette'
-
 /**
- * Card styling and layout constants
- */
-export const CARD_STYLES = {
-  SELECTED: COLOR_PALETTE.SELECTED,
-  LEGENDARY: COLOR_PALETTE.LEGENDARY,
-  EPIC: COLOR_PALETTE.EPIC,
-  UNCOMMON: COLOR_PALETTE.UNCOMMON,
-  RARE: COLOR_PALETTE.RARE,
-  VOWEL: COLOR_PALETTE.COMMON,
-  DEFAULT: COLOR_PALETTE.DEFAULT,
-}
-
-export const CARD_ANIMATION = {
-  BASE: 'transform transition-all duration-300',
-  DEAL: 'animate-dealCard',
-  NEW: 'opacity-0',
-  EXIT: 'opacity-0 -translate-y-full rotate-180 scale-0',
-}
-
-export const CARD_LAYOUT = {
-  CONTAINER: 'w-16 h-20 rounded-lg shadow-md flex items-center justify-center',
-  CONTENT: 'relative w-full h-full flex flex-col items-center justify-center',
-  ID: 'text-xs absolute top-1 left-1 opacity-50',
-  LETTER: 'text-2xl',
-  SCORE: 'text-xs absolute bottom-1 right-1 opacity-75',
-}
-
-export const MINI_CARD_LAYOUT = {
-  CONTAINER:
-    'font-bold w-8 h-10 rounded shadow-sm flex items-center justify-center',
-  CONTENT: 'relative w-full h-full flex flex-col items-center justify-center',
-  LETTER: 'text-lg',
-  SCORE: 'text-[10px] absolute bottom-0.5 right-0.5 opacity-75',
-}
-
-/**
- * Card types and scoring
+ * Card types and scoring constants
  */
 export const CARD_TYPE = {
   LEGENDARY: 'LEGENDARY',

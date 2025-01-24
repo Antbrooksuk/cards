@@ -51,15 +51,15 @@ export const INPUT_CLASSES = {
  * Tailwind CSS classes for card components
  */
 export const CARD_CLASSES = {
-  base: 'w-16 h-20 rounded-lg shadow-md flex items-center justify-center font-bold text-2xl transform transition-all duration-300',
+  base: 'w-14 h-[4.5rem] rounded-lg shadow-md flex items-center justify-center font-bold text-xl transform transition-all duration-300 hover:scale-110',
   content: 'relative w-full h-full flex flex-col items-center justify-center',
-  id: 'text-xs absolute top-1 left-1 opacity-50',
-  letter: 'text-2xl',
-  score: 'text-xs absolute bottom-1 right-1 opacity-75',
+  id: 'text-[0.6rem] absolute top-1 left-1 opacity-50',
+  letter: 'text-4xl',
+  score: 'text-[0.75rem] absolute top-1 left-1 opacity-75 leading-none',
   animation: {
-    deal: 'animate-dealCard',
-    new: 'opacity-0',
-    exit: 'opacity-0 -translate-y-full rotate-180 scale-0',
+    deal: 'animate-dealCard scale-100',
+    new: 'opacity-0 scale-75',
+    exit: 'opacity-0 -translate-y-16 rotate-180 scale-0',
   },
 }
 
@@ -70,6 +70,9 @@ export const MINI_CARD_CLASSES = {
   score: 'text-[10px] absolute bottom-0.5 right-0.5 opacity-75',
 }
 
+/**
+ * Color palette for consistent styling across the application
+ */
 export const CARD_COLORS = {
   legendary: 'bg-orange-500 text-white',
   epic: 'bg-purple-500 text-white',
@@ -78,4 +81,28 @@ export const CARD_COLORS = {
   common: 'bg-white',
   default: 'bg-gray-500 text-white',
   selected: 'bg-gray-400 text-white',
+}
+
+export const THEME_COLORS = {
+  disgusting: 'bg-amber-700 text-white',
+  genz: 'bg-pink-500 text-white',
+  millennial: 'bg-cyan-500 text-white',
+  tech: 'bg-indigo-500 text-white',
+  food: 'bg-yellow-500 text-white',
+  nature: 'bg-emerald-500 text-white',
+  retro: 'bg-purple-400 text-white',
+  internet: 'bg-blue-400 text-white',
+  love: 'bg-rose-400 text-white',
+}
+
+export const WORD_TYPE_COLORS = {
+  noun: CARD_COLORS.common,
+  verb: CARD_COLORS.uncommon,
+  adjective: CARD_COLORS.rare,
+  adverb: CARD_COLORS.epic,
+  preposition: CARD_COLORS.epic,
+  pronoun: CARD_COLORS.epic,
+  conjunction: CARD_COLORS.epic,
+  interjection: CARD_COLORS.epic,
+  unknown: CARD_COLORS.default,
 }
