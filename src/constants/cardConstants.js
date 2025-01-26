@@ -67,6 +67,14 @@ export const ANIMATION_TIMING = {
 export const CARD_ANIMATION = {
   WORD_CARD_SCALE: 1,
   DRAGGED_CARD_OPACITY: 0.8,
+  ENABLE_3D: true,
+  ROTATION: {
+    X: 2,
+    Y: 1,
+    Z: 2,
+  },
+  PERSPECTIVE: 1000,
+  ANIMATION_DURATION: 2000, // 2 seconds for a complete rotation cycle
 }
 
 /**

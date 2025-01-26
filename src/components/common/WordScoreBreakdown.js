@@ -7,7 +7,7 @@ const WordScoreBreakdown = ({ word }) => {
     <div className='flex items-center gap-2'>
       <div className='flex gap-1'>
         {word.split('').map((letter, index) => (
-          <MiniCard key={index} letter={letter} />
+          <MiniCard key={index} letter={letter} index={index} />
         ))}
       </div>
     </div>

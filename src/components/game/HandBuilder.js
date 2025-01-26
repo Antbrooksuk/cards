@@ -437,6 +437,7 @@ const HandBuilder = ({
                       handleCardClick(card.letter, index)
                     }
                   }}
+                  index={isInWord ? wordIndex : undefined}
                 />
               </div>
             )

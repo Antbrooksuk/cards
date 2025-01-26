@@ -3,12 +3,12 @@ import { calculateLetterScore } from '../../utils/scoreUtils'
 import { MINI_CARD_CLASSES } from '../../constants/tailwindClasses'
 import { getCardStyle, getLetterType } from '../../utils/cardUtils'
 
-const MiniCard = ({ letter }) => {
+const MiniCard = ({ letter, index = 0 }) => {
   return (
     <div
       className={`${getCardStyle(getLetterType(letter), false, true)} ${
         MINI_CARD_CLASSES.base
-      }`}
+      } ${index % 2 === 0 ? 'translate-y-[1px]' : '-translate-y-[1px]'}`}
     >
       <div
         className={`${MINI_CARD_CLASSES.inner.base} ${

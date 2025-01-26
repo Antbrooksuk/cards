@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes dealCard {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0) scale(0.5) rotate3d(1, 0, 0, -45deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(
+        var(--tw-translate-x, 0),
+        var(--tw-translate-y, 0),
+        0
+      )
+      scale(1) rotate3d(0, 0, 0, 0);
+  }
+}
+
+.animate-dealCard {
+  animation: dealCard 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 @keyframes float {
   0% {
     opacity: 0;
