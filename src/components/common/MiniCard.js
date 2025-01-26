@@ -19,9 +19,9 @@ const MiniCard = ({ letter }) => {
           <span className={MINI_CARD_CLASSES.letter}>
             {letter.toUpperCase()}
           </span>
-          <span className={MINI_CARD_CLASSES.score}>
+          {/* <span className={MINI_CARD_CLASSES.score}>
             {calculateLetterScore(letter)}
-          </span>
+          </span> */}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 // Layout dimensions
 export const LAYOUT_DIMENSIONS = {
   HAND_CONTAINER_WIDTH: 600, // Width of the hand container in pixels
-  CONTAINER_HEIGHT: 200,
+  CONTAINER_HEIGHT: 250,
   CARD_HEIGHT: 72, // 4.5rem
   get TOP_HALF_CENTER() {
     return this.CONTAINER_HEIGHT / 2 - this.CARD_HEIGHT * 1.35

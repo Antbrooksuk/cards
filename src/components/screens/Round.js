@@ -206,7 +206,7 @@ const Round = ({ className = '' }) => {
               .sort((a, b) => a.timestamp - b.timestamp)}
           />
         </div>
-        <DeckDisplay />
+        {debugMode && <DeckDisplay />}
       </>
     </>
   )

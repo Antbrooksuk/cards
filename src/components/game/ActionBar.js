@@ -74,6 +74,17 @@ const ActionBar = ({
             </Button>
           </Tooltip>
 
+          <Tooltip content='reorder your hand'>
+            <Button
+              onClick={onShuffleHand}
+              disabled={isValidating || isAnimating}
+              variant='secondary'
+              className='disabled:opacity-50 disabled:cursor-not-allowed p-2'
+            >
+              <ShuffleIcon />
+            </Button>
+          </Tooltip>
+
           <Tooltip
             content={`${
               MAX_DISCARDS_PER_ROUND - discardsUsed
@@ -92,17 +103,6 @@ const ActionBar = ({
               className='disabled:opacity-50 disabled:cursor-not-allowed'
             >
               Discard ({MAX_DISCARDS_PER_ROUND - discardsUsed})
-            </Button>
-          </Tooltip>
-
-          <Tooltip content='reorder your hand'>
-            <Button
-              onClick={onShuffleHand}
-              disabled={isValidating || isAnimating}
-              variant='secondary'
-              className='disabled:opacity-50 disabled:cursor-not-allowed p-2'
-            >
-              <ShuffleIcon />
             </Button>
           </Tooltip>
         </>
