@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useGame } from '../../context/GameContext'
 import { LEGENDARY_LETTERS } from '../../constants/cardConstants'
+import BuffBar from '../common/BuffBar'
 import HandBuilder from '../game/HandBuilder'
 import Header from '../common/Header'
 import DebugPanel from '../debug/DebugPanel'
@@ -175,6 +176,7 @@ const Round = ({ className = '' }) => {
             targetScore={targetScore}
             totalScore={score}
           />
+          <BuffBar />
           <HandBuilder
             isAnimating={isAnimating}
             isValidating={isValidating}

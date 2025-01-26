@@ -10,7 +10,7 @@ const Button = ({
   const baseClasses = 'btn'
   const variantClasses = {
     primary: 'btn-primary',
-    secondary: 'bg-gray-500 text-white hover:bg-gray-600',
+    secondary: 'bg-gray-500 text-white',
   }
 
   return (

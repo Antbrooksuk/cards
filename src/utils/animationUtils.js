@@ -6,11 +6,31 @@ export const handleCongratsAnimation = (
   message,
   setCongratsMessage,
   setCongratsAnimatingIndices,
+  setCongratsPositions,
 ) => {
   setCongratsMessage(message)
   setCongratsAnimatingIndices(new Set())
 
-  message.split('').forEach((_, index) => {
+  // Calculate positions for letters in a centered line
+  const letters = message.split('')
+  const { xSpacing } = getResponsiveValues()
+  const letterSpacing = xSpacing * 0.6 // Reduce spacing between letters
+  const totalWidth = (letters.length - 1) * letterSpacing
+
+  const positions = letters.map((_, index) => {
+    const xOffset = index * letterSpacing - totalWidth / 2
+    return {
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: `translate(calc(-50% + ${xOffset}px), -50%)`,
+    }
+  })
+
+  setCongratsPositions(positions)
+
+  // Animate letters one by one with the same stagger delay
+  letters.forEach((_, index) => {
     setTimeout(() => {
       setCongratsAnimatingIndices(prev => new Set([...prev, index]))
     }, index * ANIMATION_TIMING.CARD_STAGGER_DELAY)

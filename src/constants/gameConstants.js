@@ -28,8 +28,7 @@ export const INITIAL_TARGET_SCORE = 25000
 export const TARGET_SCORE_INCREMENT = 10000
 
 // Game limits
-export const MAX_DISCARDS_PER_ROUND = 2
-export const MAX_LETTERS_PER_DISCARD = 5
+export const MAX_DISCARDS_PER_ROUND = 9
 export const MAX_PLAYS_PER_ROUND = 5
 
 // Action types

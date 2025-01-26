@@ -4,7 +4,6 @@ import Tooltip from '../common/Tooltip'
 import ShuffleIcon from '../common/ShuffleIcon'
 import {
   MAX_DISCARDS_PER_ROUND,
-  MAX_LETTERS_PER_DISCARD,
   MAX_PLAYS_PER_ROUND,
 } from '../../constants/gameConstants'
 import { WORD_LENGTH } from '../../constants/wordConstants'
@@ -39,10 +38,7 @@ const ActionBar = ({
   }
 
   return (
-    <div
-      id='actionBar'
-      className='flex flex-row gap-4 items-center justify-center'
-    >
+    <div id='actionBar' className='flex flex-row gap-2 justify-center'>
       {canReshuffle ? (
         <Tooltip content='You have no vowels, draw a new hand'>
           <Button
@@ -94,7 +90,7 @@ const ActionBar = ({
               onClick={onDiscardCards}
               disabled={
                 selectedCards.length === 0 ||
-                selectedCards.length > MAX_LETTERS_PER_DISCARD ||
+                selectedCards.length > MAX_DISCARDS_PER_ROUND - discardsUsed ||
                 discardsUsed >= MAX_DISCARDS_PER_ROUND ||
                 isAnimating ||
                 isValidating

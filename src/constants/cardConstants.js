@@ -21,10 +21,26 @@ export const CARD_SCORES = {
  * Letter categories
  */
 export const LEGENDARY_LETTERS = ['!', '?']
-export const EPIC_CONSONANTS = ['Q', 'Z', 'Z', 'Z', 'X', 'X', 'J']
-export const RARE_CONSONANTS = ['B', 'C', 'F', 'G', 'K', 'P', 'V', 'W', 'Y']
-export const UNCOMMON_CONSONANTS = ['L', 'D', 'M', 'H', 'R', 'T', 'N', 'S']
-export const VOWELS = ['A', 'E', 'I', 'O', 'U']
+export const EPIC_CONSONANTS = ['Q', 'Z', 'Z', 'X', 'X', 'J']
+export const RARE_CONSONANTS = ['B', 'F', 'H', 'K', 'W']
+export const UNCOMMON_CONSONANTS = [
+  'R',
+  'R',
+  'S',
+  'S',
+  'T',
+  'T',
+  'L',
+  'L',
+  'N',
+  'N',
+  'D',
+  'C',
+  'M',
+  'P',
+  'G',
+]
+export const VOWELS = ['A', 'A', 'A', 'E', 'E', 'E', 'I', 'I', 'O', 'O', 'U']
 
 /**
  * Animation states and timing
@@ -60,6 +76,6 @@ export const DECK_CONFIG = {
   LEGENDARY_SETS: 1, // set of legendary letters
   EPIC_CONSONANTS_SETS: 1, // sets of epic consonants
   RARE_CONSONANTS_SETS: 2, // sets of rare consonants
-  UNCOMMON_CONSONANTS_SETS: 6, // sets of uncommon consonants
-  VOWEL_SETS: 10, // sets of vowels
+  UNCOMMON_CONSONANTS_SETS: 4, // sets of uncommon consonants
+  VOWEL_SETS: 4, // sets of vowels
 }

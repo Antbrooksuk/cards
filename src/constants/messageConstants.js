@@ -1,10 +1,10 @@
 export const CONGRATULATORY_MESSAGES = [
   'Nice!',
   'Great!',
-  'Awesome!',
-  'Amazing!',
-  'Fantastic!',
-  'Well Done!',
-  'Brilliant!',
+  'WOW!',
+  'Ace!',
+  'Mega!',
+  'Bingo!',
+  'Woop!',
   'Super!',
 ]

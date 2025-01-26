@@ -16,7 +16,7 @@ const WordTypeBonus = ({ word, type, wordScoreResult }) => {
     .reduce((total, letter) => total + calculateLetterScore(letter), 0)
 
   return (
-    <div className='flex w-full flex-col gap-1 text-sm'>
+    <div className='flex flex-col items-center gap-1 text-sm'>
       <span className='font-bold text-md items-center bg-gray-200 px-2 py-0.5 rounded-md'>
         WORD SCORE: {totalLetterScore}
       </span>

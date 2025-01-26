@@ -18,14 +18,13 @@ import {
   INITIAL_TARGET_SCORE,
   TARGET_SCORE_INCREMENT,
   MAX_DISCARDS_PER_ROUND,
-  MAX_LETTERS_PER_DISCARD,
   MAX_PLAYS_PER_ROUND,
   INITIAL_GAME_STATUS,
   GAME_STATUS,
   MAX_HAND_SIZE,
-  LEGENDARY_LETTERS,
   ACTION_TYPES,
 } from '../constants/gameConstants'
+import { LEGENDARY_LETTERS } from '../constants/cardConstants'
 
 // Helper functions
 const handleNewRound = (deck, handSize = MAX_HAND_SIZE) => {
@@ -73,17 +72,16 @@ const handleWordValidation = (state, word, isValid, validation) => {
 }
 
 const isValidDiscard = state => {
+  const selectedCount = state.wordHistory.current.selectedIndices.length
   return !(
-    state.discardsUsed >= MAX_DISCARDS_PER_ROUND ||
-    state.wordHistory.current.selectedIndices.length >
-      MAX_LETTERS_PER_DISCARD ||
+    state.discardsUsed + selectedCount > MAX_DISCARDS_PER_ROUND ||
+    selectedCount === 0 ||
     state.roundScore >= state.targetScore
   )
 }
 
 const canAddLetter = (state, letter) => {
-  const isLegendary =
-    letter === LEGENDARY_LETTERS.WILD || letter === LEGENDARY_LETTERS.SPECIAL
+  const isLegendary = LEGENDARY_LETTERS.includes(letter)
   return !state.wordHistory?.current?.hasLegendaryLetter || !isLegendary
 }
 
@@ -187,6 +185,15 @@ const gameReducer = (state, action) => {
       const newRoundScore = wordResult.roundScore || state.roundScore
       const newPlaysUsed = state.playsUsed + 1
 
+      // Check if the word contains a legendary letter and was valid
+      const hasLegendaryLetter = state.wordHistory.current.hasLegendaryLetter
+      const legendaryLetter =
+        hasLegendaryLetter && isValid
+          ? state.wordHistory.current.text
+              .split('')
+              .find(letter => LEGENDARY_LETTERS.includes(letter))
+          : state.legendaryLetterPlayed
+
       // Check if out of plays without reaching target
       if (
         newPlaysUsed >= MAX_PLAYS_PER_ROUND &&
@@ -263,6 +270,7 @@ const gameReducer = (state, action) => {
         deck: updatedDeck,
         playerHand: newHand,
         canReshuffle: canReshuffleHand,
+        legendaryLetterPlayed: legendaryLetter,
         wordHistory: {
           ...state.wordHistory,
           valid: wordResult.words || state.wordHistory.valid,
@@ -345,9 +353,7 @@ const gameReducer = (state, action) => {
       })
 
       if (!state.wordHistory.current.selectedIndices.includes(cardIndex)) {
-        const isLegendary =
-          letter === LEGENDARY_LETTERS.WILD ||
-          letter === LEGENDARY_LETTERS.SPECIAL
+        const isLegendary = LEGENDARY_LETTERS.includes(letter)
 
         // Prevent adding more letters after legendary
         if (state.wordHistory.current.hasLegendaryLetter) {
@@ -372,9 +378,6 @@ const gameReducer = (state, action) => {
             ...state.wordHistory,
             current: updatedCurrent,
           },
-          legendaryLetterPlayed: isLegendary
-            ? letter
-            : state.legendaryLetterPlayed,
         }
       }
       console.log('Card already selected')
@@ -425,7 +428,8 @@ const gameReducer = (state, action) => {
           current: { text: '', selectedIndices: [], hasLegendaryLetter: false },
         },
         canReshuffle: !hasVowels(discardHand),
-        discardsUsed: state.discardsUsed + 1,
+        discardsUsed:
+          state.discardsUsed + state.wordHistory.current.selectedIndices.length,
       }
 
     case ACTION_TYPES.RESHUFFLE_HAND:

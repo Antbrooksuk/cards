@@ -48,6 +48,7 @@ const HandBuilder = ({
   const [congratsAnimatingIndices, setCongratsAnimatingIndices] = useState(
     new Set(),
   )
+  const [congratsPositions, setCongratsPositions] = useState([])
   const [draggedCard, setDraggedCard] = useState(null)
   const [dragStartX, setDragStartX] = useState(0)
   const [dragStartY, setDragStartY] = useState(0)
@@ -93,6 +94,7 @@ const HandBuilder = ({
           message,
           setCongratsMessage,
           setCongratsAnimatingIndices,
+          setCongratsPositions,
         )
       }, undealDelay)
     } else {
@@ -173,30 +175,34 @@ const HandBuilder = ({
     <div className='relative flex flex-col items-center'>
       {/* Cards Container */}
       <div
-        className='relative w-full flex justify-center'
+        className='relative w-full'
         style={{ height: `${LAYOUT_DIMENSIONS.CONTAINER_HEIGHT}px` }}
       >
         {/* Congratulatory Message */}
         {congratsMessage && (
-          <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex m gap-0 z-50'>
-            {congratsMessage.split('').map((letter, index) => (
-              <div
-                key={index}
-                className={`transition-all duration-${
-                  ANIMATION_CONSTANTS.BASE_DURATION
-                } ${
-                  congratsAnimatingIndices.has(index)
-                    ? 'opacity-100 transform scale-75'
-                    : 'opacity-0 transform scale-0'
-                }`}
-              >
-                <Card
-                  letter={letter}
-                  type={getLetterType(letter)}
-                  onClick={() => {}} // Empty handler for congratulatory cards
-                />
-              </div>
-            ))}
+          <div className='absolute inset-0 flex items-center justify-center'>
+            <div className='flex gap-4 relative'>
+              {congratsMessage.split('').map((letter, index) => (
+                <div
+                  key={index}
+                  className={`${
+                    congratsAnimatingIndices.has(index)
+                      ? 'animate-congratsCard'
+                      : 'opacity-0 scale-0'
+                  }`}
+                  style={{
+                    zIndex: 50,
+                  }}
+                >
+                  <Card
+                    letter={letter}
+                    type={getLetterType(letter)}
+                    isAnimating={congratsAnimatingIndices.has(index)}
+                    onClick={() => {}} // Empty handler for congratulatory cards
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
         <div
