@@ -61,7 +61,10 @@ const HandBuilder = ({
   const TOUCH_MOVE_THRESHOLD = 10 // pixels
   const TOUCH_TIME_THRESHOLD = 200 // milliseconds
 
-  const animatingCards = useCardAnimation(playerHand, clearNewFlags)
+  const { animatingCards, getAnimationDuration } = useCardAnimation(
+    playerHand,
+    clearNewFlags,
+  )
   const hasAnimatingCards = animatingCards.size > 0
 
   // Handle round completion animations
@@ -439,6 +442,7 @@ const HandBuilder = ({
                     }
                   }}
                   index={isInWord ? wordIndex : undefined}
+                  getAnimationDuration={getAnimationDuration}
                 />
               </div>
             )

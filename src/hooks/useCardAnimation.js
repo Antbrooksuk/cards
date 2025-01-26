@@ -1,13 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ANIMATION_TIMING } from '../constants/cardConstants'
 
 const useCardAnimation = (cards, clearNewFlags) => {
   const [animatingCards, setAnimatingCards] = useState(new Set())
+  const animationDurations = useRef(new Map())
+
+  const getAnimationDuration = cardIndex => {
+    if (!animationDurations.current.has(cardIndex)) {
+      // Generate and store a persistent random duration between 2-4 seconds
+      animationDurations.current.set(cardIndex, Math.random() * 2000 + 2000)
+    }
+    return animationDurations.current.get(cardIndex)
+  }
 
   useEffect(() => {
     // Only animate new cards being dealt
     const newCards = cards.reduce((acc, card, index) => {
-      if (card.isNew) acc.push(index)
+      if (card.isNew) {
+        acc.push(index)
+        // Generate new duration for new cards
+        getAnimationDuration(index)
+      }
       return acc
     }, [])
 
@@ -33,7 +46,10 @@ const useCardAnimation = (cards, clearNewFlags) => {
     }
   }, [cards, clearNewFlags])
 
-  return animatingCards
+  return {
+    animatingCards,
+    getAnimationDuration,
+  }
 }
 
 export default useCardAnimation

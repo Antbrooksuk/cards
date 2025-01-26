@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 import { CARD_CLASSES } from '../../constants/tailwindClasses'
 import { getCardStyle } from '../../utils/cardUtils'
@@ -18,6 +18,7 @@ const Card = ({
   className = '',
   index = 0,
   enable3D = CARD_ANIMATION.ENABLE_3D,
+  getAnimationDuration,
 }) => {
   const getAnimationClasses = () => {
     if (isExiting) return CARD_CLASSES.animation.exit
@@ -27,6 +28,7 @@ const Card = ({
   }
 
   const [dealComplete, setDealComplete] = useState(false)
+  const [isAnimationPaused, setIsAnimationPaused] = useState(false)
   const animationClass = getAnimationClasses()
   useEffect(() => {
     if (isAnimating) {
@@ -36,6 +38,25 @@ const Card = ({
       return () => clearTimeout(timer)
     }
   }, [isAnimating])
+
+  // Handle animation pause on key events
+  useEffect(() => {
+    if (enable3D && dealComplete) {
+      const handleKeyEvent = e => {
+        if (e.type === 'keydown') {
+          setIsAnimationPaused(true)
+        } else if (e.type === 'keyup') {
+          setIsAnimationPaused(false)
+        }
+      }
+      window.addEventListener('keydown', handleKeyEvent)
+      window.addEventListener('keyup', handleKeyEvent)
+      return () => {
+        window.removeEventListener('keydown', handleKeyEvent)
+        window.removeEventListener('keyup', handleKeyEvent)
+      }
+    }
+  }, [enable3D, dealComplete])
 
   const handleInteraction = e => {
     // Prevent double-firing of events on touch devices
@@ -60,9 +81,11 @@ const Card = ({
       }`}
       style={{
         ...style,
-        '--animation-duration': enable3D
-          ? `${Math.random() * 2000 + 2000}ms`
-          : `0ms`,
+        '--animation-duration':
+          enable3D && getAnimationDuration
+            ? `${getAnimationDuration(index)}ms`
+            : `0ms`,
+        '--animation-play-state': isAnimationPaused ? 'paused' : 'running',
         '--tw-translate-y':
           isSelected && typeof index === 'number'
             ? index % 2 === 0

@@ -3,9 +3,11 @@
   backface-visibility: hidden !important;
   transform-origin: center center !important;
   perspective: 800px !important;
-  animation: card3DFloat 3s infinite alternate ease-in-out;
+  animation: card3DFloat infinite alternate ease-in-out;
   animation-delay: 0ms;
-  animation-duration: var(--animation-duration, 1s);
+  animation-duration: var(--animation-duration, 3000ms);
+  animation-play-state: var(--animation-play-state, running);
+  will-change: transform;
 }
 
 @keyframes card3DFloat {
