@@ -13,15 +13,16 @@ import {
 } from '../../constants/cardConstants'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 import ScoreAnimation from '../common/ScoreAnimation'
+import CongratsMessage from '../common/CongratsMessage'
 import { CONGRATULATORY_MESSAGES } from '../../constants/messageConstants'
 import { LAYOUT_DIMENSIONS } from '../../constants/styleConstants'
 import {
-  handleCongratsAnimation,
   handleCardExitAnimation,
   getHandCardPosition,
   getWordCardPosition,
   getResponsiveValues,
 } from '../../utils/animationUtils'
+import { handleCongratsAnimation } from '../../utils/congratsAnimationUtils'
 
 const HandBuilder = ({
   isValidating,
@@ -180,35 +181,15 @@ const HandBuilder = ({
       >
         {/* Congratulatory Message */}
         {congratsMessage && (
-          <div className='absolute inset-0 flex items-center justify-center'>
-            <div className='flex gap-4 relative'>
-              {congratsMessage.split('').map((letter, index) => (
-                <div
-                  key={index}
-                  className={`${
-                    congratsAnimatingIndices.has(index)
-                      ? 'animate-congratsCard'
-                      : 'opacity-0 scale-0'
-                  }`}
-                  style={{
-                    zIndex: 50,
-                  }}
-                >
-                  <Card
-                    letter={letter}
-                    type={getLetterType(letter)}
-                    isAnimating={congratsAnimatingIndices.has(index)}
-                    onClick={() => {}} // Empty handler for congratulatory cards
-                  />
-                </div>
-              ))}
-            </div>
+          <div className='absolute inset-0'>
+            <CongratsMessage
+              message={congratsMessage}
+              animatingIndices={congratsAnimatingIndices}
+              positions={congratsPositions}
+            />
           </div>
         )}
-        <div
-          className='relative h-full'
-          style={{ width: `${LAYOUT_DIMENSIONS.HAND_CONTAINER_WIDTH}px` }}
-        >
+        <div className='relative mx-auto h-full'>
           {playerHand.map((card, index) => {
             const isInWord = selectedCards.includes(index)
             const nonSelectedCards = playerHand

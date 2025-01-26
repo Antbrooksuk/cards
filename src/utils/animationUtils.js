@@ -13,8 +13,8 @@ export const handleCongratsAnimation = (
 
   // Calculate positions for letters in a centered line
   const letters = message.split('')
-  const { xSpacing } = getResponsiveValues()
-  const letterSpacing = xSpacing * 0.6 // Reduce spacing between letters
+  const { xSpacing, baseScale } = getResponsiveValues()
+  const letterSpacing = xSpacing * 0.8 // Adjust spacing between letters
   const totalWidth = (letters.length - 1) * letterSpacing
 
   const positions = letters.map((_, index) => {
@@ -23,7 +23,7 @@ export const handleCongratsAnimation = (
       position: 'absolute',
       left: '50%',
       top: '50%',
-      transform: `translate(calc(-50% + ${xOffset}px), -50%)`,
+      transform: `translate(calc(-50% + ${xOffset}px), -50%) scale(${baseScale}) !important`,
     }
   })
 

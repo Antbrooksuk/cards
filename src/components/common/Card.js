@@ -13,6 +13,8 @@ const Card = ({
   isNew,
   isExiting,
   onClick,
+  style,
+  className = '',
 }) => {
   const getAnimationClasses = () => {
     if (isExiting) return CARD_CLASSES.animation.exit
@@ -40,9 +42,11 @@ const Card = ({
     <div
       onClick={handleInteraction}
       onTouchEnd={handleInteraction}
-      className={`p-1 ${getCardStyle(type, isSelected)} ${
-        CARD_CLASSES.base
-      } ${animationClass}`}
+      className={`p-1 ${getCardStyle(
+        type,
+        isSelected,
+      )} border border-gray-500 w-14 h-[4.5rem] rounded-lg shadow-[0px_2px_5px_1px_rgba(0,_0,_0,_0.2)] ${animationClass} ${className}`}
+      style={style}
     >
       <div
         className={`${CARD_CLASSES.inner.base} ${

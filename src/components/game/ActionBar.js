@@ -25,10 +25,12 @@ const ActionBar = ({
 }) => {
   if (gameStatus === 'roundComplete') {
     return (
-      <div className='flex justify-center gap-4'>
-        <Button onClick={onShowRoundEnd} variant='primary'>
-          Continue
-        </Button>
+      <div className='flex border rounded-lg p-4 flex-row gap-2 justify-center'>
+        <div>
+          <Button onClick={onShowRoundEnd} variant='primary'>
+            Continue
+          </Button>
+        </div>
       </div>
     )
   }
@@ -38,7 +40,10 @@ const ActionBar = ({
   }
 
   return (
-    <div id='actionBar' className='flex flex-row gap-2 justify-center'>
+    <div
+      id='actionBar'
+      className='flex border rounded-lg p-4 flex-row gap-2 justify-center'
+    >
       {canReshuffle ? (
         <Tooltip content='You have no vowels, draw a new hand'>
           <Button
