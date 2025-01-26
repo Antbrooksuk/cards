@@ -1,5 +1,5 @@
 import React from 'react'
-import MiniCard from '../common/MiniCard'
+import MiniCard from './MiniCard'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 
 const WordScoreBreakdown = ({ word }) => {

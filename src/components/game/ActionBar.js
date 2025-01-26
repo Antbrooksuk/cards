@@ -6,7 +6,7 @@ import {
   MAX_DISCARDS_PER_ROUND,
   MAX_LETTERS_PER_DISCARD,
   MAX_PLAYS_PER_ROUND,
-} from '../../constants/gameConfig'
+} from '../../constants/gameConstants'
 import { WORD_LENGTH } from '../../constants/wordConstants'
 
 const ActionBar = ({

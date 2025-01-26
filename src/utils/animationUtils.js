@@ -1,0 +1,72 @@
+import { ANIMATION_TIMING, CARD_ANIMATION } from '../constants/cardConstants'
+import { LAYOUT_DIMENSIONS } from '../constants/styleConstants'
+import { MAX_HAND_SIZE } from '../constants/gameConstants'
+
+export const handleCongratsAnimation = (
+  message,
+  setCongratsMessage,
+  setCongratsAnimatingIndices,
+) => {
+  setCongratsMessage(message)
+  setCongratsAnimatingIndices(new Set())
+
+  message.split('').forEach((_, index) => {
+    setTimeout(() => {
+      setCongratsAnimatingIndices(prev => new Set([...prev, index]))
+    }, index * ANIMATION_TIMING.CARD_STAGGER_DELAY)
+  })
+}
+
+export const handleCardExitAnimation = (playerHand, setExitingCards, index) => {
+  setTimeout(() => {
+    setExitingCards(prev => new Set([...prev, playerHand.length - 1 - index]))
+  }, index * ANIMATION_TIMING.CARD_STAGGER_DELAY)
+}
+
+export const getResponsiveValues = () => {
+  const width = window.innerWidth
+  return {
+    xSpacing: Math.min(width / 11, 70),
+    baseScale: Math.min(width / 500, CARD_ANIMATION.WORD_CARD_SCALE),
+  }
+}
+
+export const getHandCardPosition = (index, totalCards) => {
+  const centerIndex = (totalCards - 1) / 2
+  const offset = index - centerIndex
+
+  const { xSpacing, baseScale } = getResponsiveValues()
+  const xOffset = offset * xSpacing
+
+  // Calculate curve height relative to number of cards
+  const curveHeight =
+    (totalCards - 1) *
+    (LAYOUT_DIMENSIONS.MAX_CURVE_HEIGHT / (MAX_HAND_SIZE - 1))
+  const yOffset =
+    ((offset * offset) / (centerIndex * centerIndex)) * curveHeight
+
+  return {
+    transform: `
+      translate(calc(${xOffset}px - 50%), ${
+      LAYOUT_DIMENSIONS.BOTTOM_HALF_CENTER - yOffset
+    }px)
+      scale(${baseScale})
+    `,
+  }
+}
+
+export const getWordCardPosition = (index, totalCards) => {
+  const centerIndex = (totalCards - 1) / 2
+  const offset = index - centerIndex
+  const { xSpacing, baseScale } = getResponsiveValues()
+
+  return {
+    transform: `
+      translate(calc(${offset * xSpacing}px - 50%), ${
+      LAYOUT_DIMENSIONS.TOP_HALF_CENTER
+    }px)
+      scale(${baseScale})
+    `,
+    zIndex: index + 1, // Ensure increasing z-index from left to right
+  }
+}

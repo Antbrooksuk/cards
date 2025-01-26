@@ -1,3 +1,5 @@
+import { ANIMATION_CONSTANTS } from './cardConstants'
+
 /**
  * Tailwind CSS classes for layout patterns
  */
@@ -50,24 +52,47 @@ export const INPUT_CLASSES = {
 /**
  * Tailwind CSS classes for card components
  */
+export const ANIMATION_CLASSES = {
+  base: `transition-all duration-${ANIMATION_CONSTANTS.BASE_DURATION}`,
+  instant: '!duration-0',
+  positioned: 'transform !duration-0', // For positioned elements that shouldn't animate
+}
+
 export const CARD_CLASSES = {
-  base: 'w-14 h-[4.5rem] rounded-lg shadow-md flex items-center justify-center font-bold text-xl transform transition-all duration-300',
+  base: `border border-gray-500 w-14 h-[4.5rem] rounded-lg shadow-[0px_2px_5px_1px_rgba(0,_0,_0,_0.2)] transform ${ANIMATION_CLASSES.base}`,
+  inner: {
+    base: ' w-full h-full rounded-md shadow-inner flex items-center justify-center font-bold text-xl',
+    legendary: 'bg-orange-100 text-orange-900',
+    epic: 'bg-purple-100 text-purple-900',
+    rare: 'bg-blue-100 text-blue-900',
+    uncommon: 'bg-green-100 text-green-900',
+    vowel: 'bg-white text-gray-800',
+    default: 'bg-gray-100 text-gray-800',
+    selected: 'bg-gray-100 text-gray-900',
+  },
   content: 'relative w-full h-full flex flex-col items-center justify-center',
   id: 'text-[0.6rem] absolute top-1 left-1 opacity-50',
   letter: 'text-4xl',
-  score: 'text-[0.75rem] absolute top-1 left-1 opacity-75 leading-none',
+  score: 'text-[0.6rem] absolute top-0.5 left-0.5 opacity-75 leading-none',
   animation: {
     deal: 'animate-dealCard scale-100',
     new: 'opacity-0 scale-75',
     exit: 'opacity-0 -translate-y-16 rotate-180 scale-0',
-    shuffle: 'animate-shuffle hover:animate-none',
-    shuffleIn: 'animate-shuffleIn',
-    glow: 'animate-glow',
   },
 }
 
 export const MINI_CARD_CLASSES = {
-  base: 'w-8 h-10 rounded shadow-sm flex items-center justify-center font-bold',
+  base: 'w-8 h-10 rounded p-0.5 shadow-md',
+  inner: {
+    base: 'w-full h-full rounded shadow-inner flex items-center justify-center font-bold',
+    legendary: 'bg-orange-50 text-orange-900',
+    epic: 'bg-purple-50 text-purple-900',
+    rare: 'bg-blue-50 text-blue-900',
+    uncommon: 'bg-green-50 text-green-900',
+    vowel: 'bg-white text-gray-800',
+    default: 'bg-gray-50 text-gray-800',
+    selected: 'bg-gray-100 text-gray-900',
+  },
   content: 'relative w-full h-full flex flex-col items-center justify-center',
   letter: 'text-lg',
   score: 'text-[10px] absolute bottom-0.5 right-0.5 opacity-75',
@@ -77,13 +102,13 @@ export const MINI_CARD_CLASSES = {
  * Color palette for consistent styling across the application
  */
 export const CARD_COLORS = {
-  legendary: 'bg-orange-500 text-white',
-  epic: 'bg-purple-500 text-white',
-  rare: 'bg-blue-500 text-white',
-  uncommon: 'bg-green-500 text-white',
-  common: 'bg-white',
-  default: 'bg-gray-500 text-white',
-  selected: 'bg-gray-400 text-white',
+  legendary: 'bg-gradient-to-tr from-orange-500 to-red-500',
+  epic: 'bg-gradient-to-tr from-purple-500 to-pink-500',
+  rare: 'bg-gradient-to-tr from-blue-500 to-purple-500',
+  uncommon: 'bg-gradient-to-tr from-green-500 to-teal-500',
+  common: 'bg-gradient-to-tr from-sky-200 to-pink-200',
+  default: 'bg-gradient-to-tr from-gray-400 to-gray-500',
+  selected: 'bg-gradient-to-tr from-gray-500 to-gray-600',
 }
 
 export const THEME_COLORS = {

@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import PlayedWord from '../common/PlayedWord'
 import { LAYOUT_STYLES } from '../../constants/styleConstants'
+import { ANIMATION_CONSTANTS } from '../../constants/cardConstants'
 
 const WORD_LIST_STYLES = {
   CONTAINER: `${LAYOUT_STYLES.GAP_4} mb-4`,
   TITLE: `text-lg font-semibold ${LAYOUT_STYLES.FLEX_CENTER} gap-2 cursor-pointer hover:text-gray-600 select-none`,
-  WORDS_CONTAINER: `${LAYOUT_STYLES.FLEX_COL} ${LAYOUT_STYLES.GAP_4} ${LAYOUT_STYLES.FLEX_CENTER} overflow-hidden transition-all duration-300 ease-in-out`,
-  CHEVRON: 'w-5 h-5 transition-transform duration-300 ease-in-out',
+  WORDS_CONTAINER: `${LAYOUT_STYLES.FLEX_COL} ${LAYOUT_STYLES.GAP_4} ${LAYOUT_STYLES.FLEX_CENTER} overflow-hidden transition-all duration-${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,
+  CHEVRON: `w-5 h-5 transition-transform duration-${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,
 }
 
 const WordList = ({ allWords = [] }) => {

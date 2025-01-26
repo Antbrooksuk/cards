@@ -1,9 +1,25 @@
+// Layout dimensions
+export const LAYOUT_DIMENSIONS = {
+  HAND_CONTAINER_WIDTH: 600, // Width of the hand container in pixels
+  CONTAINER_HEIGHT: 200,
+  CARD_HEIGHT: 72, // 4.5rem
+  get TOP_HALF_CENTER() {
+    return this.CONTAINER_HEIGHT / 2 - this.CARD_HEIGHT * 1.35
+  },
+  get BOTTOM_HALF_CENTER() {
+    return (
+      this.CONTAINER_HEIGHT / 2 + (this.CONTAINER_HEIGHT / 2 - this.CARD_HEIGHT)
+    )
+  },
+  MAX_CURVE_HEIGHT: 40, // Maximum height of hand curve in pixels
+}
+
 export const HAND_STYLES = {
   CONTAINER:
     'w-full flex justify-center items-center relative overflow-hidden h-36 sm:h-40 md:h-44',
   DISABLED: 'cursor-not-allowed opacity-50',
   CARD_WRAPPER: 'absolute',
-  CARD_WRAPPER_POSITIONED: 'transform duration-0',
+  CARD_WRAPPER_POSITIONED: 'transform !duration-0', // Using !duration-0 to ensure override
 }
 
 export const LAYOUT_STYLES = {

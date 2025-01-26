@@ -3,9 +3,9 @@ import { useGame } from '../../context/GameContext'
 import { LEGENDARY_LETTERS } from '../../constants/cardConstants'
 import HandBuilder from '../game/HandBuilder'
 import Header from '../common/Header'
-import DebugPanel from '../game/DebugPanel'
+import DebugPanel from '../debug/DebugPanel'
 import WordList from '../game/WordList'
-import DeckDisplay from '../game/DeckDisplay'
+import DeckDisplay from '../debug/DeckDisplay'
 import ActionBar from '../game/ActionBar'
 import useCardAnimation from '../../hooks/useCardAnimation'
 
@@ -14,6 +14,9 @@ const Round = ({ className = '' }) => {
   const [isValidating, setIsValidating] = useState(false)
   const [animatingIndices, setAnimatingIndices] = useState([])
   const [keyboardAnimating, setKeyboardAnimating] = useState(false)
+  const [lastKeyTime, setLastKeyTime] = useState(0)
+  const [isTouchActive, setIsTouchActive] = useState(false)
+  const KEY_DEBOUNCE = 100 // milliseconds
 
   const {
     wordHistory,
@@ -42,6 +45,20 @@ const Round = ({ className = '' }) => {
 
   const animatingCards = useCardAnimation(playerHand, clearNewFlags)
 
+  // Listen for touch interaction state changes from HandBuilder
+  useEffect(() => {
+    const handleTouchStateChange = event => {
+      setIsTouchActive(event.detail.isActive)
+    }
+    window.addEventListener('touchInteractionChange', handleTouchStateChange)
+    return () => {
+      window.removeEventListener(
+        'touchInteractionChange',
+        handleTouchStateChange,
+      )
+    }
+  }, [])
+
   // Reset keyboard animation state when hand changes
   useEffect(() => {
     setKeyboardAnimating(false)
@@ -50,14 +67,19 @@ const Round = ({ className = '' }) => {
   useEffect(() => {
     const handleKeyDown = async e => {
       const hasAnimatingCards = animatingCards.size > 0
+      const now = Date.now()
       if (
         gameStatus !== 'playing' ||
         isValidating ||
         isAnimating ||
         debugMode ||
-        hasAnimatingCards
+        hasAnimatingCards ||
+        now - lastKeyTime < KEY_DEBOUNCE ||
+        isTouchActive
       )
         return
+
+      setLastKeyTime(now)
 
       if (e.key === 'Enter' && currentWord) {
         await handleWordSubmit()

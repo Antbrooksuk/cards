@@ -10,11 +10,19 @@ const MiniCard = ({ letter }) => {
         MINI_CARD_CLASSES.base
       }`}
     >
-      <div className={MINI_CARD_CLASSES.content}>
-        <span className={MINI_CARD_CLASSES.letter}>{letter.toUpperCase()}</span>
-        <span className={MINI_CARD_CLASSES.score}>
-          {calculateLetterScore(letter)}
-        </span>
+      <div
+        className={`${MINI_CARD_CLASSES.inner.base} ${
+          MINI_CARD_CLASSES.inner[getLetterType(letter).toLowerCase()]
+        }`}
+      >
+        <div className={MINI_CARD_CLASSES.content}>
+          <span className={MINI_CARD_CLASSES.letter}>
+            {letter.toUpperCase()}
+          </span>
+          <span className={MINI_CARD_CLASSES.score}>
+            {calculateLetterScore(letter)}
+          </span>
+        </div>
       </div>
     </div>
   )

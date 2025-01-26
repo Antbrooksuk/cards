@@ -27,13 +27,30 @@ export const UNCOMMON_CONSONANTS = ['L', 'D', 'M', 'H', 'R', 'T', 'N', 'S']
 export const VOWELS = ['A', 'E', 'I', 'O', 'U']
 
 /**
- * Animation timing
+ * Animation states and timing
  */
+export const ANIMATION_STATE = {
+  NONE: 'NONE',
+  ENTERING_WORD: 'ENTERING_WORD',
+  EXITING_WORD: 'EXITING_WORD',
+}
+
+export const ANIMATION_CONSTANTS = {
+  BASE_DURATION: 300, // ms - base duration for transitions
+  CARD_ANIMATION_DURATION: 500, // ms - duration for card animations
+  STAGGER_DELAY: 150, // ms - delay between staggered animations
+  UNDEAL_DELAY_BUFFER: 500, // ms - additional delay after undealing
+}
+
 export const ANIMATION_TIMING = {
-  CARD_STAGGER_DELAY: 150, // ms between each card animation
-  CARD_ANIMATION_DURATION: 500, // total animation duration for cards
-  SHUFFLE_ANIMATION_DURATION: 1000, // duration for shuffle animation
-  SHUFFLE_STAGGER_DELAY: 80, // stagger for shuffle animations
+  CARD_STAGGER_DELAY: ANIMATION_CONSTANTS.STAGGER_DELAY,
+  CARD_ANIMATION_DURATION: ANIMATION_CONSTANTS.CARD_ANIMATION_DURATION,
+  UNDEAL_DELAY_BUFFER: ANIMATION_CONSTANTS.UNDEAL_DELAY_BUFFER,
+}
+
+export const CARD_ANIMATION = {
+  WORD_CARD_SCALE: 1,
+  DRAGGED_CARD_OPACITY: 0.8,
 }
 
 /**

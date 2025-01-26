@@ -25,7 +25,7 @@ import {
   MAX_HAND_SIZE,
   LEGENDARY_LETTERS,
   ACTION_TYPES,
-} from '../constants/gameConfig'
+} from '../constants/gameConstants'
 
 // Helper functions
 const handleNewRound = (deck, handSize = MAX_HAND_SIZE) => {
@@ -338,6 +338,12 @@ const gameReducer = (state, action) => {
 
     case ACTION_TYPES.ADD_LETTER: {
       const { letter, cardIndex } = action.payload
+      console.log('ADD_LETTER:', { letter, cardIndex })
+      console.log('Current state:', {
+        text: state.wordHistory.current.text,
+        selectedIndices: state.wordHistory.current.selectedIndices,
+      })
+
       if (!state.wordHistory.current.selectedIndices.includes(cardIndex)) {
         const isLegendary =
           letter === LEGENDARY_LETTERS.WILD ||
@@ -345,6 +351,7 @@ const gameReducer = (state, action) => {
 
         // Prevent adding more letters after legendary
         if (state.wordHistory.current.hasLegendaryLetter) {
+          console.log('Prevented adding letter after legendary')
           return state
         }
 
@@ -357,6 +364,8 @@ const gameReducer = (state, action) => {
           hasLegendaryLetter: isLegendary,
         }
 
+        console.log('Updated state:', updatedCurrent)
+
         return {
           ...state,
           wordHistory: {
@@ -368,6 +377,7 @@ const gameReducer = (state, action) => {
             : state.legendaryLetterPlayed,
         }
       }
+      console.log('Card already selected')
       return state
     }
 
@@ -458,6 +468,37 @@ const gameReducer = (state, action) => {
         },
       }
 
+    case ACTION_TYPES.REORDER_HAND:
+      const { fromIndex, toIndex } = action.payload
+      const reorderedHand = [...state.playerHand]
+      const [movedCard] = reorderedHand.splice(fromIndex, 1)
+      reorderedHand.splice(toIndex, 0, movedCard)
+
+      // Update selected indices if any cards are selected
+      const updatedIndices = state.wordHistory.current.selectedIndices.map(
+        index => {
+          if (index === fromIndex) return toIndex
+          if (fromIndex < toIndex) {
+            if (index > fromIndex && index <= toIndex) return index - 1
+          } else {
+            if (index < fromIndex && index >= toIndex) return index + 1
+          }
+          return index
+        },
+      )
+
+      return {
+        ...state,
+        playerHand: reorderedHand,
+        wordHistory: {
+          ...state.wordHistory,
+          current: {
+            ...state.wordHistory.current,
+            selectedIndices: updatedIndices,
+          },
+        },
+      }
+
     default:
       console.warn(`Unknown action type: ${action.type}`)
       return state
@@ -490,6 +531,7 @@ export const GameProvider = ({ children }) => {
 
   const safeDispatch = useCallback(action => {
     try {
+      console.log('Dispatching action:', action)
       dispatch(action)
     } catch (err) {
       console.error('Game action error:', err)
@@ -534,11 +576,13 @@ export const GameProvider = ({ children }) => {
       startGame: () => safeDispatch({ type: ACTION_TYPES.START_GAME }),
       addWord,
       toggleDebug: () => safeDispatch({ type: ACTION_TYPES.TOGGLE_DEBUG }),
-      addLetter: (letter, cardIndex) =>
+      addLetter: (letter, cardIndex) => {
+        console.log('addLetter called:', { letter, cardIndex })
         safeDispatch({
           type: ACTION_TYPES.ADD_LETTER,
           payload: { letter, cardIndex },
-        }),
+        })
+      },
       removeLetter: () => safeDispatch({ type: ACTION_TYPES.REMOVE_LETTER }),
       clearWord: () => safeDispatch({ type: ACTION_TYPES.CLEAR_WORD }),
       endRound: () => safeDispatch({ type: ACTION_TYPES.END_ROUND }),
@@ -550,6 +594,11 @@ export const GameProvider = ({ children }) => {
       reshuffleHand: () => safeDispatch({ type: ACTION_TYPES.RESHUFFLE_HAND }),
       reshuffleDeck: () => safeDispatch({ type: ACTION_TYPES.RESHUFFLE_DECK }),
       clearNewFlags: () => safeDispatch({ type: ACTION_TYPES.CLEAR_NEW_FLAGS }),
+      reorderHand: (fromIndex, toIndex) =>
+        safeDispatch({
+          type: ACTION_TYPES.REORDER_HAND,
+          payload: { fromIndex, toIndex },
+        }),
       // Expose deck and hand for components
       deck: state.deck,
       playerHand: state.playerHand,
