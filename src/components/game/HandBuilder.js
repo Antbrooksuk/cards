@@ -61,7 +61,7 @@ const HandBuilder = ({
   const TOUCH_MOVE_THRESHOLD = 10 // pixels
   const TOUCH_TIME_THRESHOLD = 200 // milliseconds
 
-  const { animatingCards, getAnimationDuration } = useCardAnimation(
+  const { animatingCards, getAnimationDuration, isDealing } = useCardAnimation(
     playerHand,
     clearNewFlags,
   )
@@ -144,7 +144,7 @@ const HandBuilder = ({
     }
   }
 
-  // Reset animation state when hand changes
+  // Reset hand animation state when hand changes
   useEffect(() => {
     setHandAnimating(false)
   }, [playerHand])
@@ -236,9 +236,10 @@ const HandBuilder = ({
                   cardAnimationStates[index] === ANIMATION_STATE.EXITING_WORD ||
                   handAnimating ||
                   draggedCard !== null ||
-                  forceHandAnimating
+                  forceHandAnimating ||
+                  isDealing
                     ? `transition-transform duration-${ANIMATION_CONSTANTS.BASE_DURATION}`
-                    : '!duration-0'
+                    : ''
                 } ${!isInWord ? 'cursor-move' : ''} ${
                   draggedCard === index ? 'z-50' : 'z-0'
                 }`}

@@ -3,6 +3,7 @@ import { ANIMATION_TIMING } from '../constants/cardConstants'
 
 const useCardAnimation = (cards, clearNewFlags) => {
   const [animatingCards, setAnimatingCards] = useState(new Set())
+  const [isDealing, setIsDealing] = useState(false)
   const animationDurations = useRef(new Map())
 
   const getAnimationDuration = cardIndex => {
@@ -26,6 +27,7 @@ const useCardAnimation = (cards, clearNewFlags) => {
 
     if (newCards.length > 0) {
       setAnimatingCards(new Set())
+      setIsDealing(true)
 
       // Deal cards sequentially with a short delay
       newCards.forEach((cardIndex, i) => {
@@ -41,6 +43,7 @@ const useCardAnimation = (cards, clearNewFlags) => {
 
       setTimeout(() => {
         setAnimatingCards(new Set())
+        setIsDealing(false)
         clearNewFlags()
       }, totalDuration)
     }
@@ -49,6 +52,7 @@ const useCardAnimation = (cards, clearNewFlags) => {
   return {
     animatingCards,
     getAnimationDuration,
+    isDealing,
   }
 }
 
