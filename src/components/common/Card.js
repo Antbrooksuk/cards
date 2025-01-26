@@ -9,8 +9,8 @@ const Card = ({
   id,
   letter,
   type,
-  isSelected,
   isAnimating,
+  isSelected,
   isNew,
   isExiting,
   onClick,
@@ -28,7 +28,6 @@ const Card = ({
 
   const [dealComplete, setDealComplete] = useState(false)
   const animationClass = getAnimationClasses()
-
   useEffect(() => {
     if (isAnimating) {
       const timer = setTimeout(() => {
@@ -56,15 +55,16 @@ const Card = ({
       onTouchEnd={handleInteraction}
       className={`p-1 ${getCardStyle(
         type,
-        isSelected,
       )} border border-gray-500 w-14 h-[4.5rem] rounded-lg shadow-[0px_2px_5px_1px_rgba(0,_0,_0,_0.2)] ${animationClass} ${className} ${
         enable3D && dealComplete ? 'card-3d' : ''
       }`}
       style={{
         ...style,
-        '--animation-delay': enable3D ? `${Math.random() * 250}ms` : `0ms`,
+        '--animation-duration': enable3D
+          ? `${Math.random() * 2000 + 2000}ms`
+          : `0ms`,
         '--tw-translate-y':
-          typeof index === 'number'
+          isSelected && typeof index === 'number'
             ? index % 2 === 0
               ? '4px'
               : '-4px'

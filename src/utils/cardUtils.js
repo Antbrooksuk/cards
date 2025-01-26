@@ -32,12 +32,10 @@ export const getLetterType = letter => {
 /**
  * Get the style class for a card based on its type and selection state
  * @param {CardType} type - The type of card
- * @param {boolean} isSelected - Whether the card is selected
  * @param {boolean} isMini - Whether this is a mini card
  * @returns {string} The CSS class for the card style
  */
-export const getCardStyle = (type, isSelected = false, isMini = false) => {
-  if (isSelected && !isMini) return CARD_COLORS.selected
+export const getCardStyle = (type, isMini = false) => {
   switch (type) {
     case CARD_TYPE.LEGENDARY:
       return CARD_COLORS.legendary

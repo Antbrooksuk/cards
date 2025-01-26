@@ -225,7 +225,7 @@ const HandBuilder = ({
             return (
               <div
                 key={card.id}
-                className={`absolute left-[50%] top-0 transition-all duration-${
+                className={`absolute [perspective:100px] left-[50%] top-0 transition-all duration-${
                   ANIMATION_CONSTANTS.BASE_DURATION
                 } ${
                   cardAnimationStates[index] ===
@@ -428,6 +428,7 @@ const HandBuilder = ({
                   type={card.type}
                   isAnimating={animatingCards.has(index)}
                   isNew={card.isNew}
+                  isSelected={selectedCards.includes(index)}
                   isExiting={exitingCards.has(index)}
                   className={isValidating ? HAND_STYLES.DISABLED : ''}
                   onClick={() => {
