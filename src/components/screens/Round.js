@@ -186,6 +186,7 @@ const Round = ({ className = '' }) => {
           onReshuffleDeck={reshuffleDeck}
           onDiscardCards={discardCards}
           onShowRoundEnd={showRoundEnd}
+          animatingCards={animatingCards}
         />
         <WordList
           allWords={wordHistory.all

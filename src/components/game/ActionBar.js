@@ -22,6 +22,7 @@ const ActionBar = ({
   onReshuffleDeck,
   onDiscardCards,
   onShowRoundEnd,
+  animatingCards,
 }) => {
   if (gameStatus === 'roundComplete') {
     return (
@@ -75,7 +76,7 @@ const ActionBar = ({
           <Tooltip content='Reorder your hand'>
             <Button
               onClick={onShuffleHand}
-              disabled={isValidating || isAnimating}
+              disabled={isValidating || isAnimating || animatingCards.isDealing}
               variant='secondary'
               className='disabled:opacity-50 disabled:cursor-not-allowed p-2'
             >
