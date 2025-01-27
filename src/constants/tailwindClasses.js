@@ -59,7 +59,7 @@ export const ANIMATION_CLASSES = {
 }
 
 export const CARD_CLASSES = {
-  base: `border border-gray-500 w-14 h-[4.5rem] rounded-lg shadow-[0px_2px_5px_1px_rgba(0,_0,_0,_0.2)] transform ${ANIMATION_CLASSES.base}`,
+  base: `border border-2 border-[rgba(0,0,0,0.25)] w-14 h-[4.5rem] rounded-lg shadow-[0px_3px_4px_1px_rgba(0,_0,_0,_0.2)] transform ${ANIMATION_CLASSES.base}`,
   inner: {
     base: ' w-full h-full rounded-md shadow-inner flex items-center justify-center font-bold text-xl',
     legendary: 'bg-orange-100 text-orange-900',

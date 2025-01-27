@@ -58,7 +58,7 @@ const ActionBar = ({
       ) : (
         <>
           <Tooltip
-            content={`${MAX_PLAYS_PER_ROUND - playsUsed} plays remaining`}
+            content={`${MAX_PLAYS_PER_ROUND - playsUsed} play(s) remaining`}
           >
             <Button
               onClick={onPlayWord}
@@ -75,7 +75,7 @@ const ActionBar = ({
             </Button>
           </Tooltip>
 
-          <Tooltip content='reorder your hand'>
+          <Tooltip content='Reorder your hand'>
             <Button
               onClick={onShuffleHand}
               disabled={isValidating || isAnimating}
@@ -89,7 +89,7 @@ const ActionBar = ({
           <Tooltip
             content={`${
               MAX_DISCARDS_PER_ROUND - discardsUsed
-            } discards remaining`}
+            } discard(s) remaining`}
           >
             <Button
               onClick={onDiscardCards}
@@ -100,7 +100,7 @@ const ActionBar = ({
                 isAnimating ||
                 isValidating
               }
-              variant='secondary'
+              variant='discard'
               className='disabled:opacity-50 disabled:cursor-not-allowed'
             >
               Discard ({MAX_DISCARDS_PER_ROUND - discardsUsed})

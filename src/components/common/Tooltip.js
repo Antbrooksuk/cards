@@ -37,9 +37,12 @@ const Tooltip = ({ children, content }) => {
         {children}
       </div>
 
-      {isVisible && (
-        <div className='absolute z-50 flex flex-col top-full left-1/2 -translate-x-1/2 min-w-[6rem] max-w-[12rem] text-center mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded shadow-lg transition-opacity duration-150'>
-          <button
+      <div
+        className={`opacity-${
+          isVisible ? 1 : 0
+        } absolute z-50 flex flex-col top-full left-1/2 -translate-x-1/2 max-w-[10rem] text-center mt-4 px-3 py-2 bg-gray-800 text-white text-sm rounded shadow-lg whitespace-nowrap transition-opacity duration-150`}
+      >
+        {/* <button
             onClick={e => {
               e.stopPropagation()
               setIsVisible(false)
@@ -48,12 +51,11 @@ const Tooltip = ({ children, content }) => {
             aria-label='Close tooltip'
           >
             ×
-          </button>
-          {content}
-          {/* Arrow pointer */}
-          <div className='absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-gray-800' />
-        </div>
-      )}
+          </button> */}
+        {content}
+        {/* Arrow pointer */}
+        <div className='absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-gray-800' />
+      </div>
     </div>
   )
 }

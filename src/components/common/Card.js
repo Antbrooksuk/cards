@@ -62,9 +62,8 @@ const Card = ({
       role='button'
       tabIndex={0}
       aria-pressed={isSelected}
-      className={`p-1 ${getCardStyle(
-        type,
-      )} border border-gray-500 w-14 h-[4.5rem] rounded-lg shadow-[0px_2px_5px_1px_rgba(0,_0,_0,_0.2)] ${animationClass} ${className} ${
+      className={`p-1 ${CARD_CLASSES.base}
+      ${getCardStyle(type)}  ${animationClass} ${className} ${
         enable3D && dealComplete ? 'card-3d' : ''
       }`}
       style={{
