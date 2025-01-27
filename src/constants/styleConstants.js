@@ -17,7 +17,7 @@ export const LAYOUT_DIMENSIONS = {
 export const HAND_STYLES = {
   CONTAINER:
     'w-full flex justify-center items-center relative overflow-hidden h-36 sm:h-40 md:h-44',
-  DISABLED: 'cursor-not-allowed opacity-50',
+  DISABLED: 'cursor-not-allowed',
   CARD_WRAPPER: 'absolute',
   CARD_WRAPPER_POSITIONED: 'transform !duration-0', // Using !duration-0 to ensure override
 }

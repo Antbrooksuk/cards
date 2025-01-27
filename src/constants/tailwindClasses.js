@@ -94,7 +94,7 @@ export const MINI_CARD_CLASSES = {
     selected: 'bg-gray-100 text-gray-900',
   },
   content: 'relative w-full h-full flex flex-col items-center justify-center',
-  letter: 'text-lg',
+  letter: 'text-xl',
   score: 'text-[10px] absolute bottom-0.5 right-0.5 opacity-75',
 }
 

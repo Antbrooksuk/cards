@@ -10,10 +10,10 @@ const PlayedWord = ({ word, type, isInvalid = false, className = '' }) => {
   return (
     <div className={`flex w-full border rounded-lg p-4 ${className}`}>
       {isInvalid ? (
-        <div className='flex flex-col gap-4 x items-center'>
+        <div className='flex w-full flex-col gap-4 x items-center'>
           <WordScoreBreakdown word={word} />
           <div className='flex flex-col gap-1 x items-center'>
-            <span className='text-red-600 text-sm font-semibold'>
+            <span className='flex font-bold text-sm items-center bg-red-500 text-white px-2 py-0.5 rounded-md'>
               Invalid Word
             </span>
           </div>
