@@ -27,7 +27,6 @@ const Card = ({
   }
 
   const [dealComplete, setDealComplete] = useState(false)
-  const [isAnimationPaused, setIsAnimationPaused] = useState(false)
   const animationClass = getAnimationClasses()
   useEffect(() => {
     if (isAnimating) {
@@ -37,25 +36,6 @@ const Card = ({
       return () => clearTimeout(timer)
     }
   }, [isAnimating])
-
-  // Handle animation pause on key events
-  useEffect(() => {
-    if (enable3D && dealComplete) {
-      const handleKeyEvent = e => {
-        if (e.type === 'keydown') {
-          setIsAnimationPaused(true)
-        } else if (e.type === 'keyup') {
-          setIsAnimationPaused(false)
-        }
-      }
-      window.addEventListener('keydown', handleKeyEvent)
-      window.addEventListener('keyup', handleKeyEvent)
-      return () => {
-        window.removeEventListener('keydown', handleKeyEvent)
-        window.removeEventListener('keyup', handleKeyEvent)
-      }
-    }
-  }, [enable3D, dealComplete])
 
   return (
     <div
@@ -72,7 +52,6 @@ const Card = ({
           enable3D && getAnimationDuration
             ? `${getAnimationDuration(index)}ms`
             : `0ms`,
-        '--animation-play-state': isAnimationPaused ? 'paused' : 'running',
         '--tw-translate-y':
           isSelected && typeof index === 'number'
             ? index % 2 === 0

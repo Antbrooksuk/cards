@@ -171,11 +171,6 @@ export const getHandCardStyles = ({
   handAnimating,
 }) => {
   const styles = {}
-  // Only add transition if we're animating
-  if (isAnimating || handAnimating || isDealing) {
-    styles.transition = 'transform 300ms'
-  }
-
   return styles
 }
 

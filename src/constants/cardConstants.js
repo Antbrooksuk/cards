@@ -56,24 +56,16 @@ export const ANIMATION_CONSTANTS = {
   BASE_DURATION: 300, // ms - base duration for transitions
   CARD_ANIMATION_DURATION: 500, // ms - duration for card animations
   STAGGER_DELAY: 150, // ms - delay between staggered animations
-  UNDEAL_DELAY_BUFFER: 500, // ms - additional delay after undealing
 }
 
 export const ANIMATION_TIMING = {
   CARD_STAGGER_DELAY: ANIMATION_CONSTANTS.STAGGER_DELAY,
   CARD_ANIMATION_DURATION: ANIMATION_CONSTANTS.CARD_ANIMATION_DURATION,
-  UNDEAL_DELAY_BUFFER: ANIMATION_CONSTANTS.UNDEAL_DELAY_BUFFER,
 }
 
 export const CARD_ANIMATION = {
   WORD_CARD_SCALE: 1,
   ENABLE_3D: true,
-  ROTATION: {
-    X: 2,
-    Y: 1,
-    Z: 2,
-  },
-  PERSPECTIVE: 1000,
   ANIMATION_DURATION: 2000, // 2 seconds for a complete rotation cycle
 }
 

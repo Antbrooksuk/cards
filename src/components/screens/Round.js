@@ -14,7 +14,7 @@ const Round = ({ className = '' }) => {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [animatingIndices, setAnimatingIndices] = useState([])
-  const [keyboardAnimating, setKeyboardAnimating] = useState(false)
+  const [handAnimating, setHandAnimating] = useState(false)
   const [lastKeyTime, setLastKeyTime] = useState(0)
   const KEY_DEBOUNCE = 100 // milliseconds
 
@@ -45,9 +45,8 @@ const Round = ({ className = '' }) => {
 
   const animatingCards = useCardAnimation(playerHand, clearNewFlags)
 
-  // Reset keyboard animation state when hand changes
   useEffect(() => {
-    setKeyboardAnimating(false)
+    setHandAnimating(false)
   }, [playerHand])
 
   useEffect(() => {
@@ -82,7 +81,7 @@ const Round = ({ className = '' }) => {
             card.letter.toLowerCase() === letter,
         )
         if (cardIndex !== -1) {
-          setKeyboardAnimating(true)
+          setHandAnimating(true)
           addLetter(letter, cardIndex)
         }
       }
@@ -165,6 +164,8 @@ const Round = ({ className = '' }) => {
         <HandBuilder
           isAnimating={isAnimating || animatingCards.size > 0}
           isValidating={isValidating}
+          handAnimating={handAnimating}
+          setHandAnimating={setHandAnimating}
           animatingIndices={animatingIndices}
           onAnimationComplete={() => {
             setAnimatingIndices([])

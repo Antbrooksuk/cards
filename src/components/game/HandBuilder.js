@@ -27,6 +27,8 @@ import { handleCongratsAnimation } from '../../utils/congratsAnimationUtils'
 
 const HandBuilder = ({
   isValidating,
+  setHandAnimating,
+  handAnimating,
   onAnimationComplete,
   animatingIndices = [],
   isAnimating = false,
@@ -44,7 +46,6 @@ const HandBuilder = ({
 
   const [exitingCards, setExitingCards] = useState(new Set())
   const [cardAnimationStates, setCardAnimationStates] = useState({})
-  const [handAnimating, setHandAnimating] = useState(false)
   const [congratsMessage, setCongratsMessage] = useState('')
   const [congratsAnimatingIndices, setCongratsAnimatingIndices] = useState(
     new Set(),

@@ -1,65 +1,7 @@
 import { ANIMATION_CONSTANTS } from './cardConstants'
 
-/**
- * Tailwind CSS classes for layout patterns
- */
-export const LAYOUT_CLASSES = {
-  container: 'max-w-4xl mx-auto px-4',
-  header: 'flex justify-between items-center mb-6',
-  contentSection: 'space-y-4',
-  flexRow: 'flex gap-4',
-  flexBetween: 'flex justify-between items-center',
-}
-
-/**
- * Tailwind CSS classes for common UI elements
- */
-export const UI_CLASSES = {
-  panel: 'border bg-gray-100 rounded-lg min-h-[100px] w-full',
-  spinner: 'animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500',
-  flexCenter: 'flex justify-center items-center',
-  flexWrap: 'flex flex-wrap gap-4 justify-center items-center',
-}
-
-/**
- * Tailwind CSS classes for text styles
- */
-export const TEXT_CLASSES = {
-  heading: 'text-xl font-bold',
-  label: 'text-sm font-medium text-gray-600',
-  score: 'text-lg font-semibold',
-}
-
-/**
- * Tailwind CSS classes for interactive elements
- */
-export const BUTTON_CLASSES = {
-  base: 'px-4 py-2 rounded-lg font-semibold transition-colors',
-  primary: 'bg-blue-500 text-white',
-  secondary: 'bg-gray-500 text-white',
-  disabled: 'opacity-50 cursor-not-allowed',
-}
-
-/**
- * Tailwind CSS classes for input elements
- */
-export const INPUT_CLASSES = {
-  base: 'w-full p-2 border-2 rounded-lg focus:outline-none focus:border-blue-500',
-  error: 'border-red-500 focus:border-red-600',
-  success: 'border-green-500 focus:border-green-600',
-}
-
-/**
- * Tailwind CSS classes for card components
- */
-export const ANIMATION_CLASSES = {
-  base: `transition-all duration-${ANIMATION_CONSTANTS.BASE_DURATION}`,
-  instant: '!duration-0',
-  positioned: 'transform !duration-0', // For positioned elements that shouldn't animate
-}
-
 export const CARD_CLASSES = {
-  base: `border border-[2px] border-[rgba(0,0,0,0.25)] w-14 h-[4.5rem] rounded-lg shadow-[0px_3px_4px_1px_rgba(0,_0,_0,_0.2)] transform ${ANIMATION_CLASSES.base}`,
+  base: `border border-[2px] border-[rgba(0,0,0,0.25)] w-14 h-[4.5rem] rounded-lg shadow-[0px_3px_4px_1px_rgba(0,_0,_0,_0.2)] transform transition-all duration-${ANIMATION_CONSTANTS.BASE_DURATION}`,
   inner: {
     base: ' w-full h-full rounded-[4px] shadow-inner flex items-center justify-center font-bold text-xl',
     legendary: 'bg-orange-100 text-orange-900',

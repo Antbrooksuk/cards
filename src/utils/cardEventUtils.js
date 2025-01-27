@@ -14,7 +14,6 @@ export const handleCardClick = (letter, index, options) => {
     isAnimating,
   } = options
 
-  //   console.log('handleCardClick:', { letter, index })
   if (
     gameStatus === GAME_STATUS.PLAYING &&
     canSelectCard(
