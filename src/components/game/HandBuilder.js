@@ -32,6 +32,7 @@ const HandBuilder = ({
   onAnimationComplete,
   animatingIndices = [],
   isAnimating = false,
+  debugMode,
 }) => {
   const {
     playerHand,
@@ -180,7 +181,7 @@ const HandBuilder = ({
                 }}
                 onClick={e => {
                   // Only handle primary button clicks
-                  if (e.button !== 0) return
+                  if (e.button !== 0 || debugMode) return
 
                   // Prevent event from reaching the Card component
                   e.stopPropagation()

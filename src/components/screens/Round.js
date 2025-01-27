@@ -167,6 +167,7 @@ const Round = ({ className = '' }) => {
           handAnimating={handAnimating}
           setHandAnimating={setHandAnimating}
           animatingIndices={animatingIndices}
+          debugMode={debugMode}
           onAnimationComplete={() => {
             setAnimatingIndices([])
             // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
