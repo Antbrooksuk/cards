@@ -255,17 +255,13 @@ const HandBuilder = ({
                     setDropPreviewIndex,
                   })
                 }
-                onClick={e => {
-                  // Only handle click events that aren't from touch events
-                  if (e.detail === 0 || e.pointerType === 'touch') {
-                    return
-                  }
-                  // console.log('onClick:', {
-                  //   letter: card.letter,
-                  //   index,
-                  //   source: 'mouse',
-                  //   timestamp: Date.now(),
-                  // })
+                onPointerDown={e => {
+                  // Only handle primary button clicks
+                  if (e.button !== 0) return
+
+                  // Prevent event from reaching the Card component
+                  e.stopPropagation()
+
                   isInWord
                     ? handleWordCardClick(wordIndex, {
                         isValidating,
@@ -283,52 +279,6 @@ const HandBuilder = ({
                         addLetter,
                       })
                 }}
-                onTouchStart={e =>
-                  handleTouchStart(e, card, index, {
-                    isInWord,
-                    isValidating,
-                    playerHand,
-                    selectedCards,
-                    setTouchStartTime,
-                    setDragStartX,
-                    setDragStartY,
-                    setTouchMoved,
-                    setDragStartIndex,
-                  })
-                }
-                onTouchMove={e =>
-                  handleTouchMove(e, {
-                    isInWord,
-                    isValidating,
-                    dragStartIndex,
-                    dragStartX,
-                    dragStartY,
-                    playerHand,
-                    selectedCards,
-                    index,
-                    draggedCard,
-                    dropPreviewIndex,
-                    setTouchMoved,
-                    setDraggedCard,
-                    setDropPreviewIndex,
-                  })
-                }
-                onTouchEnd={e =>
-                  handleTouchEnd(e, card, index, {
-                    touchMoved,
-                    touchStartTime,
-                    isInWord,
-                    draggedCard,
-                    dropPreviewIndex,
-                    playerHand,
-                    selectedCards,
-                    setTouchMoved,
-                    setDraggedCard,
-                    setDragStartIndex,
-                    setDropPreviewIndex,
-                    reorderHand,
-                  })
-                }
               >
                 {isInWord && animatingIndices.includes(wordIndex) && (
                   <ScoreAnimation
@@ -349,26 +299,6 @@ const HandBuilder = ({
                   isSelected={selectedCards.includes(index)}
                   isExiting={exitingCards.has(index)}
                   className={isValidating ? HAND_STYLES.DISABLED : ''}
-                  onClick={() => {
-                    if (isInWord) {
-                      handleWordCardClick(wordIndex, {
-                        isValidating,
-                        selectedCards,
-                        setCardAnimationStates,
-                        removeLetter,
-                      })
-                    } else {
-                      handleCardClick(card.letter, index, {
-                        selectedCards,
-                        gameStatus,
-                        isValidating,
-                        hasAnimatingCards,
-                        setCardAnimationStates,
-                        setHandAnimating,
-                        addLetter,
-                      })
-                    }
-                  }}
                   index={isInWord ? wordIndex : undefined}
                   getAnimationDuration={getAnimationDuration}
                 />

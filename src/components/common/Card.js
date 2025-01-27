@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 import { CARD_CLASSES } from '../../constants/tailwindClasses'
 import { getCardStyle } from '../../utils/cardUtils'
@@ -13,7 +13,6 @@ const Card = ({
   isSelected,
   isNew,
   isExiting,
-  onClick,
   style,
   className = '',
   index = 0,
@@ -58,23 +57,11 @@ const Card = ({
     }
   }, [enable3D, dealComplete])
 
-  const handleInteraction = e => {
-    e.preventDefault() // Prevent default for all events
-
-    // Guard against undefined onClick
-    if (!onClick) return
-
-    // Only handle primary button clicks or touch events
-    if ((e.type === 'click' && e.button === 0) || e.type === 'touchend') {
-      onClick()
-    }
-  }
-
   return (
     <div
-      onClick={handleInteraction}
-      onTouchEnd={handleInteraction}
-      onTouchStart={e => e.preventDefault()} // Prevent touch event from triggering click
+      role='button'
+      tabIndex={0}
+      aria-pressed={isSelected}
       className={`p-1 ${getCardStyle(
         type,
       )} border border-gray-500 w-14 h-[4.5rem] rounded-lg shadow-[0px_2px_5px_1px_rgba(0,_0,_0,_0.2)] ${animationClass} ${className} ${
