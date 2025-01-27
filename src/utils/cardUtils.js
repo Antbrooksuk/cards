@@ -216,6 +216,7 @@ export const getHandCardClassNames = ({
   handAnimating,
   forceHandAnimating,
   isDealing,
+  gameStatus,
 }) => {
   const classes = ['absolute', '[perspective:1000px]', 'left-[50%]', 'top-0']
 
@@ -232,8 +233,13 @@ export const getHandCardClassNames = ({
   }
 
   // Interaction classes
-  if (!isInWord) {
+  if (!isInWord && gameStatus === 'playing') {
     classes.push('cursor-move')
+  }
+
+  // Disable interactions when not in playing state
+  if (gameStatus !== 'playing') {
+    classes.push('pointer-events-none', 'select-none')
   }
 
   // Z-index

@@ -36,6 +36,7 @@ const HandBuilder = ({
   onAnimationComplete,
   animatingIndices = [],
   forceHandAnimating = false,
+  isAnimating = false,
 }) => {
   const {
     playerHand,
@@ -203,6 +204,7 @@ const HandBuilder = ({
                   handAnimating,
                   forceHandAnimating,
                   isDealing,
+                  gameStatus,
                 })}
                 style={{
                   ...(isInWord
@@ -229,6 +231,7 @@ const HandBuilder = ({
                     setDragStartX,
                     setDragStartIndex,
                     setDropPreviewIndex,
+                    gameStatus,
                   })
                 }
                 onDrag={e =>
@@ -241,6 +244,7 @@ const HandBuilder = ({
                     selectedCards,
                     dropPreviewIndex,
                     setDropPreviewIndex,
+                    gameStatus,
                   })
                 }
                 onDragEnd={() =>
@@ -253,6 +257,7 @@ const HandBuilder = ({
                     setDraggedCard,
                     setDragStartIndex,
                     setDropPreviewIndex,
+                    gameStatus,
                   })
                 }
                 onPointerDown={e => {
@@ -268,6 +273,7 @@ const HandBuilder = ({
                         selectedCards,
                         setCardAnimationStates,
                         removeLetter,
+                        gameStatus,
                       })
                     : handleCardClick(card.letter, index, {
                         selectedCards,
@@ -277,8 +283,68 @@ const HandBuilder = ({
                         setCardAnimationStates,
                         setHandAnimating,
                         addLetter,
+                        isAnimating: animatingCards.has(index) || isAnimating,
                       })
                 }}
+                onTouchStart={e =>
+                  handleTouchStart(e, card, index, {
+                    isInWord,
+                    isValidating,
+                    playerHand,
+                    selectedCards,
+                    setTouchStartTime,
+                    setDragStartX,
+                    setDragStartY,
+                    setTouchMoved,
+                    setDragStartIndex,
+                    gameStatus,
+                    isAnimating: animatingCards.has(index) || isAnimating,
+                    hasAnimatingCards,
+                  })
+                }
+                onTouchMove={e =>
+                  handleTouchMove(e, {
+                    isInWord,
+                    isValidating,
+                    dragStartIndex,
+                    dragStartX,
+                    dragStartY,
+                    playerHand,
+                    selectedCards,
+                    index,
+                    draggedCard,
+                    dropPreviewIndex,
+                    setTouchMoved,
+                    setDraggedCard,
+                    setDropPreviewIndex,
+                    gameStatus,
+                    isAnimating: animatingCards.has(index) || isAnimating,
+                  })
+                }
+                onTouchEnd={e =>
+                  handleTouchEnd(e, card, index, {
+                    touchMoved,
+                    touchStartTime,
+                    isInWord,
+                    draggedCard,
+                    dropPreviewIndex,
+                    playerHand,
+                    selectedCards,
+                    setTouchMoved,
+                    setDraggedCard,
+                    setDragStartIndex,
+                    setDropPreviewIndex,
+                    reorderHand,
+                    gameStatus,
+                    setCardAnimationStates,
+                    setHandAnimating,
+                    hasAnimatingCards,
+                    addLetter,
+                    removeLetter,
+                    isValidating,
+                    isAnimating: animatingCards.has(index),
+                  })
+                }
               >
                 {isInWord && animatingIndices.includes(wordIndex) && (
                   <ScoreAnimation

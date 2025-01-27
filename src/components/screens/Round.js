@@ -163,7 +163,7 @@ const Round = ({ className = '' }) => {
         />
         <BuffBar />
         <HandBuilder
-          isAnimating={isAnimating}
+          isAnimating={isAnimating || animatingCards.size > 0}
           isValidating={isValidating}
           animatingIndices={animatingIndices}
           forceHandAnimating={keyboardAnimating}

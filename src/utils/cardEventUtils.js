@@ -1,4 +1,5 @@
 import { ANIMATION_STATE } from '../constants/cardConstants'
+import { GAME_STATUS } from '../constants/gameConstants'
 import { canSelectCard } from './handUtils'
 import { getResponsiveValues } from './animationUtils'
 
@@ -14,16 +15,19 @@ export const handleCardClick = (letter, index, options) => {
     setCardAnimationStates,
     setHandAnimating,
     addLetter,
+    isAnimating,
   } = options
 
   //   console.log('handleCardClick:', { letter, index })
   if (
+    gameStatus === GAME_STATUS.PLAYING &&
     canSelectCard(
       index,
       selectedCards,
       gameStatus,
       isValidating,
       hasAnimatingCards,
+      isAnimating,
     )
   ) {
     console.log('Card can be selected, adding letter')
@@ -66,13 +70,27 @@ export const handleTouchStart = (e, card, index, options) => {
     setDragStartY,
     setTouchMoved,
     setDragStartIndex,
+    gameStatus,
+    isAnimating,
   } = options
 
-  // console.log('onTouchStart:', {
-  //   letter: card.letter,
-  //   index,
-  //   timestamp: Date.now(),
-  // })
+  // Early return if not in playing state, animating, or has animating cards
+  if (
+    gameStatus !== GAME_STATUS.PLAYING ||
+    isAnimating ||
+    options.hasAnimatingCards ||
+    isValidating ||
+    !canSelectCard(
+      index,
+      selectedCards,
+      gameStatus,
+      isValidating,
+      options.hasAnimatingCards,
+      isAnimating,
+    )
+  )
+    return
+
   const touch = e.touches[0]
   setTouchStartTime(Date.now())
   setDragStartX(touch.clientX)
@@ -104,10 +122,18 @@ export const handleTouchMove = (e, options) => {
     setTouchMoved,
     setDraggedCard,
     setDropPreviewIndex,
+    gameStatus,
+    isAnimating,
   } = options
 
   // Only handle drag movement for draggable cards
-  if (!isInWord && !isValidating && dragStartIndex !== null) {
+  if (
+    gameStatus === GAME_STATUS.PLAYING &&
+    !isInWord &&
+    !isValidating &&
+    !isAnimating &&
+    dragStartIndex !== null
+  ) {
     const touch = e.touches[0]
     const deltaX = touch.clientX - dragStartX
     const deltaY = touch.clientY - dragStartY
@@ -154,27 +180,32 @@ export const handleTouchEnd = (e, card, index, options) => {
     setDragStartIndex,
     setDropPreviewIndex,
     reorderHand,
+    gameStatus,
+    hasAnimatingCards,
+    isValidating,
+    isAnimating,
   } = options
 
-  // console.log('onTouchEnd:', {
-  //   letter: card.letter,
-  //   index,
-  //   touchMoved,
-  //   timestamp: Date.now(),
-  // })
   const touchDuration = Date.now() - touchStartTime
 
-  if (!touchMoved && touchDuration < TOUCH_TIME_THRESHOLD) {
-    // Handle as a tap/click if no significant movement and short duration
-    isInWord
-      ? handleWordCardClick(selectedCards.indexOf(index), options)
-      : handleCardClick(card.letter, index, options)
-  } else if (!isInWord && draggedCard !== null && dropPreviewIndex !== null) {
-    // Handle as drag completion
-    const nonSelectedCards = playerHand
-      .map((_, i) => i)
-      .filter(i => !selectedCards.includes(i))
-    reorderHand(draggedCard, nonSelectedCards[dropPreviewIndex])
+  if (
+    gameStatus === GAME_STATUS.PLAYING &&
+    !hasAnimatingCards &&
+    !isValidating &&
+    !isAnimating
+  ) {
+    if (!touchMoved && touchDuration < TOUCH_TIME_THRESHOLD) {
+      // Handle as a tap/click if no significant movement and short duration
+      isInWord
+        ? handleWordCardClick(selectedCards.indexOf(index), options)
+        : handleCardClick(card.letter, index, options)
+    } else if (!isInWord && draggedCard !== null && dropPreviewIndex !== null) {
+      // Handle as drag completion
+      const nonSelectedCards = playerHand
+        .map((_, i) => i)
+        .filter(i => !selectedCards.includes(i))
+      reorderHand(draggedCard, nonSelectedCards[dropPreviewIndex])
+    }
   }
 
   // Reset all touch-related state

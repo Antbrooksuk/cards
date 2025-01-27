@@ -7,12 +7,21 @@ export const canSelectCard = (
   gameStatus,
   isValidating,
   hasAnimatingCards,
+  isAnimating,
 ) => {
+  const invalidGameStates = [
+    GAME_STATUS.ROUND_COMPLETE,
+    GAME_STATUS.ROUND_END,
+    GAME_STATUS.GAME_OVER,
+    GAME_STATUS.VALIDATING,
+  ]
+
   return (
     !selectedCards.includes(index) &&
-    gameStatus === GAME_STATUS.PLAYING &&
+    !invalidGameStates.includes(gameStatus) &&
     !isValidating &&
-    !hasAnimatingCards
+    !hasAnimatingCards &&
+    !isAnimating
   )
 }
 
