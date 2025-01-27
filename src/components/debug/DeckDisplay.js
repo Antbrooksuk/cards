@@ -10,11 +10,11 @@ const DeckDisplay = () => {
 
   return (
     <div id='deckStatus' className='p-4 border-t bg-gray-100'>
-      <div className='max-w-4xl mb-8 mx-auto px-4'>
-        <h3 className='text-lg font-semibold mb-2'>
+      <div className='max-w-4xl mb-8 mx-auto'>
+        <h3 className='text-center text-lg font-semibold mb-2'>
           Deck Status ({allCards.length})
         </h3>
-        <div className='flex flex-wrap gap-2'>
+        <div className='flex flex-wrap justify-center gap-2'>
           {allCards.map((card, index) => {
             const isDealt = index < playerHand.length
             const isSelected = isDealt && selectedCards.includes(index)
