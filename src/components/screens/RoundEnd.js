@@ -20,12 +20,16 @@ const RoundEnd = ({
 
       <div className='bg-white rounded-lg shadow-md p-6 w-full max-w-2xl'>
         <div className='flex justify-around mb-8'>
-          <AnimatedScoreDisplay label='Round Score' score={roundScore} />
-          <ScoreDisplay
+          <AnimatedScoreDisplay
+            label='Round Score'
+            roundScore={roundScore}
+            targetScore={targetScore}
+          />
+          {/* <ScoreDisplay
             label='Total Score'
             score={totalScore}
             targetScore={targetScore}
-          />
+          /> */}
         </div>
 
         <div className='mb-6'>

@@ -1,16 +1,21 @@
 import React, { useEffect, useState, memo } from 'react'
 
-const AnimatedScoreDisplay = ({ score, targetScore, label = 'Score' }) => {
+const AnimatedScoreDisplay = ({
+  score,
+  roundScore = 0,
+  targetScore,
+  label = 'Score',
+}) => {
   const currentScore =
     Number(typeof score === 'object' ? score.score : score) || 0
   const [prevScore, setPrevScore] = useState(currentScore)
   const [shouldAnimate, setShouldAnimate] = useState(false)
 
   useEffect(() => {
-    if (currentScore !== prevScore) {
+    if (currentScore !== prevScore || roundScore > 0) {
       // First set the starting point
       setPrevScore(prev => {
-        if (prev === currentScore) return prev
+        if (roundScore === 0 && prev === currentScore) return prev
         setShouldAnimate(true)
         return prev
       })
@@ -35,7 +40,7 @@ const AnimatedScoreDisplay = ({ score, targetScore, label = 'Score' }) => {
           }`}
           style={{
             '--prev-num': prevScore,
-            '--current-num': currentScore,
+            '--current-num': currentScore || roundScore,
           }}
         />
         {targetScore && (
