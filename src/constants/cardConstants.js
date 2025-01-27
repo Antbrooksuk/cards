@@ -67,7 +67,6 @@ export const ANIMATION_TIMING = {
 
 export const CARD_ANIMATION = {
   WORD_CARD_SCALE: 1,
-  DRAGGED_CARD_OPACITY: 1,
   ENABLE_3D: true,
   ROTATION: {
     X: 2,

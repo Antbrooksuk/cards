@@ -12,12 +12,6 @@ import {
 import {
   handleCardClick,
   handleWordCardClick,
-  handleTouchStart,
-  handleTouchMove,
-  handleTouchEnd,
-  handleDragStart,
-  handleDrag,
-  handleDragEnd,
 } from '../../utils/cardEventUtils'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 import ScoreAnimation from '../common/ScoreAnimation'
@@ -47,7 +41,6 @@ const HandBuilder = ({
     clearNewFlags,
     roundScore,
     targetScore,
-    reorderHand,
   } = useGame()
 
   const [exitingCards, setExitingCards] = useState(new Set())
@@ -58,13 +51,6 @@ const HandBuilder = ({
     new Set(),
   )
   const [congratsPositions, setCongratsPositions] = useState([])
-  const [draggedCard, setDraggedCard] = useState(null)
-  const [dragStartX, setDragStartX] = useState(0)
-  const [dragStartY, setDragStartY] = useState(0)
-  const [dragStartIndex, setDragStartIndex] = useState(null)
-  const [dropPreviewIndex, setDropPreviewIndex] = useState(null)
-  const [touchStartTime, setTouchStartTime] = useState(null)
-  const [touchMoved, setTouchMoved] = useState(false)
 
   const { animatingCards, getAnimationDuration, isDealing } = useCardAnimation(
     playerHand,
@@ -169,36 +155,11 @@ const HandBuilder = ({
             let handIndex = nonSelectedCards.indexOf(index)
             const wordIndex = selectedCards.indexOf(index)
 
-            // Adjust indices during drag preview
-            if (
-              draggedCard !== null &&
-              dropPreviewIndex !== null &&
-              !isInWord
-            ) {
-              const currentDragIndex = nonSelectedCards.indexOf(draggedCard)
-              if (handIndex === currentDragIndex) {
-                handIndex = dropPreviewIndex
-              } else if (
-                currentDragIndex < dropPreviewIndex &&
-                handIndex > currentDragIndex &&
-                handIndex <= dropPreviewIndex
-              ) {
-                handIndex--
-              } else if (
-                currentDragIndex > dropPreviewIndex &&
-                handIndex < currentDragIndex &&
-                handIndex >= dropPreviewIndex
-              ) {
-                handIndex++
-              }
-            }
-
             return (
               <div
                 key={card.id}
                 className={getHandCardClassNames({
                   isInWord,
-                  isDragged: draggedCard === index,
                   isAnimating: animatingCards.has(index),
                   cardAnimationState: cardAnimationStates[index],
                   handAnimating,
@@ -213,54 +174,13 @@ const HandBuilder = ({
                   ...getHandCardStyles({
                     index,
                     totalCards: nonSelectedCards.length,
-                    isDragged: draggedCard === index,
                     isAnimating: animatingCards.has(index),
                     isDealing,
                     handAnimating,
                     forceHandAnimating,
                   }),
                 }}
-                draggable={!isInWord && !isValidating}
-                onDragStart={e =>
-                  handleDragStart(e, index, {
-                    isInWord,
-                    isValidating,
-                    playerHand,
-                    selectedCards,
-                    setDraggedCard,
-                    setDragStartX,
-                    setDragStartIndex,
-                    setDropPreviewIndex,
-                    gameStatus,
-                  })
-                }
-                onDrag={e =>
-                  handleDrag(e, {
-                    draggedCard,
-                    isInWord,
-                    dragStartIndex,
-                    dragStartX,
-                    playerHand,
-                    selectedCards,
-                    dropPreviewIndex,
-                    setDropPreviewIndex,
-                    gameStatus,
-                  })
-                }
-                onDragEnd={() =>
-                  handleDragEnd({
-                    draggedCard,
-                    dropPreviewIndex,
-                    playerHand,
-                    selectedCards,
-                    reorderHand,
-                    setDraggedCard,
-                    setDragStartIndex,
-                    setDropPreviewIndex,
-                    gameStatus,
-                  })
-                }
-                onPointerDown={e => {
+                onClick={e => {
                   // Only handle primary button clicks
                   if (e.button !== 0) return
 
@@ -286,65 +206,6 @@ const HandBuilder = ({
                         isAnimating: animatingCards.has(index) || isAnimating,
                       })
                 }}
-                onTouchStart={e =>
-                  handleTouchStart(e, card, index, {
-                    isInWord,
-                    isValidating,
-                    playerHand,
-                    selectedCards,
-                    setTouchStartTime,
-                    setDragStartX,
-                    setDragStartY,
-                    setTouchMoved,
-                    setDragStartIndex,
-                    gameStatus,
-                    isAnimating: animatingCards.has(index) || isAnimating,
-                    hasAnimatingCards,
-                  })
-                }
-                onTouchMove={e =>
-                  handleTouchMove(e, {
-                    isInWord,
-                    isValidating,
-                    dragStartIndex,
-                    dragStartX,
-                    dragStartY,
-                    playerHand,
-                    selectedCards,
-                    index,
-                    draggedCard,
-                    dropPreviewIndex,
-                    setTouchMoved,
-                    setDraggedCard,
-                    setDropPreviewIndex,
-                    gameStatus,
-                    isAnimating: animatingCards.has(index) || isAnimating,
-                  })
-                }
-                onTouchEnd={e =>
-                  handleTouchEnd(e, card, index, {
-                    touchMoved,
-                    touchStartTime,
-                    isInWord,
-                    draggedCard,
-                    dropPreviewIndex,
-                    playerHand,
-                    selectedCards,
-                    setTouchMoved,
-                    setDraggedCard,
-                    setDragStartIndex,
-                    setDropPreviewIndex,
-                    reorderHand,
-                    gameStatus,
-                    setCardAnimationStates,
-                    setHandAnimating,
-                    hasAnimatingCards,
-                    addLetter,
-                    removeLetter,
-                    isValidating,
-                    isAnimating: animatingCards.has(index),
-                  })
-                }
               >
                 {isInWord && animatingIndices.includes(wordIndex) && (
                   <ScoreAnimation

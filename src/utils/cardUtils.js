@@ -8,9 +8,7 @@ import {
   DECK_CONFIG,
 } from '../constants/cardConstants'
 import { CARD_COLORS } from '../constants/tailwindClasses'
-
 import { WORD_LENGTH, WORD_LENGTH_CLASSES } from '../constants/wordConstants'
-import { ERROR_MESSAGES } from '../constants/gameConstants'
 
 // Static ID counter for generating unique card IDs
 let cardIdCounter = 0
@@ -162,7 +160,6 @@ export const hasVowels = hand => {
  * @param {Object} options - Style configuration options
  * @param {number} options.index - Card index in hand
  * @param {number} options.totalCards - Total number of cards in hand
- * @param {boolean} options.isDragged - Whether card is being dragged
  * @param {boolean} options.isAnimating - Whether card is animating
  * @param {boolean} options.isDealing - Whether cards are being dealt
  * @param {boolean} options.handAnimating - Whether hand is animating
@@ -170,26 +167,14 @@ export const hasVowels = hand => {
  * @returns {Object} Style object for the card
  */
 export const getHandCardStyles = ({
-  index,
-  totalCards,
-  isDragged,
   isAnimating,
   isDealing,
   handAnimating,
   forceHandAnimating,
 }) => {
-  const styles = {
-    opacity: isDragged ? 0.6 : 1,
-  }
-
+  const styles = {}
   // Only add transition if we're animating
-  if (
-    isAnimating ||
-    handAnimating ||
-    isDragged ||
-    forceHandAnimating ||
-    isDealing
-  ) {
+  if (isAnimating || handAnimating || forceHandAnimating || isDealing) {
     styles.transition = 'transform 300ms'
   }
 
@@ -200,7 +185,6 @@ export const getHandCardStyles = ({
  * Gets the complete className string for a card in the hand
  * @param {Object} options - Class configuration options
  * @param {boolean} options.isInWord - Whether card is in word area
- * @param {boolean} options.isDragged - Whether card is being dragged
  * @param {boolean} options.isAnimating - Whether card is animating
  * @param {string} options.cardAnimationState - Current animation state
  * @param {boolean} options.handAnimating - Whether hand is animating
@@ -210,8 +194,6 @@ export const getHandCardStyles = ({
  */
 export const getHandCardClassNames = ({
   isInWord,
-  isDragged,
-  isAnimating,
   cardAnimationState,
   handAnimating,
   forceHandAnimating,
@@ -225,7 +207,6 @@ export const getHandCardClassNames = ({
     cardAnimationState === 'ENTERING_WORD' ||
     cardAnimationState === 'EXITING_WORD' ||
     handAnimating ||
-    isDragged ||
     forceHandAnimating ||
     isDealing
   ) {
@@ -240,13 +221,6 @@ export const getHandCardClassNames = ({
   // Disable interactions when not in playing state
   if (gameStatus !== 'playing') {
     classes.push('pointer-events-none', 'select-none')
-  }
-
-  // Z-index
-  if (isDragged) {
-    classes.push('z-50')
-  } else {
-    classes.push('z-0')
   }
 
   return classes.join(' ')
