@@ -10,9 +10,10 @@ const CongratsMessage = ({ message, animatingIndices, positions }) => {
       {message.split('').map((letter, index) => (
         <div
           key={index}
-          className={`absolute left-[50%] top-[${index % 2 === 0 ? -4 : 4}px]`}
+          className={`absolute left-[50%]`}
           style={{
             ...positions[index],
+            top: index % 2 === 0 ? '-4px' : '4px',
           }}
         >
           <Card
