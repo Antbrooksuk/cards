@@ -7,7 +7,7 @@ import {
 import Tooltip from './Tooltip'
 
 const ROUND_SCORE_STYLES = {
-  CONTAINER: 'text-center flex-1 ',
+  CONTAINER: 'text-center flex-1 p-4',
   TOP: 'flex flex-row items-center justify-between gap-2',
   BOTTOM: '',
   LABEL: 'text-lg font-semibold text-gray-600',
@@ -36,7 +36,7 @@ const Header = ({
   )
 
   return (
-    <div id='header' className='flex pt-4 '>
+    <div id='header' className='flex'>
       <div className={ROUND_SCORE_STYLES.CONTAINER}>
         <div className={ROUND_SCORE_STYLES.TOP}>
           <AnimatedScoreDisplay

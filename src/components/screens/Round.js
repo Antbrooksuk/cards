@@ -151,7 +151,7 @@ const Round = ({ className = '' }) => {
   return (
     <>
       <DebugPanel onWordSubmit={handleWordSubmit} />
-      <div className='game-container flex flex-col gap-4'>
+      <div className='game-container flex flex-col'>
         <Header
           roundNumber={roundNumber}
           roundScore={roundScore}

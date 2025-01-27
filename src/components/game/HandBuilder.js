@@ -131,7 +131,7 @@ const HandBuilder = ({
   }, [cardAnimationStates])
 
   return (
-    <div className='relative flex flex-col items-center'>
+    <div className='hand-builder relative flex flex-col items-center'>
       {/* Cards Container */}
       <div
         className='relative w-full'

@@ -4,7 +4,7 @@ import { LAYOUT_STYLES } from '../../constants/styleConstants'
 import { ANIMATION_CONSTANTS } from '../../constants/cardConstants'
 
 const WORD_LIST_STYLES = {
-  CONTAINER: `${LAYOUT_STYLES.GAP_4} mb-4`,
+  CONTAINER: `${LAYOUT_STYLES.GAP_4} mb-4 p-4`,
   TITLE: `text-lg font-semibold ${LAYOUT_STYLES.FLEX_CENTER} gap-2 cursor-pointer select-none`,
   WORDS_CONTAINER: `py-4 ${LAYOUT_STYLES.FLEX_COL} ${LAYOUT_STYLES.GAP_4} ${LAYOUT_STYLES.FLEX_CENTER} overflow-hidden transition-all duration-${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,
   CHEVRON: `w-5 h-5 transition-transform duration-${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,

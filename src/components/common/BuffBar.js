@@ -7,12 +7,12 @@ const BuffBar = () => {
   const { legendaryLetterPlayed } = useGame()
 
   return (
-    <div className='flex gap-4 justify-center items-center'>
+    <div className='flex gap-4 p-4 justify-center items-center bg-blue-500'>
       <div
         className={`px-2 py-1 rounded-lg ${
           legendaryLetterPlayed === '?'
             ? `${CARD_COLORS.legendary} text-white`
-            : 'bg-gray-100 text-gray-400'
+            : 'bg-white/20 text-black'
         }`}
       >
         Question?
@@ -21,7 +21,7 @@ const BuffBar = () => {
         className={`px-2 py-1 rounded-lg ${
           legendaryLetterPlayed === '!'
             ? `${CARD_COLORS.legendary} text-white`
-            : 'bg-gray-100 text-gray-400'
+            : 'bg-white/20 text-black'
         }`}
       >
         Exclamation!
