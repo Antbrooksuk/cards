@@ -154,13 +154,6 @@ const HandBuilder = ({
             let handIndex = nonSelectedCards.indexOf(index)
             const wordIndex = selectedCards.indexOf(index)
 
-            console.log({
-              isAnimating: animatingCards.has(index),
-              cardAnimationState: cardAnimationStates[index],
-              handAnimating,
-              isDealing,
-            })
-
             return (
               <div
                 key={card.id}
