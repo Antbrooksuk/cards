@@ -62,7 +62,8 @@ const ActionBar = ({
           <Button
             onClick={onPlayWord}
             disabled={
-              (!debugMode && selectedCards.length < WORD_LENGTH.MIN) ||
+              selectedCards.length < WORD_LENGTH.MIN ||
+              debugMode ||
               isAnimating ||
               isValidating ||
               playsUsed >= MAX_PLAYS_PER_ROUND
@@ -76,7 +77,12 @@ const ActionBar = ({
           <Tooltip content='Reorder your hand'>
             <Button
               onClick={onShuffleHand}
-              disabled={isValidating || isAnimating || animatingCards.isDealing}
+              disabled={
+                isValidating ||
+                isAnimating ||
+                debugMode ||
+                animatingCards.isDealing
+              }
               variant='secondary'
               className='disabled:opacity-50 disabled:cursor-not-allowed p-2'
             >
@@ -87,6 +93,7 @@ const ActionBar = ({
           <Button
             onClick={onDiscardCards}
             disabled={
+              debugMode ||
               selectedCards.length === 0 ||
               selectedCards.length > MAX_DISCARDS_PER_ROUND - discardsUsed ||
               discardsUsed >= MAX_DISCARDS_PER_ROUND ||
