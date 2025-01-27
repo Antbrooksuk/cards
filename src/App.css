@@ -2,8 +2,7 @@
   transform-style: preserve-3d !important;
   backface-visibility: hidden !important;
   transform-origin: center center !important;
-  perspective: 800px !important;
-  animation: card3DFloat infinite alternate ease-in-out;
+  animation: card3DFloat infinite alternate linear;
   animation-delay: 0ms;
   animation-duration: var(--animation-duration, 3000ms);
   animation-play-state: var(--animation-play-state, running);
@@ -12,15 +11,15 @@
 
 @keyframes card3DFloat {
   0% {
-    transform: translate3d(0, var(--tw-translate-y), 0) rotateX(-2deg)
-      rotateY(-2deg) rotateZ(-2deg);
-  }
-  50% {
     transform: translate3d(0, var(--tw-translate-y), 0) rotateX(0deg)
       rotateY(0deg) rotateZ(0deg);
   }
-  100% {
+  50% {
     transform: translate3d(0, var(--tw-translate-y), 0) rotateX(-2deg)
-      rotateY(-2deg) rotateZ(2deg);
+      rotateY(2deg) rotateZ(-4deg);
+  }
+  100% {
+    transform: translate3d(0, var(--tw-translate-y), 0) rotateX(4deg)
+      rotateY(-5deg) rotateZ(4deg);
   }
 }

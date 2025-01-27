@@ -2,15 +2,29 @@ import React, { useState, useEffect } from 'react'
 import { useGame } from '../../context/GameContext'
 import Card from '../common/Card'
 import useCardAnimation from '../../hooks/useCardAnimation'
-import { canSelectCard, HAND_STYLES } from '../../utils/handUtils'
-import { getLetterType } from '../../utils/cardUtils'
+import { HAND_STYLES } from '../../utils/handUtils'
+import {
+  getLetterType,
+  getHandCardStyles,
+  getHandCardClassNames,
+} from '../../utils/cardUtils'
 import { GAME_STATUS } from '../../constants/gameConstants'
 import {
   ANIMATION_TIMING,
-  ANIMATION_STATE,
   CARD_ANIMATION,
   ANIMATION_CONSTANTS,
+  ANIMATION_STATE,
 } from '../../constants/cardConstants'
+import {
+  handleCardClick,
+  handleWordCardClick,
+  handleTouchStart,
+  handleTouchMove,
+  handleTouchEnd,
+  handleDragStart,
+  handleDrag,
+  handleDragEnd,
+} from '../../utils/cardEventUtils'
 import { calculateLetterScore } from '../../utils/scoreUtils'
 import ScoreAnimation from '../common/ScoreAnimation'
 import CongratsMessage from '../common/CongratsMessage'
@@ -107,43 +121,6 @@ const HandBuilder = ({
     }
   }, [roundScore, targetScore, gameStatus, playerHand.length])
 
-  const handleCardClick = (letter, index) => {
-    console.log('handleCardClick:', { letter, index })
-    if (
-      canSelectCard(
-        index,
-        selectedCards,
-        gameStatus,
-        isValidating,
-        hasAnimatingCards,
-      )
-    ) {
-      console.log('Card can be selected, adding letter')
-      setCardAnimationStates(prev => ({
-        ...prev,
-        [index]: ANIMATION_STATE.ENTERING_WORD,
-      }))
-      setHandAnimating(true)
-      addLetter(letter, index)
-    } else {
-      console.log('Card cannot be selected')
-    }
-  }
-
-  const handleWordCardClick = index => {
-    if (!isValidating) {
-      const cardIndex = selectedCards[index]
-      setCardAnimationStates(prev => ({
-        ...prev,
-        [cardIndex]: ANIMATION_STATE.EXITING_WORD,
-      }))
-      // Remove this letter and all letters after it
-      for (let i = 0; i < selectedCards.length - index; i++) {
-        removeLetter()
-      }
-    }
-  }
-
   // Reset hand animation state when hand changes
   useEffect(() => {
     setHandAnimating(false)
@@ -228,83 +205,66 @@ const HandBuilder = ({
             return (
               <div
                 key={card.id}
-                className={`absolute [perspective:100px] left-[50%] top-0 transition-all duration-${
-                  ANIMATION_CONSTANTS.BASE_DURATION
-                } ${
-                  cardAnimationStates[index] ===
-                    ANIMATION_STATE.ENTERING_WORD ||
-                  cardAnimationStates[index] === ANIMATION_STATE.EXITING_WORD ||
-                  handAnimating ||
-                  draggedCard !== null ||
-                  forceHandAnimating ||
-                  isDealing
-                    ? `transition-transform duration-${ANIMATION_CONSTANTS.BASE_DURATION}`
-                    : ''
-                } ${!isInWord ? 'cursor-move' : ''} ${
-                  draggedCard === index ? 'z-50' : 'z-0'
-                }`}
+                className={getHandCardClassNames({
+                  isInWord,
+                  isDragged: draggedCard === index,
+                  isAnimating: animatingCards.has(index),
+                  cardAnimationState: cardAnimationStates[index],
+                  handAnimating,
+                  forceHandAnimating,
+                  isDealing,
+                })}
                 style={{
-                  ...(!isInWord
-                    ? getHandCardPosition(handIndex, nonSelectedCards.length)
-                    : getWordCardPosition(wordIndex, selectedCards.length)),
-                  opacity:
-                    draggedCard === index
-                      ? CARD_ANIMATION.DRAGGED_CARD_OPACITY
-                      : 1,
+                  ...(isInWord
+                    ? getWordCardPosition(wordIndex, selectedCards.length)
+                    : getHandCardPosition(handIndex, nonSelectedCards.length)),
+                  ...getHandCardStyles({
+                    index,
+                    totalCards: nonSelectedCards.length,
+                    isDragged: draggedCard === index,
+                    isAnimating: animatingCards.has(index),
+                    isDealing,
+                    handAnimating,
+                    forceHandAnimating,
+                  }),
                 }}
                 draggable={!isInWord && !isValidating}
-                onDragStart={e => {
-                  if (!isInWord && !isValidating) {
-                    const nonSelectedCards = playerHand
-                      .map((_, i) => i)
-                      .filter(i => !selectedCards.includes(i))
-                    const currentIndex = nonSelectedCards.indexOf(index)
-                    setDraggedCard(index)
-                    setDragStartX(e.clientX)
-                    setDragStartIndex(currentIndex)
-                    setDropPreviewIndex(currentIndex)
-                    e.dataTransfer.effectAllowed = 'move'
-                  }
-                }}
-                onDrag={e => {
-                  if (e.clientX === 0) return // Ignore invalid drag events
-
-                  if (
-                    draggedCard !== null &&
-                    !isInWord &&
-                    dragStartIndex !== null
-                  ) {
-                    const nonSelectedCards = playerHand
-                      .map((_, i) => i)
-                      .filter(i => !selectedCards.includes(i))
-                    const { xSpacing } = getResponsiveValues()
-
-                    const deltaX = e.clientX - dragStartX
-                    const indexChange = Math.round(deltaX / xSpacing)
-                    const newIndex = Math.max(
-                      0,
-                      Math.min(
-                        dragStartIndex + indexChange,
-                        nonSelectedCards.length - 1,
-                      ),
-                    )
-
-                    if (newIndex !== dropPreviewIndex) {
-                      setDropPreviewIndex(newIndex)
-                    }
-                  }
-                }}
-                onDragEnd={() => {
-                  if (draggedCard !== null && dropPreviewIndex !== null) {
-                    const nonSelectedCards = playerHand
-                      .map((_, i) => i)
-                      .filter(i => !selectedCards.includes(i))
-                    reorderHand(draggedCard, nonSelectedCards[dropPreviewIndex])
-                  }
-                  setDraggedCard(null)
-                  setDragStartIndex(null)
-                  setDropPreviewIndex(null)
-                }}
+                onDragStart={e =>
+                  handleDragStart(e, index, {
+                    isInWord,
+                    isValidating,
+                    playerHand,
+                    selectedCards,
+                    setDraggedCard,
+                    setDragStartX,
+                    setDragStartIndex,
+                    setDropPreviewIndex,
+                  })
+                }
+                onDrag={e =>
+                  handleDrag(e, {
+                    draggedCard,
+                    isInWord,
+                    dragStartIndex,
+                    dragStartX,
+                    playerHand,
+                    selectedCards,
+                    dropPreviewIndex,
+                    setDropPreviewIndex,
+                  })
+                }
+                onDragEnd={() =>
+                  handleDragEnd({
+                    draggedCard,
+                    dropPreviewIndex,
+                    playerHand,
+                    selectedCards,
+                    reorderHand,
+                    setDraggedCard,
+                    setDragStartIndex,
+                    setDropPreviewIndex,
+                  })
+                }
                 onClick={e => {
                   // Only handle click events that aren't from touch events
                   if (e.detail === 0 || e.pointerType === 'touch') {
@@ -317,104 +277,70 @@ const HandBuilder = ({
                     timestamp: Date.now(),
                   })
                   isInWord
-                    ? handleWordCardClick(wordIndex)
-                    : handleCardClick(card.letter, index)
+                    ? handleWordCardClick(wordIndex, {
+                        isValidating,
+                        selectedCards,
+                        setCardAnimationStates,
+                        removeLetter,
+                      })
+                    : handleCardClick(card.letter, index, {
+                        selectedCards,
+                        gameStatus,
+                        isValidating,
+                        hasAnimatingCards,
+                        setCardAnimationStates,
+                        setHandAnimating,
+                        addLetter,
+                      })
                 }}
-                onTouchStart={e => {
-                  console.log('onTouchStart:', {
-                    letter: card.letter,
-                    index,
-                    timestamp: Date.now(),
+                onTouchStart={e =>
+                  handleTouchStart(e, card, index, {
+                    isInWord,
+                    isValidating,
+                    playerHand,
+                    selectedCards,
+                    setTouchStartTime,
+                    setDragStartX,
+                    setDragStartY,
+                    setTouchMoved,
+                    setIsTouch,
+                    setDragStartIndex,
                   })
-                  const touch = e.touches[0]
-                  setTouchStartTime(Date.now())
-                  setDragStartX(touch.clientX)
-                  setDragStartY(touch.clientY)
-                  setTouchMoved(false)
-                  setIsTouch(true)
-                  // Only set up drag-related state if this is a draggable card
-                  if (!isInWord && !isValidating) {
-                    const nonSelectedCards = playerHand
-                      .map((_, i) => i)
-                      .filter(i => !selectedCards.includes(i))
-                    const currentIndex = nonSelectedCards.indexOf(index)
-                    setDragStartIndex(currentIndex)
-                  }
-                }}
-                onTouchMove={e => {
-                  // Only handle drag movement for draggable cards
-                  if (!isInWord && !isValidating && dragStartIndex !== null) {
-                    const touch = e.touches[0]
-                    const deltaX = touch.clientX - dragStartX
-                    const deltaY = touch.clientY - dragStartY
-                    const distance = Math.sqrt(
-                      deltaX * deltaX + deltaY * deltaY,
-                    )
-
-                    if (distance > TOUCH_MOVE_THRESHOLD) {
-                      e.preventDefault()
-                      setTouchMoved(true)
-                      if (!draggedCard) {
-                        setDraggedCard(index)
-                        setDropPreviewIndex(dragStartIndex)
-                      }
-
-                      if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                        const nonSelectedCards = playerHand
-                          .map((_, i) => i)
-                          .filter(i => !selectedCards.includes(i))
-                        const { xSpacing } = getResponsiveValues()
-                        const indexChange = Math.round(deltaX / xSpacing)
-                        const newIndex = Math.max(
-                          0,
-                          Math.min(
-                            dragStartIndex + indexChange,
-                            nonSelectedCards.length - 1,
-                          ),
-                        )
-
-                        if (newIndex !== dropPreviewIndex) {
-                          setDropPreviewIndex(newIndex)
-                        }
-                      }
-                    }
-                  }
-                }}
-                onTouchEnd={e => {
-                  console.log('onTouchEnd:', {
-                    letter: card.letter,
+                }
+                onTouchMove={e =>
+                  handleTouchMove(e, {
+                    isInWord,
+                    isValidating,
+                    dragStartIndex,
+                    dragStartX,
+                    dragStartY,
+                    playerHand,
+                    selectedCards,
                     index,
+                    draggedCard,
+                    dropPreviewIndex,
+                    setTouchMoved,
+                    setDraggedCard,
+                    setDropPreviewIndex,
+                  })
+                }
+                onTouchEnd={e =>
+                  handleTouchEnd(e, card, index, {
                     touchMoved,
-                    timestamp: Date.now(),
+                    touchStartTime,
+                    isInWord,
+                    draggedCard,
+                    dropPreviewIndex,
+                    playerHand,
+                    selectedCards,
+                    setTouchMoved,
+                    setDraggedCard,
+                    setDragStartIndex,
+                    setDropPreviewIndex,
+                    setIsTouch,
+                    reorderHand,
                   })
-                  const touchDuration = Date.now() - touchStartTime
-
-                  if (!touchMoved && touchDuration < TOUCH_TIME_THRESHOLD) {
-                    // Handle as a tap/click if no significant movement and short duration
-                    isInWord
-                      ? handleWordCardClick(wordIndex)
-                      : handleCardClick(card.letter, index)
-                  } else if (
-                    !isInWord &&
-                    draggedCard !== null &&
-                    dropPreviewIndex !== null
-                  ) {
-                    // Handle as drag completion
-                    const nonSelectedCards = playerHand
-                      .map((_, i) => i)
-                      .filter(i => !selectedCards.includes(i))
-                    reorderHand(draggedCard, nonSelectedCards[dropPreviewIndex])
-                  }
-
-                  // Reset all touch-related state
-                  setTouchMoved(false)
-                  setDraggedCard(null)
-                  setDragStartIndex(null)
-                  setDropPreviewIndex(null)
-
-                  // Reset touch state immediately
-                  setIsTouch(false)
-                }}
+                }
               >
                 {isInWord && animatingIndices.includes(wordIndex) && (
                   <ScoreAnimation
@@ -437,9 +363,22 @@ const HandBuilder = ({
                   className={isValidating ? HAND_STYLES.DISABLED : ''}
                   onClick={() => {
                     if (isInWord) {
-                      handleWordCardClick(wordIndex)
+                      handleWordCardClick(wordIndex, {
+                        isValidating,
+                        selectedCards,
+                        setCardAnimationStates,
+                        removeLetter,
+                      })
                     } else {
-                      handleCardClick(card.letter, index)
+                      handleCardClick(card.letter, index, {
+                        selectedCards,
+                        gameStatus,
+                        isValidating,
+                        hasAnimatingCards,
+                        setCardAnimationStates,
+                        setHandAnimating,
+                        addLetter,
+                      })
                     }
                   }}
                   index={isInWord ? wordIndex : undefined}

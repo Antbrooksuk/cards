@@ -5,9 +5,9 @@ import { CARD_COLORS, THEME_COLORS } from './tailwindClasses'
  */
 export const WORD_LENGTH = {
   MIN: 2,
-  MAX: 15,
+  MAX: 9,
   LEGENDARY_MIN: 9,
-  LEGENDARY_MAX: 10,
+  LEGENDARY_MAX: 9,
   EPIC_MIN: 7,
   EPIC_MAX: 8,
   RARE_MIN: 5,

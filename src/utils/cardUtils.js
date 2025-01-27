@@ -157,6 +157,95 @@ export const hasVowels = hand => {
  * @param {number} count - Number of cards to deal
  * @returns {Object} Object containing dealt cards and remaining deck
  */
+/**
+ * Gets the complete style object for a card in the hand
+ * @param {Object} options - Style configuration options
+ * @param {number} options.index - Card index in hand
+ * @param {number} options.totalCards - Total number of cards in hand
+ * @param {boolean} options.isDragged - Whether card is being dragged
+ * @param {boolean} options.isAnimating - Whether card is animating
+ * @param {boolean} options.isDealing - Whether cards are being dealt
+ * @param {boolean} options.handAnimating - Whether hand is animating
+ * @param {boolean} options.forceHandAnimating - Whether hand animation is forced
+ * @returns {Object} Style object for the card
+ */
+export const getHandCardStyles = ({
+  index,
+  totalCards,
+  isDragged,
+  isAnimating,
+  isDealing,
+  handAnimating,
+  forceHandAnimating,
+}) => {
+  const styles = {
+    opacity: isDragged ? 0.6 : 1,
+  }
+
+  // Only add transition if we're animating
+  if (
+    isAnimating ||
+    handAnimating ||
+    isDragged ||
+    forceHandAnimating ||
+    isDealing
+  ) {
+    styles.transition = 'transform 300ms'
+  }
+
+  return styles
+}
+
+/**
+ * Gets the complete className string for a card in the hand
+ * @param {Object} options - Class configuration options
+ * @param {boolean} options.isInWord - Whether card is in word area
+ * @param {boolean} options.isDragged - Whether card is being dragged
+ * @param {boolean} options.isAnimating - Whether card is animating
+ * @param {string} options.cardAnimationState - Current animation state
+ * @param {boolean} options.handAnimating - Whether hand is animating
+ * @param {boolean} options.forceHandAnimating - Whether hand animation is forced
+ * @param {boolean} options.isDealing - Whether cards are being dealt
+ * @returns {string} Combined className string
+ */
+export const getHandCardClassNames = ({
+  isInWord,
+  isDragged,
+  isAnimating,
+  cardAnimationState,
+  handAnimating,
+  forceHandAnimating,
+  isDealing,
+}) => {
+  const classes = ['absolute', '[perspective:1000px]', 'left-[50%]', 'top-0']
+
+  // Animation classes
+  if (
+    cardAnimationState === 'ENTERING_WORD' ||
+    cardAnimationState === 'EXITING_WORD' ||
+    handAnimating ||
+    isDragged ||
+    forceHandAnimating ||
+    isDealing
+  ) {
+    classes.push('transition-transform', 'duration-300')
+  }
+
+  // Interaction classes
+  if (!isInWord) {
+    classes.push('cursor-move')
+  }
+
+  // Z-index
+  if (isDragged) {
+    classes.push('z-50')
+  } else {
+    classes.push('z-0')
+  }
+
+  return classes.join(' ')
+}
+
 export const dealCards = (deck, count) => {
   if (count > deck.length) {
     throw new Error('Not enough cards in deck')

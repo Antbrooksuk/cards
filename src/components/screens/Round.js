@@ -168,48 +168,46 @@ const Round = ({ className = '' }) => {
   return (
     <>
       <DebugPanel onWordSubmit={handleWordSubmit} />
-      <>
-        <div className='game-container flex flex-col gap-4'>
-          <Header
-            roundNumber={roundNumber}
-            roundScore={roundScore}
-            targetScore={targetScore}
-            totalScore={score}
-          />
-          <BuffBar />
-          <HandBuilder
-            isAnimating={isAnimating}
-            isValidating={isValidating}
-            animatingIndices={animatingIndices}
-            forceHandAnimating={keyboardAnimating}
-            onAnimationComplete={() => {
-              setAnimatingIndices([])
-              // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
-            }}
-          />
-          <ActionBar
-            gameStatus={gameStatus}
-            isAnimating={isAnimating || animatingCards.size > 0}
-            isValidating={isValidating}
-            selectedCards={selectedCards}
-            discardsUsed={discardsUsed}
-            playsUsed={playsUsed}
-            canReshuffle={canReshuffle}
-            debugMode={debugMode}
-            onPlayWord={handleWordSubmit}
-            onShuffleHand={reshuffleHand}
-            onReshuffleDeck={reshuffleDeck}
-            onDiscardCards={discardCards}
-            onShowRoundEnd={showRoundEnd}
-          />
-          <WordList
-            allWords={wordHistory.all
-              .filter(word => word.round === roundNumber)
-              .sort((a, b) => a.timestamp - b.timestamp)}
-          />
-        </div>
-        {debugMode && <DeckDisplay />}
-      </>
+      <div className='game-container flex flex-col gap-4'>
+        <Header
+          roundNumber={roundNumber}
+          roundScore={roundScore}
+          targetScore={targetScore}
+          totalScore={score}
+        />
+        <BuffBar />
+        <HandBuilder
+          isAnimating={isAnimating}
+          isValidating={isValidating}
+          animatingIndices={animatingIndices}
+          forceHandAnimating={keyboardAnimating}
+          onAnimationComplete={() => {
+            setAnimatingIndices([])
+            // Removed setIsAnimating(false) from here since it's managed in handleWordSubmit
+          }}
+        />
+        <ActionBar
+          gameStatus={gameStatus}
+          isAnimating={isAnimating || animatingCards.size > 0}
+          isValidating={isValidating}
+          selectedCards={selectedCards}
+          discardsUsed={discardsUsed}
+          playsUsed={playsUsed}
+          canReshuffle={canReshuffle}
+          debugMode={debugMode}
+          onPlayWord={handleWordSubmit}
+          onShuffleHand={reshuffleHand}
+          onReshuffleDeck={reshuffleDeck}
+          onDiscardCards={discardCards}
+          onShowRoundEnd={showRoundEnd}
+        />
+        <WordList
+          allWords={wordHistory.all
+            .filter(word => word.round === roundNumber)
+            .sort((a, b) => a.timestamp - b.timestamp)}
+        />
+      </div>
+      {debugMode && <DeckDisplay />}
     </>
   )
 }

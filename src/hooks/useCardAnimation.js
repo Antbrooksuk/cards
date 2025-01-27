@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { ANIMATION_TIMING } from '../constants/cardConstants'
+import { ANIMATION_TIMING, CARD_ANIMATION } from '../constants/cardConstants'
 
 const useCardAnimation = (cards, clearNewFlags) => {
   const [animatingCards, setAnimatingCards] = useState(new Set())
@@ -9,7 +9,11 @@ const useCardAnimation = (cards, clearNewFlags) => {
   const getAnimationDuration = cardIndex => {
     if (!animationDurations.current.has(cardIndex)) {
       // Generate and store a persistent random duration between 2-4 seconds
-      animationDurations.current.set(cardIndex, Math.random() * 2000 + 2000)
+      animationDurations.current.set(
+        cardIndex,
+        Math.random() * CARD_ANIMATION.ANIMATION_DURATION +
+          CARD_ANIMATION.ANIMATION_DURATION,
+      )
     }
     return animationDurations.current.get(cardIndex)
   }
