@@ -1,11 +1,6 @@
 import React, { useEffect, useState, memo } from 'react'
 
-const AnimatedScoreDisplay = ({
-  score,
-  targetScore,
-  label = 'Score',
-  className = '',
-}) => {
+const AnimatedScoreDisplay = ({ score, targetScore, label = 'Score' }) => {
   const currentScore =
     Number(typeof score === 'object' ? score.score : score) || 0
   const [prevScore, setPrevScore] = useState(currentScore)
@@ -31,9 +26,9 @@ const AnimatedScoreDisplay = ({
   }, [currentScore, prevScore])
 
   return (
-    <div className={`text-center ${className}`}>
+    <div className={`text-left flex-1`}>
       <div className='text-lg font-semibold text-gray-600'>{label}</div>
-      <div className='text-3xl font-bold flex items-center justify-center'>
+      <div className='text-3xl font-bold flex'>
         <div
           className={`animated-score text-blue-600 ${
             shouldAnimate ? 'animate' : ''

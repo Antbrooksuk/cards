@@ -158,6 +158,8 @@ const Round = ({ className = '' }) => {
           roundScore={roundScore}
           targetScore={targetScore}
           totalScore={score}
+          discardsUsed={discardsUsed}
+          playsUsed={playsUsed}
         />
         <BuffBar />
         <HandBuilder

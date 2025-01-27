@@ -32,7 +32,7 @@
 
 .animated-score {
   counter-reset: num var(--current-num);
-  min-width: 2ch;
+  min-width: 1ch;
 }
 
 .animated-score.animate {
