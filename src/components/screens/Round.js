@@ -16,7 +16,6 @@ const Round = ({ className = '' }) => {
   const [animatingIndices, setAnimatingIndices] = useState([])
   const [keyboardAnimating, setKeyboardAnimating] = useState(false)
   const [lastKeyTime, setLastKeyTime] = useState(0)
-  const [isTouchActive, setIsTouchActive] = useState(false)
   const KEY_DEBOUNCE = 100 // milliseconds
 
   const {
@@ -46,20 +45,6 @@ const Round = ({ className = '' }) => {
 
   const animatingCards = useCardAnimation(playerHand, clearNewFlags)
 
-  // Listen for touch interaction state changes from HandBuilder
-  useEffect(() => {
-    const handleTouchStateChange = event => {
-      setIsTouchActive(event.detail.isActive)
-    }
-    window.addEventListener('touchInteractionChange', handleTouchStateChange)
-    return () => {
-      window.removeEventListener(
-        'touchInteractionChange',
-        handleTouchStateChange,
-      )
-    }
-  }, [])
-
   // Reset keyboard animation state when hand changes
   useEffect(() => {
     setKeyboardAnimating(false)
@@ -75,8 +60,7 @@ const Round = ({ className = '' }) => {
         isAnimating ||
         debugMode ||
         hasAnimatingCards ||
-        now - lastKeyTime < KEY_DEBOUNCE ||
-        isTouchActive
+        now - lastKeyTime < KEY_DEBOUNCE
       )
         return
 

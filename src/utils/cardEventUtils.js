@@ -16,7 +16,7 @@ export const handleCardClick = (letter, index, options) => {
     addLetter,
   } = options
 
-  console.log('handleCardClick:', { letter, index })
+  //   console.log('handleCardClick:', { letter, index })
   if (
     canSelectCard(
       index,
@@ -65,7 +65,6 @@ export const handleTouchStart = (e, card, index, options) => {
     setDragStartX,
     setDragStartY,
     setTouchMoved,
-    setIsTouch,
     setDragStartIndex,
   } = options
 
@@ -79,7 +78,6 @@ export const handleTouchStart = (e, card, index, options) => {
   setDragStartX(touch.clientX)
   setDragStartY(touch.clientY)
   setTouchMoved(false)
-  setIsTouch(true)
 
   // Only set up drag-related state if this is a draggable card
   if (!isInWord && !isValidating) {
@@ -155,7 +153,6 @@ export const handleTouchEnd = (e, card, index, options) => {
     setDraggedCard,
     setDragStartIndex,
     setDropPreviewIndex,
-    setIsTouch,
     reorderHand,
   } = options
 
@@ -185,7 +182,6 @@ export const handleTouchEnd = (e, card, index, options) => {
   setDraggedCard(null)
   setDragStartIndex(null)
   setDropPreviewIndex(null)
-  setIsTouch(false)
 }
 
 export const handleDragStart = (e, index, options) => {

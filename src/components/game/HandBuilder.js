@@ -3,16 +3,10 @@ import { useGame } from '../../context/GameContext'
 import Card from '../common/Card'
 import useCardAnimation from '../../hooks/useCardAnimation'
 import { HAND_STYLES } from '../../utils/handUtils'
-import {
-  getLetterType,
-  getHandCardStyles,
-  getHandCardClassNames,
-} from '../../utils/cardUtils'
+import { getHandCardStyles, getHandCardClassNames } from '../../utils/cardUtils'
 import { GAME_STATUS } from '../../constants/gameConstants'
 import {
   ANIMATION_TIMING,
-  CARD_ANIMATION,
-  ANIMATION_CONSTANTS,
   ANIMATION_STATE,
 } from '../../constants/cardConstants'
 import {
@@ -34,7 +28,6 @@ import {
   handleCardExitAnimation,
   getHandCardPosition,
   getWordCardPosition,
-  getResponsiveValues,
 } from '../../utils/animationUtils'
 import { handleCongratsAnimation } from '../../utils/congratsAnimationUtils'
 
@@ -71,9 +64,6 @@ const HandBuilder = ({
   const [dropPreviewIndex, setDropPreviewIndex] = useState(null)
   const [touchStartTime, setTouchStartTime] = useState(null)
   const [touchMoved, setTouchMoved] = useState(false)
-  const [isTouch, setIsTouch] = useState(false)
-  const TOUCH_MOVE_THRESHOLD = 10 // pixels
-  const TOUCH_TIME_THRESHOLD = 200 // milliseconds
 
   const { animatingCards, getAnimationDuration, isDealing } = useCardAnimation(
     playerHand,
@@ -270,12 +260,12 @@ const HandBuilder = ({
                   if (e.detail === 0 || e.pointerType === 'touch') {
                     return
                   }
-                  console.log('onClick:', {
-                    letter: card.letter,
-                    index,
-                    source: 'mouse',
-                    timestamp: Date.now(),
-                  })
+                  // console.log('onClick:', {
+                  //   letter: card.letter,
+                  //   index,
+                  //   source: 'mouse',
+                  //   timestamp: Date.now(),
+                  // })
                   isInWord
                     ? handleWordCardClick(wordIndex, {
                         isValidating,
@@ -303,7 +293,6 @@ const HandBuilder = ({
                     setDragStartX,
                     setDragStartY,
                     setTouchMoved,
-                    setIsTouch,
                     setDragStartIndex,
                   })
                 }
@@ -337,7 +326,6 @@ const HandBuilder = ({
                     setDraggedCard,
                     setDragStartIndex,
                     setDropPreviewIndex,
-                    setIsTouch,
                     reorderHand,
                   })
                 }

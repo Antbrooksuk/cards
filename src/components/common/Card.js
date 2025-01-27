@@ -59,21 +59,22 @@ const Card = ({
   }, [enable3D, dealComplete])
 
   const handleInteraction = e => {
-    // Prevent double-firing of events on touch devices
-    if (!onClick) return // Guard against undefined onClick
+    e.preventDefault() // Prevent default for all events
 
-    if (e.type === 'touchend') {
-      e.preventDefault()
-      onClick()
-    } else if (e.type === 'click' && !e.touches) {
-      // Only handle click events if they're not from touch
+    // Guard against undefined onClick
+    if (!onClick) return
+
+    // Only handle primary button clicks or touch events
+    if ((e.type === 'click' && e.button === 0) || e.type === 'touchend') {
       onClick()
     }
   }
+
   return (
     <div
       onClick={handleInteraction}
       onTouchEnd={handleInteraction}
+      onTouchStart={e => e.preventDefault()} // Prevent touch event from triggering click
       className={`p-1 ${getCardStyle(
         type,
       )} border border-gray-500 w-14 h-[4.5rem] rounded-lg shadow-[0px_2px_5px_1px_rgba(0,_0,_0,_0.2)] ${animationClass} ${className} ${

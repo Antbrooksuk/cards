@@ -346,42 +346,52 @@ const gameReducer = (state, action) => {
 
     case ACTION_TYPES.ADD_LETTER: {
       const { letter, cardIndex } = action.payload
-      console.log('ADD_LETTER:', { letter, cardIndex })
-      console.log('Current state:', {
-        text: state.wordHistory.current.text,
-        selectedIndices: state.wordHistory.current.selectedIndices,
-      })
 
-      if (!state.wordHistory.current.selectedIndices.includes(cardIndex)) {
-        const isLegendary = LEGENDARY_LETTERS.includes(letter)
-
-        // Prevent adding more letters after legendary
-        if (state.wordHistory.current.hasLegendaryLetter) {
-          console.log('Prevented adding letter after legendary')
-          return state
-        }
-
-        const updatedCurrent = {
-          text: state.wordHistory.current.text + letter,
-          selectedIndices: [
-            ...state.wordHistory.current.selectedIndices,
-            cardIndex,
-          ],
-          hasLegendaryLetter: isLegendary,
-        }
-
-        console.log('Updated state:', updatedCurrent)
-
-        return {
-          ...state,
-          wordHistory: {
-            ...state.wordHistory,
-            current: updatedCurrent,
-          },
-        }
+      // Early returns for invalid states
+      if (cardIndex < 0 || cardIndex >= state.playerHand.length) {
+        console.warn('Invalid card index:', cardIndex)
+        return state
       }
-      console.log('Card already selected')
-      return state
+
+      if (state.wordHistory.current.selectedIndices.includes(cardIndex)) {
+        console.log('Card already selected')
+        return state
+      }
+
+      if (state.wordHistory.current.hasLegendaryLetter) {
+        console.log('Prevented adding letter after legendary')
+        return state
+      }
+
+      // Check if the letter matches the card at the given index (case-insensitive)
+      if (
+        state.playerHand[cardIndex].letter.toLowerCase() !==
+        letter.toLowerCase()
+      ) {
+        console.warn('Letter mismatch:', {
+          provided: letter,
+          actual: state.playerHand[cardIndex].letter,
+        })
+        return state
+      }
+
+      const isLegendary = LEGENDARY_LETTERS.includes(letter)
+      const updatedCurrent = {
+        text: state.wordHistory.current.text + letter,
+        selectedIndices: [
+          ...state.wordHistory.current.selectedIndices,
+          cardIndex,
+        ],
+        hasLegendaryLetter: isLegendary,
+      }
+
+      return {
+        ...state,
+        wordHistory: {
+          ...state.wordHistory,
+          current: updatedCurrent,
+        },
+      }
     }
 
     case ACTION_TYPES.REMOVE_LETTER:
