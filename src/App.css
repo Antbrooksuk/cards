@@ -23,3 +23,32 @@
       rotateY(-5deg) rotateZ(4deg);
   }
 }
+
+@property --num {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: false;
+}
+
+.animated-score {
+  counter-reset: num var(--current-num);
+  min-width: 2ch;
+}
+
+.animated-score.animate {
+  animation: counter 1s forwards ease-out;
+  counter-reset: num var(--num);
+}
+
+.animated-score::after {
+  content: counter(num);
+}
+
+@keyframes counter {
+  from {
+    --num: var(--prev-num);
+  }
+  to {
+    --num: var(--current-num);
+  }
+}

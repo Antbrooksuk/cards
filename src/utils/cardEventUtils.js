@@ -68,11 +68,11 @@ export const handleTouchStart = (e, card, index, options) => {
     setDragStartIndex,
   } = options
 
-  console.log('onTouchStart:', {
-    letter: card.letter,
-    index,
-    timestamp: Date.now(),
-  })
+  // console.log('onTouchStart:', {
+  //   letter: card.letter,
+  //   index,
+  //   timestamp: Date.now(),
+  // })
   const touch = e.touches[0]
   setTouchStartTime(Date.now())
   setDragStartX(touch.clientX)
@@ -156,12 +156,12 @@ export const handleTouchEnd = (e, card, index, options) => {
     reorderHand,
   } = options
 
-  console.log('onTouchEnd:', {
-    letter: card.letter,
-    index,
-    touchMoved,
-    timestamp: Date.now(),
-  })
+  // console.log('onTouchEnd:', {
+  //   letter: card.letter,
+  //   index,
+  //   touchMoved,
+  //   timestamp: Date.now(),
+  // })
   const touchDuration = Date.now() - touchStartTime
 
   if (!touchMoved && touchDuration < TOUCH_TIME_THRESHOLD) {

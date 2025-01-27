@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from '../common/Button'
 import ScoreDisplay from '../common/ScoreDisplay'
+import AnimatedScoreDisplay from '../common/AnimatedScoreDisplay'
 
 const RoundEnd = ({
   words,
@@ -19,7 +20,7 @@ const RoundEnd = ({
 
       <div className='bg-white rounded-lg shadow-md p-6 w-full max-w-2xl'>
         <div className='flex justify-around mb-8'>
-          <ScoreDisplay label='Round Score' score={roundScore} />
+          <AnimatedScoreDisplay label='Round Score' score={roundScore} />
           <ScoreDisplay
             label='Total Score'
             score={totalScore}

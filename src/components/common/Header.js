@@ -1,6 +1,7 @@
 import React from 'react'
 import ScoreDisplay from './ScoreDisplay'
 import { ANIMATION_CONSTANTS } from '../../constants/cardConstants'
+import AnimatedScoreDisplay from './AnimatedScoreDisplay'
 
 const ROUND_SCORE_STYLES = {
   CONTAINER: 'text-center flex-1',
@@ -10,7 +11,7 @@ const ROUND_SCORE_STYLES = {
   DIVIDER: 'text-gray-400',
   TARGET_SCORE: 'text-green-600',
   PROGRESS_BAR: 'mt-2 h-2 bg-gray-200 rounded-full overflow-hidden',
-  PROGRESS_FILL: `h-full bg-blue-600 transition-all ${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,
+  PROGRESS_FILL: `h-full bg-blue-600 transition-all duration-1000 ease-in-out`,
 }
 
 const Header = ({ roundNumber, roundScore, targetScore, totalScore }) => {
@@ -22,20 +23,12 @@ const Header = ({ roundNumber, roundScore, targetScore, totalScore }) => {
   return (
     <div id='header' className='flex pt-4 '>
       <div className={ROUND_SCORE_STYLES.CONTAINER}>
-        <div className={ROUND_SCORE_STYLES.LABEL}>
-          Round {roundNumber} Score
-        </div>
-        <div className={ROUND_SCORE_STYLES.SCORE_CONTAINER}>
-          <span className={ROUND_SCORE_STYLES.CURRENT_SCORE}>{score}</span>
-          {targetScore && (
-            <>
-              <span className={ROUND_SCORE_STYLES.DIVIDER}>/</span>
-              <span className={ROUND_SCORE_STYLES.TARGET_SCORE}>
-                {targetScore}
-              </span>
-            </>
-          )}
-        </div>
+        <AnimatedScoreDisplay
+          label={`Round ${roundNumber} Score`}
+          score={score}
+          targetScore={targetScore}
+        />
+
         {targetScore && (
           <div className={ROUND_SCORE_STYLES.PROGRESS_BAR}>
             <div
