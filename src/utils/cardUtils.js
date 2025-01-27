@@ -163,18 +163,16 @@ export const hasVowels = hand => {
  * @param {boolean} options.isAnimating - Whether card is animating
  * @param {boolean} options.isDealing - Whether cards are being dealt
  * @param {boolean} options.handAnimating - Whether hand is animating
- * @param {boolean} options.forceHandAnimating - Whether hand animation is forced
  * @returns {Object} Style object for the card
  */
 export const getHandCardStyles = ({
   isAnimating,
   isDealing,
   handAnimating,
-  forceHandAnimating,
 }) => {
   const styles = {}
   // Only add transition if we're animating
-  if (isAnimating || handAnimating || forceHandAnimating || isDealing) {
+  if (isAnimating || handAnimating || isDealing) {
     styles.transition = 'transform 300ms'
   }
 
@@ -188,7 +186,6 @@ export const getHandCardStyles = ({
  * @param {boolean} options.isAnimating - Whether card is animating
  * @param {string} options.cardAnimationState - Current animation state
  * @param {boolean} options.handAnimating - Whether hand is animating
- * @param {boolean} options.forceHandAnimating - Whether hand animation is forced
  * @param {boolean} options.isDealing - Whether cards are being dealt
  * @returns {string} Combined className string
  */
@@ -196,7 +193,6 @@ export const getHandCardClassNames = ({
   isInWord,
   cardAnimationState,
   handAnimating,
-  forceHandAnimating,
   isDealing,
   gameStatus,
 }) => {
@@ -207,7 +203,6 @@ export const getHandCardClassNames = ({
     cardAnimationState === 'ENTERING_WORD' ||
     cardAnimationState === 'EXITING_WORD' ||
     handAnimating ||
-    forceHandAnimating ||
     isDealing
   ) {
     classes.push('transition-transform', 'duration-300')

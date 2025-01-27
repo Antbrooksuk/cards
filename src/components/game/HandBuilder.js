@@ -29,7 +29,6 @@ const HandBuilder = ({
   isValidating,
   onAnimationComplete,
   animatingIndices = [],
-  forceHandAnimating = false,
   isAnimating = false,
 }) => {
   const {
@@ -155,6 +154,13 @@ const HandBuilder = ({
             let handIndex = nonSelectedCards.indexOf(index)
             const wordIndex = selectedCards.indexOf(index)
 
+            console.log({
+              isAnimating: animatingCards.has(index),
+              cardAnimationState: cardAnimationStates[index],
+              handAnimating,
+              isDealing,
+            })
+
             return (
               <div
                 key={card.id}
@@ -163,7 +169,6 @@ const HandBuilder = ({
                   isAnimating: animatingCards.has(index),
                   cardAnimationState: cardAnimationStates[index],
                   handAnimating,
-                  forceHandAnimating,
                   isDealing,
                   gameStatus,
                 })}
@@ -177,7 +182,6 @@ const HandBuilder = ({
                     isAnimating: animatingCards.has(index),
                     isDealing,
                     handAnimating,
-                    forceHandAnimating,
                   }),
                 }}
                 onClick={e => {
