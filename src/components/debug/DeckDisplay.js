@@ -10,7 +10,7 @@ const DeckDisplay = () => {
 
   return (
     <div className='deck-status'>
-      <div className='max-w-4xl mb-8 mx-auto'>
+      <div className='max-w-4xl mx-auto'>
         <h3 className='text-center text-lg font-semibold mb-2'>
           Deck Status ({allCards.length})
         </h3>

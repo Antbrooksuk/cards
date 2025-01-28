@@ -79,7 +79,7 @@ body {
     @apply w-full p-2 border-2 rounded-lg focus:outline-none focus:border-blue-500;
   }
   .deck-status {
-    @apply p-4 bg-gray-100 -mt-8 relative rounded-t-xl;
+    @apply p-4 bg-gray-100 border;
   }
   .played-words {
     @apply pl-[50px] mx-4 mb-4 rounded-md border  overflow-hidden relative;
