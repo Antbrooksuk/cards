@@ -18,7 +18,7 @@ const ROUND_SCORE_STYLES = {
   CURRENT_SCORE: 'text-blue-600',
   DIVIDER: 'text-gray-400',
   TARGET_SCORE: 'text-green-600',
-  PROGRESS_BAR: 'mt-2 h-2 bg-gray-200 rounded-full overflow-hidden',
+  PROGRESS_BAR: 'mt-4 h-2 bg-gray-200 rounded-full overflow-hidden',
   PROGRESS_FILL: `h-full bg-blue-600 transition-all duration-1000 ease-in-out`,
 }
 

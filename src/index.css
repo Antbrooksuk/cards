@@ -84,4 +84,23 @@ body {
   .deck-status {
     @apply p-4 bg-gray-100 -mt-8 relative rounded-t-xl;
   }
+  .notepad {
+    @apply border p-4 flex w-full overflow-hidden relative;
+  }
+}
+
+.notepad {
+  background: linear-gradient(to bottom, white 29px, #00b0d7 1px);
+  background-size: 100% 30px;
+}
+.notepad:before {
+  content: '';
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 40px;
+  height: 100%;
+  width: 1px;
+  background: red;
 }

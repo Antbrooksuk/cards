@@ -8,7 +8,7 @@ const PlayedWord = ({ word, type, isInvalid = false, className = '' }) => {
   const wordScore = wordScoreResult?.score
 
   return (
-    <div className={`flex w-full border rounded-lg p-4 ${className}`}>
+    <div className={`notepad ${className}`}>
       {isInvalid ? (
         <div className='flex w-full flex-col gap-4 x items-center'>
           <WordScoreBreakdown word={word} />
