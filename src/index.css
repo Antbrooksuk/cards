@@ -82,10 +82,16 @@ body {
     @apply p-4 bg-gray-100 -mt-8 relative rounded-t-xl;
   }
   .played-words {
-    @apply pl-[50px] rounded-md border w-full overflow-hidden relative;
+    @apply pl-[50px] mx-4 mb-4 rounded-md border  overflow-hidden relative;
   }
   .invalid {
     @apply italic text-red-500;
+  }
+  .total {
+    @apply italic text-green-800;
+  }
+  .breakdown {
+    @apply pl-[20px] italic;
   }
 }
 
@@ -114,7 +120,4 @@ body {
 .played-words ul li span {
   height: 30px;
   overflow: hidden;
-}
-.played-words ul li .breakdown {
-  padding-left: 20px;
 }

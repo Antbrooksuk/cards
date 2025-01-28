@@ -23,7 +23,7 @@ const PlayedWord = ({ word, type, isInvalid = false }) => {
             type={type}
             wordScoreResult={wordScoreResult}
           />
-          <span className='breakdown'>TOTAL: {wordScore}</span>
+          <span className='breakdown total'>total --> {wordScore}</span>
         </li>
       )}
     </>

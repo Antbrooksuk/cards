@@ -18,11 +18,10 @@ const WordTypeBonus = ({ word, type, wordScoreResult }) => {
   return (
     <div className='flex flex-col'>
       <span>'{word}'</span>
-      <span className='breakdown'>(WORD SCORE: {totalLetterScore})</span>
-      <span className='breakdown'>(LETTERS × {word.length})</span>
+      <span className='breakdown'>word score: {totalLetterScore}</span>
+      <span className='breakdown'>letters × {word.length}</span>
       <span className='breakdown'>
-        ({type.toUpperCase()} ×{' '}
-        {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']})
+        {type} × {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']}
       </span>
       {specialBonus && (
         <>
