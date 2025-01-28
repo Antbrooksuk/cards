@@ -11,7 +11,7 @@ const ScoreAnimation = ({ score, onComplete }) => {
 
   return (
     <div
-      className='absolute -top-8 text-2xl font-bold text-green-600 animate-float'
+      className='absolute text-center left-[50%] -translate-x-1/2 -top-8 text-2xl font-bold text-white animate-float'
       style={{
         animation: 'float 1s ease-out forwards',
       }}

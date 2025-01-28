@@ -63,7 +63,6 @@ const handleWordValidation = (state, word, isValid, validation) => {
     {
       word,
       type: isValid ? validation.wordType : null,
-      timestamp: Date.now(),
       round: state.currentRound,
     },
   ]

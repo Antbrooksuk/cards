@@ -3,7 +3,7 @@ import { useGame } from '../../context/GameContext'
 import Card from '../common/Card'
 import useCardAnimation from '../../hooks/useCardAnimation'
 import { HAND_STYLES } from '../../utils/handUtils'
-import { getHandCardStyles, getHandCardClassNames } from '../../utils/cardUtils'
+import { getHandCardClassNames } from '../../utils/cardUtils'
 import { GAME_STATUS } from '../../constants/gameConstants'
 import {
   ANIMATION_TIMING,
@@ -58,6 +58,38 @@ const HandBuilder = ({
     clearNewFlags,
   )
   const hasAnimatingCards = animatingCards.size > 0
+
+  const handleCardInteraction = (e, card, index, isInWord, wordIndex) => {
+    if (
+      (e.type === 'click' && e.button !== 0) ||
+      isValidating ||
+      isAnimating ||
+      debugMode
+    )
+      return
+
+    // Prevent event from reaching the Card component
+    e.stopPropagation()
+
+    isInWord
+      ? handleWordCardClick(wordIndex, {
+          isValidating,
+          selectedCards,
+          setCardAnimationStates,
+          removeLetter,
+          gameStatus,
+        })
+      : handleCardClick(card.letter, index, {
+          selectedCards,
+          gameStatus,
+          isValidating,
+          hasAnimatingCards,
+          setCardAnimationStates,
+          setHandAnimating,
+          addLetter,
+          isAnimating: animatingCards.has(index) || isAnimating,
+        })
+  }
 
   // Handle round completion animations
   useEffect(() => {
@@ -155,7 +187,6 @@ const HandBuilder = ({
               .filter(i => !selectedCards.includes(i))
             let handIndex = nonSelectedCards.indexOf(index)
             const wordIndex = selectedCards.indexOf(index)
-
             return (
               <div
                 key={card.id}
@@ -171,39 +202,6 @@ const HandBuilder = ({
                   ...(isInWord
                     ? getWordCardPosition(wordIndex, selectedCards.length)
                     : getHandCardPosition(handIndex, nonSelectedCards.length)),
-                  ...getHandCardStyles({
-                    index,
-                    totalCards: nonSelectedCards.length,
-                    isAnimating: animatingCards.has(index),
-                    isDealing,
-                    handAnimating,
-                  }),
-                }}
-                onClick={e => {
-                  // Only handle primary button clicks
-                  if (e.button !== 0 || debugMode) return
-
-                  // Prevent event from reaching the Card component
-                  e.stopPropagation()
-
-                  isInWord
-                    ? handleWordCardClick(wordIndex, {
-                        isValidating,
-                        selectedCards,
-                        setCardAnimationStates,
-                        removeLetter,
-                        gameStatus,
-                      })
-                    : handleCardClick(card.letter, index, {
-                        selectedCards,
-                        gameStatus,
-                        isValidating,
-                        hasAnimatingCards,
-                        setCardAnimationStates,
-                        setHandAnimating,
-                        addLetter,
-                        isAnimating: animatingCards.has(index) || isAnimating,
-                      })
                 }}
               >
                 {isInWord && animatingIndices.includes(wordIndex) && (
@@ -227,6 +225,9 @@ const HandBuilder = ({
                   className={isValidating ? HAND_STYLES.DISABLED : ''}
                   index={isInWord ? wordIndex : undefined}
                   getAnimationDuration={getAnimationDuration}
+                  onClick={e =>
+                    handleCardInteraction(e, card, index, isInWord, wordIndex)
+                  }
                 />
               </div>
             )

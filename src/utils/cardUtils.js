@@ -155,24 +155,6 @@ export const hasVowels = hand => {
  * @param {number} count - Number of cards to deal
  * @returns {Object} Object containing dealt cards and remaining deck
  */
-/**
- * Gets the complete style object for a card in the hand
- * @param {Object} options - Style configuration options
- * @param {number} options.index - Card index in hand
- * @param {number} options.totalCards - Total number of cards in hand
- * @param {boolean} options.isAnimating - Whether card is animating
- * @param {boolean} options.isDealing - Whether cards are being dealt
- * @param {boolean} options.handAnimating - Whether hand is animating
- * @returns {Object} Style object for the card
- */
-export const getHandCardStyles = ({
-  isAnimating,
-  isDealing,
-  handAnimating,
-}) => {
-  const styles = {}
-  return styles
-}
 
 /**
  * Gets the complete className string for a card in the hand

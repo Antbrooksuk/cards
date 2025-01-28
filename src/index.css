@@ -25,14 +25,14 @@
 @keyframes float {
   0% {
     opacity: 0;
-    transform: translateY(0);
+    transform: translateY(0) translateX(-50%);
   }
   20% {
     opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-20px) translateX(-50%);
   }
 }
 
@@ -44,11 +44,15 @@ body {
   margin: 0px;
   overflow-x: hidden;
 }
+@theme {
+  --outline-color: black;
+  --outline-width: 2px;
+}
 
 @layer components {
   html,
   body {
-    @apply bg-gray-100;
+    @apply bg-gray-500;
   }
   .btn {
     @apply block w-full px-4 py-2 rounded-lg font-semibold transition-colors;
@@ -57,7 +61,7 @@ body {
     @apply bg-blue-500 text-white;
   }
   .game-container {
-    @apply max-w-4xl mx-auto;
+    @apply bg-white max-w-4xl mx-auto mb-8;
   }
   .hand-builder {
     @apply bg-gradient-to-t from-sky-300 to-blue-500;

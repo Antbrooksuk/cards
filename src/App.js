@@ -60,9 +60,7 @@ const GameScreen = () => {
 const App = () => {
   return (
     <GameProvider>
-      <div className='bg-white'>
-        <GameScreen />
-      </div>
+      <GameScreen />
     </GameProvider>
   )
 }

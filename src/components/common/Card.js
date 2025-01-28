@@ -18,6 +18,7 @@ const Card = ({
   index = 0,
   enable3D = CARD_ANIMATION.ENABLE_3D,
   getAnimationDuration,
+  onClick,
 }) => {
   const getAnimationClasses = () => {
     if (isExiting) return CARD_CLASSES.animation.exit
@@ -46,6 +47,12 @@ const Card = ({
       ${getCardStyle(type)}  ${animationClass} ${className} ${
         enable3D && dealComplete ? 'card-3d' : ''
       }`}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.(e)
+        }
+      }}
       style={{
         ...style,
         '--animation-duration':

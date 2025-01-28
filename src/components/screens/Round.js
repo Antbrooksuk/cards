@@ -10,13 +10,11 @@ import DeckDisplay from '../debug/DeckDisplay'
 import ActionBar from '../game/ActionBar'
 import useCardAnimation from '../../hooks/useCardAnimation'
 
-const Round = ({ className = '' }) => {
+const Round = () => {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [animatingIndices, setAnimatingIndices] = useState([])
   const [handAnimating, setHandAnimating] = useState(false)
-  const [lastKeyTime, setLastKeyTime] = useState(0)
-  const KEY_DEBOUNCE = 100 // milliseconds
 
   const {
     wordHistory,
@@ -52,18 +50,14 @@ const Round = ({ className = '' }) => {
   useEffect(() => {
     const handleKeyDown = async e => {
       const hasAnimatingCards = animatingCards.size > 0
-      const now = Date.now()
       if (
         gameStatus !== 'playing' ||
         isValidating ||
         isAnimating ||
         debugMode ||
-        hasAnimatingCards ||
-        now - lastKeyTime < KEY_DEBOUNCE
+        hasAnimatingCards
       )
         return
-
-      setLastKeyTime(now)
 
       if (e.key === 'Enter' && currentWord) {
         await handleWordSubmit()
