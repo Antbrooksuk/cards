@@ -185,16 +185,6 @@ export const getHandCardClassNames = ({
     classes.push('transition-transform', 'duration-300')
   }
 
-  // Interaction classes
-  if (!isInWord && gameStatus === 'playing') {
-    classes.push('cursor-move')
-  }
-
-  // Disable interactions when not in playing state
-  if (gameStatus !== 'playing') {
-    classes.push('pointer-events-none', 'select-none')
-  }
-
   return classes.join(' ')
 }
 

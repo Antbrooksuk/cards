@@ -52,7 +52,7 @@ body {
 @layer components {
   html,
   body {
-    @apply bg-gray-500;
+    @apply bg-white;
   }
   .btn {
     @apply block w-full px-4 py-2 rounded-lg font-semibold transition-colors;
@@ -61,12 +61,27 @@ body {
     @apply bg-blue-500 text-white;
   }
   .game-container {
-    @apply bg-white max-w-4xl mx-auto mb-8;
+    @apply bg-white max-w-xl mx-auto;
+  }
+  .buff-bar {
+    @apply flex gap-4 p-4 border border-[3px] border-[rgba(0,0,0,0.25)] border-b-0 justify-center items-center bg-blue-500 rounded-t-xl;
+  }
+  .action-bar {
+    @apply pt-4 bg-sky-300 border border-[3px] border-[rgba(0,0,0,0.25)] border-t-0  rounded-b-xl;
+  }
+  .action-bar-inner {
+    @apply flex p-4  rounded-b-xl flex-row gap-2 justify-center bg-white/30 border-t border-[rgba(0,0,0,0.1)];
   }
   .hand-builder {
-    @apply bg-gradient-to-t from-sky-300 to-blue-500;
+    @apply bg-gradient-to-t from-sky-300 to-blue-500 border border-[3px] border-[rgba(0,0,0,0.25)] border-t-0 border-b-0;
   }
   .word-input {
     @apply w-full p-2 border-2 rounded-lg focus:outline-none focus:border-blue-500;
+  }
+  .played-words {
+    @apply bg-white p-4 rounded-t-xl;
+  }
+  .deck-status {
+    @apply p-4 bg-gray-100 -mt-8 relative rounded-t-xl;
   }
 }

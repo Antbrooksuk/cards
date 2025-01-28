@@ -4,7 +4,6 @@ import { LAYOUT_STYLES } from '../../constants/styleConstants'
 import { ANIMATION_CONSTANTS } from '../../constants/cardConstants'
 
 const WORD_LIST_STYLES = {
-  CONTAINER: `${LAYOUT_STYLES.GAP_4} bg-white p-4 -mt-8 -mb-4 relative rounded-lg z-10`,
   TITLE: `text-lg font-semibold ${LAYOUT_STYLES.FLEX_CENTER} gap-2 cursor-pointer select-none`,
   WORDS_CONTAINER: `py-4 ${LAYOUT_STYLES.FLEX_COL} ${LAYOUT_STYLES.GAP_4} ${LAYOUT_STYLES.FLEX_CENTER} overflow-hidden transition-all duration-${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,
   CHEVRON: `w-5 h-5 transition-transform duration-${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,
@@ -18,7 +17,7 @@ const WordList = ({ allWords = [] }) => {
   }
 
   return (
-    <div id='playedWords' className={WORD_LIST_STYLES.CONTAINER}>
+    <div className='played-words'>
       <h3 className={WORD_LIST_STYLES.TITLE} onClick={toggleExpand}>
         {/* <svg
           className={`${WORD_LIST_STYLES.CHEVRON} ${

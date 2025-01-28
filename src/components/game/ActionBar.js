@@ -41,8 +41,8 @@ const ActionBar = ({
   }
 
   return (
-    <div id='actionBar' className=' p-4 bg-sky-300 pb-8 mb-4'>
-      <div className='flex rounded-lg p-4 flex-row gap-2 justify-center bg-white/20'>
+    <div className='action-bar'>
+      <div className='action-bar-inner'>
         {canReshuffle ? (
           <>
             <Button

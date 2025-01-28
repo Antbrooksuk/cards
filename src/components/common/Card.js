@@ -53,6 +53,7 @@ const Card = ({
           onClick?.(e)
         }
       }}
+      onClick={onClick}
       style={{
         ...style,
         '--animation-duration':

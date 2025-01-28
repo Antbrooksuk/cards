@@ -9,7 +9,7 @@ const DeckDisplay = () => {
   const allCards = [...playerHand, ...deck]
 
   return (
-    <div id='deckStatus' className='p-4 border-t bg-gray-100'>
+    <div className='deck-status'>
       <div className='max-w-4xl mb-8 mx-auto'>
         <h3 className='text-center text-lg font-semibold mb-2'>
           Deck Status ({allCards.length})
