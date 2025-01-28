@@ -1,10 +1,9 @@
 import React from 'react'
-import AnimatedScoreDisplay from './AnimatedScoreDisplay'
+import AnimatedScoreDisplay from '../common/AnimatedScoreDisplay'
 import {
   MAX_DISCARDS_PER_ROUND,
   MAX_PLAYS_PER_ROUND,
 } from '../../constants/gameConstants'
-import Tooltip from './Tooltip'
 
 const ROUND_SCORE_STYLES = {
   CONTAINER: 'text-center flex-1 p-4',
@@ -12,7 +11,7 @@ const ROUND_SCORE_STYLES = {
   BOTTOM: '',
   LABEL: 'text-lg font-semibold text-gray-600',
   READOUT:
-    'border border-2 border-[rgba(0,0,0,0.25)] text-xl font-semibold leading-none text-white p-2 rounded-md',
+    'border border-2 border-[rgba(0,0,0,0.25)] text-md font-semibold leading-none w-8 text-white p-1 rounded-md',
   PLAYS: 'bg-blue-500',
   DISCARDS: 'bg-red-500',
   SCORE_CONTAINER: 'text-3xl font-bold flex items-center justify-center gap-2',
@@ -44,27 +43,24 @@ const Header = ({
             score={score}
             targetScore={targetScore}
           />
-
-          <Tooltip
-            content={`${MAX_PLAYS_PER_ROUND - playsUsed} play(s) remaining`}
-          >
-            <div
-              className={`${ROUND_SCORE_STYLES.READOUT} ${ROUND_SCORE_STYLES.PLAYS}`}
-            >
-              {MAX_PLAYS_PER_ROUND - playsUsed}
+          <div className='flex flex-col gap-2'>
+            <div className='flex flex-row justify-end items-center gap-2'>
+              Plays:{' '}
+              <div
+                className={`${ROUND_SCORE_STYLES.READOUT} ${ROUND_SCORE_STYLES.PLAYS}`}
+              >
+                {MAX_PLAYS_PER_ROUND - playsUsed}
+              </div>
             </div>
-          </Tooltip>
-          <Tooltip
-            content={`${
-              MAX_DISCARDS_PER_ROUND - discardsUsed
-            } discard(s) remaining`}
-          >
-            <div
-              className={`${ROUND_SCORE_STYLES.READOUT} ${ROUND_SCORE_STYLES.DISCARDS}`}
-            >
-              {MAX_DISCARDS_PER_ROUND - discardsUsed}
+            <div className='flex flex-row justify-end items-center gap-2'>
+              Discards:{' '}
+              <div
+                className={`${ROUND_SCORE_STYLES.READOUT} ${ROUND_SCORE_STYLES.DISCARDS}`}
+              >
+                {MAX_DISCARDS_PER_ROUND - discardsUsed}
+              </div>
             </div>
-          </Tooltip>
+          </div>
         </div>
         <div className={ROUND_SCORE_STYLES.BOTTOM}>
           {targetScore && (

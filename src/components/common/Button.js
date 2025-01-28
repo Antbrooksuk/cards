@@ -8,7 +8,7 @@ const Button = ({
   disabled = false,
 }) => {
   const baseClasses =
-    'btn border border-2 text-xl relative border-[rgba(0,0,0,0.25)] shadow-[0px_3px_4px_1px_rgba(0,_0,_0,_0.2)]'
+    'btn border border-2 text-xl whitespace-nowrap relative border-[rgba(0,0,0,0.25)] shadow-[0px_3px_4px_1px_rgba(0,_0,_0,_0.2)]'
   const variantClasses = {
     primary: 'btn-primary',
     secondary: 'bg-gray-500 text-white',
