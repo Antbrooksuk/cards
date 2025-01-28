@@ -4,6 +4,7 @@ import React, {
   useReducer,
   useCallback,
   useMemo,
+  useEffect,
 } from 'react'
 import {
   createDeck,
@@ -86,39 +87,75 @@ const canAddLetter = (state, letter) => {
 
 const GameContext = createContext()
 
-const getInitialState = () => ({
-  // Game configuration
-  minWordLength: WORD_LENGTH.MIN,
-  maxWordLength: WORD_LENGTH.MAX,
-  debugMode: false,
+const STORAGE_KEY = 'wordGameState'
 
-  // Game state
-  gameStatus: INITIAL_GAME_STATUS,
-  currentRound: 1,
-  score: 0,
-  roundScore: 0,
-  targetScore: INITIAL_TARGET_SCORE,
-  playsUsed: 0,
+const getStoredState = () => {
+  try {
+    const storedState = localStorage.getItem(STORAGE_KEY)
+    if (storedState) {
+      const state = JSON.parse(storedState)
+      // If we're in a playing state but have no cards, deal new ones
+      if (
+        state.gameStatus === GAME_STATUS.PLAYING &&
+        state.playerHand.length === 0
+      ) {
+        const { deck, playerHand, canReshuffle } = handleNewRound(createDeck())
+        return {
+          ...state,
+          deck,
+          playerHand,
+          canReshuffle,
+        }
+      }
+      return state
+    }
+  } catch (error) {
+    console.error('Failed to load stored game state:', error)
+  }
+  return null
+}
 
-  // Word tracking
-  wordHistory: {
-    valid: [], // Valid words for current round [{word: string, type: string}]
-    invalid: [], // Invalid words for current round
-    all: [], // All words across rounds
-    current: {
-      text: '',
-      selectedIndices: [],
-      hasLegendaryLetter: false,
+const getDefaultState = () => {
+  const { deck, playerHand, canReshuffle } = handleNewRound(createDeck())
+  return {
+    // Game configuration
+    minWordLength: WORD_LENGTH.MIN,
+    maxWordLength: WORD_LENGTH.MAX,
+    debugMode: false,
+
+    // Game state
+    gameStatus: INITIAL_GAME_STATUS,
+    currentRound: 1,
+    score: 0,
+    roundScore: 0,
+    targetScore: INITIAL_TARGET_SCORE,
+    playsUsed: 0,
+
+    // Word tracking
+    wordHistory: {
+      valid: [], // Valid words for current round [{word: string, type: string}]
+      invalid: [], // Invalid words for current round
+      all: [], // All words across rounds
+      current: {
+        text: '',
+        selectedIndices: [],
+        hasLegendaryLetter: false,
+      },
     },
-  },
 
-  // Card management
-  deck: [],
-  playerHand: [],
-  canReshuffle: false,
-  discardsUsed: 0,
-  legendaryLetterPlayed: null,
-})
+    // Card management
+    deck,
+    playerHand,
+    canReshuffle,
+    discardsUsed: 0,
+    legendaryLetterPlayed: null,
+  }
+}
+
+const getInitialState = () => {
+  const storedState = getStoredState()
+  return storedState || getDefaultState()
+}
 
 // Helper function to handle dealing new cards
 const handleCardDealing = (state, selectedIndices) => {
@@ -152,17 +189,15 @@ const handleCardDealing = (state, selectedIndices) => {
 const gameReducer = (state, action) => {
   switch (action.type) {
     case ACTION_TYPES.START_GAME:
-      const {
-        deck: startDeck,
-        playerHand: startHand,
-        canReshuffle: startReshuffle,
-      } = handleNewRound(createDeck())
+      // If there's a stored game in progress, keep using it
+      if (state.gameStatus === GAME_STATUS.PLAYING) {
+        return state
+      }
+
+      // Otherwise start a new game
       return {
-        ...getInitialState(),
+        ...getDefaultState(),
         gameStatus: GAME_STATUS.PLAYING,
-        deck: startDeck,
-        playerHand: startHand,
-        canReshuffle: startReshuffle,
       }
 
     case ACTION_TYPES.ADD_WORD:
@@ -329,7 +364,8 @@ const gameReducer = (state, action) => {
       }
 
     case ACTION_TYPES.PLAY_AGAIN:
-      return getInitialState()
+      localStorage.removeItem(STORAGE_KEY)
+      return getDefaultState()
 
     case ACTION_TYPES.TOGGLE_DEBUG:
       return {
@@ -520,11 +556,21 @@ const gameReducer = (state, action) => {
 
 export const GameProvider = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, getInitialState())
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    } catch (error) {
+      console.error('Failed to save game state:', error)
+    }
+  }, [state])
   const [error, setError] = React.useState(null)
 
-  // Auto-start game if initial status is 'playing'
+  // Auto-start game if no stored state exists
   React.useEffect(() => {
-    if (INITIAL_GAME_STATUS === GAME_STATUS.PLAYING) {
+    const storedState = getStoredState()
+    if (!storedState && INITIAL_GAME_STATUS === GAME_STATUS.PLAYING) {
       dispatch({ type: ACTION_TYPES.START_GAME })
     }
   }, [])

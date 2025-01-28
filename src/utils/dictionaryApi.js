@@ -142,7 +142,6 @@ export const validateWordWithDictionary = async word => {
       isValid: true,
       word: word,
       wordType: dominantType,
-      isDisgusting: DISGUSTING_WORDS.includes(word.toUpperCase()),
     }
 
     cacheResponse(word, result)
