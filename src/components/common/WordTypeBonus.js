@@ -16,26 +16,17 @@ const WordTypeBonus = ({ word, type, wordScoreResult }) => {
     .reduce((total, letter) => total + calculateLetterScore(letter), 0)
 
   return (
-    <div className='flex flex-col items-center gap-1 text-sm'>
-      <span className='font-bold text-md items-center bg-gray-200 px-2 py-0.5 rounded-md'>
-        WORD SCORE: {totalLetterScore}
-      </span>
-      <span
-        className={`flex font-bold text-md items-center ${wordLengthClass} px-2 py-0.5 rounded-md`}
-      >
-        LETTERS × {word.length}
-      </span>
-      <span
-        className={`flex font-bold text-md items-center ${typeColor} px-2 py-0.5 rounded-md`}
-      >
-        {type.toUpperCase()} ×{' '}
-        {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']}
+    <div className='flex flex-col'>
+      <span>'{word}'</span>
+      <span className='breakdown'>(WORD SCORE: {totalLetterScore})</span>
+      <span className='breakdown'>(LETTERS × {word.length})</span>
+      <span className='breakdown'>
+        ({type.toUpperCase()} ×{' '}
+        {WORD_TYPE_MULTIPLIER[type?.toLowerCase() || 'unknown']})
       </span>
       {specialBonus && (
         <>
-          <span
-            className={`flex font-bold text-md items-center ${specialBonus.style.COLOR} px-2 py-0.5 rounded-md`}
-          >
+          <span className='breakdown'>
             {specialBonus.text} × {specialBonus.multiplier}
           </span>
         </>

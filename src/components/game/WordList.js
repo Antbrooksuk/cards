@@ -3,12 +3,6 @@ import PlayedWord from '../common/PlayedWord'
 import { LAYOUT_STYLES } from '../../constants/styleConstants'
 import { ANIMATION_CONSTANTS } from '../../constants/cardConstants'
 
-const WORD_LIST_STYLES = {
-  TITLE: `text-lg font-semibold ${LAYOUT_STYLES.FLEX_CENTER} gap-2 cursor-pointer select-none`,
-  WORDS_CONTAINER: `py-4 ${LAYOUT_STYLES.FLEX_COL} ${LAYOUT_STYLES.GAP_4} `,
-  CHEVRON: `w-5 h-5 transition-transform duration-${ANIMATION_CONSTANTS.BASE_DURATION} ease-in-out`,
-}
-
 const WordList = ({ allWords = [] }) => {
   const [isExpanded, setIsExpanded] = useState(true)
 
@@ -18,7 +12,7 @@ const WordList = ({ allWords = [] }) => {
 
   return (
     <div className='played-words'>
-      <h3 className={WORD_LIST_STYLES.TITLE} onClick={toggleExpand}>
+      <h3 className='font-semibold' onClick={toggleExpand}>
         {/* <svg
           className={`${WORD_LIST_STYLES.CHEVRON} ${
             isExpanded ? 'transform rotate-180' : ''
@@ -34,11 +28,7 @@ const WordList = ({ allWords = [] }) => {
         </svg> */}
         Played Words ({allWords.length})
       </h3>
-      <div
-        className={`${WORD_LIST_STYLES.WORDS_CONTAINER} ${
-          isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
+      <ul>
         {[...allWords].reverse().map((wordObj, index) => (
           <PlayedWord
             key={index}
@@ -47,7 +37,7 @@ const WordList = ({ allWords = [] }) => {
             isInvalid={!wordObj.type}
           />
         ))}
-      </div>
+      </ul>
     </div>
   )
 }

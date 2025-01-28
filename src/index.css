@@ -64,10 +64,10 @@ body {
     @apply bg-white max-w-xl mx-auto;
   }
   .buff-bar {
-    @apply flex gap-2 p-4 pt-0 border border-[3px] border-[rgba(0,0,0,0.25)] border-b-0 justify-end items-center bg-blue-500 rounded-t-xl;
+    @apply flex gap-2  p-4 pt-0 border border-[3px] border-[rgba(0,0,0,0.25)] border-b-0 justify-end items-center bg-blue-500 rounded-t-xl;
   }
   .action-bar {
-    @apply pt-4 bg-sky-300 border border-[3px] border-[rgba(0,0,0,0.25)] border-t-0  rounded-b-xl;
+    @apply pt-4 mb-4 bg-sky-300 border border-[3px] border-[rgba(0,0,0,0.25)] border-t-0  rounded-b-xl;
   }
   .action-bar-inner {
     @apply flex p-4  rounded-b-xl flex-row gap-2 justify-center bg-white/30 border-t border-[rgba(0,0,0,0.1)];
@@ -78,22 +78,23 @@ body {
   .word-input {
     @apply w-full p-2 border-2 rounded-lg focus:outline-none focus:border-blue-500;
   }
-  .played-words {
-    @apply bg-white p-4 rounded-t-xl;
-  }
   .deck-status {
     @apply p-4 bg-gray-100 -mt-8 relative rounded-t-xl;
   }
-  .notepad {
-    @apply border p-4 flex w-full overflow-hidden relative;
+  .played-words {
+    @apply pl-[50px] rounded-md border w-full overflow-hidden relative;
+  }
+  .invalid {
+    @apply italic text-red-500;
   }
 }
 
-.notepad {
+.played-words {
   background: linear-gradient(to bottom, white 29px, #00b0d7 1px);
   background-size: 100% 30px;
+  line-height: 30px;
 }
-.notepad:before {
+.played-words:before {
   content: '';
   display: block;
   position: absolute;
@@ -103,4 +104,17 @@ body {
   height: 100%;
   width: 1px;
   background: red;
+}
+.played-words ul {
+  padding-bottom: 30px;
+}
+.played-words ul li {
+  margin-top: 30px;
+}
+.played-words ul li span {
+  height: 30px;
+  overflow: hidden;
+}
+.played-words ul li .breakdown {
+  padding-left: 20px;
 }
