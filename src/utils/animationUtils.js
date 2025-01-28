@@ -46,7 +46,7 @@ export const handleCardExitAnimation = (playerHand, setExitingCards, index) => {
 export const getResponsiveValues = () => {
   const width = window.innerWidth
   return {
-    xSpacing: Math.min(width / 10, 50),
+    xSpacing: Math.min(width / 11, 50),
     baseScale: Math.min(width / 500, CARD_ANIMATION.WORD_CARD_SCALE),
   }
 }
