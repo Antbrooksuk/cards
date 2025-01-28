@@ -91,7 +91,7 @@ body {
     @apply italic text-green-800;
   }
   .breakdown {
-    @apply pl-[20px] italic;
+    @apply px-[20px] italic;
   }
 }
 
@@ -117,7 +117,10 @@ body {
 .played-words ul li {
   margin-top: 30px;
 }
-.played-words ul li span {
-  height: 30px;
+.played-words ul li span.breakdown {
   overflow: hidden;
+  display: list-item;
+  list-style-type: disc;
+  list-style-position: inside;
+  width: 100%;
 }
