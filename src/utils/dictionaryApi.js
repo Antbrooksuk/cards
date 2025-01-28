@@ -2,9 +2,43 @@ import { API_ENDPOINTS } from '../constants/apiConstants'
 import { ERROR_MESSAGES } from '../constants/gameConstants'
 import { CACHE_CONFIG } from '../constants/apiConstants'
 
-// Simple in-memory cache
-const cache = new Map()
-const cacheTimestamps = new Map()
+const CACHE_PREFIX = 'wordCache_'
+
+/**
+ * Get all cache keys
+ * @returns {string[]} Array of cache keys
+ */
+const getCacheKeys = () => {
+  return Object.keys(localStorage).filter(key => key.startsWith(CACHE_PREFIX))
+}
+
+/**
+ * Clean up expired or excess cache entries
+ */
+const cleanupCache = () => {
+  const keys = getCacheKeys()
+  const now = Date.now()
+
+  // Remove expired entries and collect valid entries
+  const validEntries = keys
+    .map(key => {
+      const item = JSON.parse(localStorage.getItem(key))
+      if (now - item.timestamp > CACHE_CONFIG.EXPIRY_TIME) {
+        localStorage.removeItem(key)
+        return null
+      }
+      return { key, timestamp: item.timestamp }
+    })
+    .filter(Boolean)
+
+  // Remove oldest entries if we're over the size limit
+  if (validEntries.length > CACHE_CONFIG.MAX_SIZE) {
+    validEntries
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .slice(0, validEntries.length - CACHE_CONFIG.MAX_SIZE)
+      .forEach(({ key }) => localStorage.removeItem(key))
+  }
+}
 
 /**
  * Get cached response if available and not expired
@@ -12,16 +46,19 @@ const cacheTimestamps = new Map()
  * @returns {any|null} Cached value or null if not found/expired
  */
 const getCachedResponse = key => {
-  if (!cache.has(key)) return null
+  const cacheKey = CACHE_PREFIX + key
+  const cachedItem = localStorage.getItem(cacheKey)
 
-  const timestamp = cacheTimestamps.get(key)
+  if (!cachedItem) return null
+
+  const { value, timestamp } = JSON.parse(cachedItem)
+
   if (Date.now() - timestamp > CACHE_CONFIG.EXPIRY_TIME) {
-    cache.delete(key)
-    cacheTimestamps.delete(key)
+    localStorage.removeItem(cacheKey)
     return null
   }
 
-  return cache.get(key)
+  return value
 }
 
 /**
@@ -30,15 +67,35 @@ const getCachedResponse = key => {
  * @param {any} value - Value to cache
  */
 const cacheResponse = (key, value) => {
-  // Remove oldest entry if cache is full
-  if (cache.size >= CACHE_CONFIG.MAX_SIZE) {
-    const oldestKey = cache.keys().next().value
-    cache.delete(oldestKey)
-    cacheTimestamps.delete(oldestKey)
-  }
+  try {
+    cleanupCache()
 
-  cache.set(key, value)
-  cacheTimestamps.set(key, Date.now())
+    const cacheKey = CACHE_PREFIX + key
+    const cacheItem = {
+      value,
+      timestamp: Date.now(),
+    }
+
+    localStorage.setItem(cacheKey, JSON.stringify(cacheItem))
+  } catch (error) {
+    // Handle quota exceeded or other storage errors
+    if (
+      error.name === 'QuotaExceededError' ||
+      error.name === 'NS_ERROR_DOM_QUOTA_REACHED'
+    ) {
+      cleanupCache()
+      try {
+        const cacheKey = CACHE_PREFIX + key
+        const cacheItem = {
+          value,
+          timestamp: Date.now(),
+        }
+        localStorage.setItem(cacheKey, JSON.stringify(cacheItem))
+      } catch (retryError) {
+        console.warn('Failed to cache response after cleanup:', retryError)
+      }
+    }
+  }
 }
 
 /**

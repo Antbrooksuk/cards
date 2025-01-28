@@ -64,7 +64,7 @@ body {
     @apply bg-white max-w-xl mx-auto;
   }
   .buff-bar {
-    @apply flex gap-4 p-4 border border-[3px] border-[rgba(0,0,0,0.25)] border-b-0 justify-center items-center bg-blue-500 rounded-t-xl;
+    @apply flex gap-2 p-4 border border-[3px] border-[rgba(0,0,0,0.25)] border-b-0 justify-end items-center bg-blue-500 rounded-t-xl;
   }
   .action-bar {
     @apply pt-4 bg-sky-300 border border-[3px] border-[rgba(0,0,0,0.25)] border-t-0  rounded-b-xl;

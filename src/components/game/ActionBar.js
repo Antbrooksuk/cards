@@ -26,8 +26,8 @@ const ActionBar = ({
 }) => {
   if (gameStatus === 'roundComplete') {
     return (
-      <div className='flex border rounded-lg p-4 flex-row gap-2 justify-center'>
-        <div>
+      <div className='action-bar'>
+        <div className='action-bar-inner'>
           <Button onClick={onShowRoundEnd} variant='primary'>
             Continue
           </Button>

@@ -9,22 +9,22 @@ const BuffBar = () => {
   return (
     <div className='buff-bar'>
       <div
-        className={`px-2 py-1 rounded-lg ${
+        className={`px-2 py-1 w-8 font-bold text-center rounded-md ${
           legendaryLetterPlayed === '?'
             ? `${CARD_COLORS.legendary} text-white`
-            : 'bg-white/20 text-black'
+            : 'bg-white/20 text-[rgba(0,0,0,0.5)]'
         }`}
       >
-        Question?
+        ?
       </div>
       <div
-        className={`px-2 py-1 rounded-lg ${
+        className={`px-2 py-1 w-8 font-bold text-center rounded-md ${
           legendaryLetterPlayed === '!'
             ? `${CARD_COLORS.legendary} text-white`
-            : 'bg-white/20 text-black'
+            : 'bg-white/20 text-[rgba(0,0,0,0.5)]'
         }`}
       >
-        Exclamation!
+        !
       </div>
     </div>
   )

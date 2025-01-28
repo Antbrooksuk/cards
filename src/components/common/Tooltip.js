@@ -27,6 +27,7 @@ const Tooltip = ({ children, content }) => {
     <div className='relative inline-block tooltip-container'>
       <div
         onClick={toggleTooltip}
+        onFocus={toggleTooltip}
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
         className='cursor-pointer'
