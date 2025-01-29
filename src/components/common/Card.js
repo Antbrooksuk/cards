@@ -3,7 +3,10 @@ import { calculateLetterScore } from '../../utils/scoreUtils'
 import { CARD_CLASSES } from '../../constants/tailwindClasses'
 import { getCardStyle } from '../../utils/cardUtils'
 import CardLayout from '../layouts/CardLayout'
-import { CARD_ANIMATION } from '../../constants/cardConstants'
+import {
+  CARD_ANIMATION,
+  ANIMATION_CONSTANTS,
+} from '../../constants/cardConstants'
 
 const Card = ({
   id,
@@ -29,11 +32,20 @@ const Card = ({
 
   const [dealComplete, setDealComplete] = useState(false)
   const animationClass = getAnimationClasses()
+
+  // Handle existing cards loaded from cache
+  useEffect(() => {
+    if (!isNew && !isAnimating) {
+      setDealComplete(true)
+    }
+  }, [isNew, isAnimating])
+
+  // Handle deal animation completion
   useEffect(() => {
     if (isAnimating) {
       const timer = setTimeout(() => {
         setDealComplete(true)
-      }, 500) // Match the dealCard animation duration
+      }, ANIMATION_CONSTANTS.CARD_ANIMATION_DURATION)
       return () => clearTimeout(timer)
     }
   }, [isAnimating])
