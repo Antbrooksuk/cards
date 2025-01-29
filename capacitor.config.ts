@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Word Game',
   webDir: 'build',
   server: {
-    url: 'http://localhost:3000',
+    url: 'http://10.0.2.2:3000',
     cleartext: true,
   },
   plugins: {
@@ -24,6 +24,7 @@ const config: CapacitorConfig = {
     allowMixedContent: true,
     captureInput: true,
     webContentsDebuggingEnabled: true,
+    initialFocus: false,
   },
 }
 

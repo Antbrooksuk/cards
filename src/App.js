@@ -1,5 +1,6 @@
 import React from 'react'
 import { GameProvider, useGame } from './context/GameContext'
+import SafeArea from './components/layouts/SafeArea'
 import Welcome from './components/screens/Welcome'
 import Round from './components/screens/Round'
 import RoundEnd from './components/screens/RoundEnd'
@@ -55,7 +56,9 @@ const GameScreen = () => {
 const App = () => {
   return (
     <GameProvider>
-      <GameScreen />
+      <SafeArea>
+        <GameScreen />
+      </SafeArea>
     </GameProvider>
   )
 }

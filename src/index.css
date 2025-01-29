@@ -43,6 +43,17 @@ body {
   padding: 0px;
   margin: 0px;
   overflow-x: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#root {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 @theme {
   --outline-color: black;
@@ -61,7 +72,7 @@ body {
     @apply bg-blue-500 text-white;
   }
   .game-container {
-    @apply bg-white max-w-xl mx-auto;
+    @apply bg-white max-w-xl mx-auto h-full;
   }
   .buff-bar {
     @apply mx-4 flex gap-2  p-4 pt-0 border border-[3px] border-[rgba(0,0,0,0.25)] border-b-0 justify-end items-center bg-blue-500 rounded-t-xl;
