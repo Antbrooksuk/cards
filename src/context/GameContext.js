@@ -80,11 +80,6 @@ const isValidDiscard = state => {
   )
 }
 
-const canAddLetter = (state, letter) => {
-  const isLegendary = LEGENDARY_LETTERS.includes(letter)
-  return !state.wordHistory?.current?.hasLegendaryLetter || !isLegendary
-}
-
 const GameContext = createContext()
 
 const STORAGE_KEY = 'wordGameState'

@@ -1,5 +1,4 @@
 import React from 'react'
-import { calculateLetterScore } from '../../utils/scoreUtils'
 import { MINI_CARD_CLASSES } from '../../constants/tailwindClasses'
 import { getCardStyle, getLetterType } from '../../utils/cardUtils'
 

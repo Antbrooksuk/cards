@@ -121,7 +121,7 @@ export const validateWordWithDictionary = async word => {
     }
 
     const data = await response.json()
-    const { WORD_TYPE_MULTIPLIER, DISGUSTING_WORDS } = await import(
+    const { WORD_TYPE_MULTIPLIER } = await import(
       '../constants/wordConstants.js'
     )
 

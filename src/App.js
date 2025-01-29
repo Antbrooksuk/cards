@@ -4,8 +4,6 @@ import Welcome from './components/screens/Welcome'
 import Round from './components/screens/Round'
 import RoundEnd from './components/screens/RoundEnd'
 import GameOver from './components/screens/GameOver'
-import useWordValidation from './hooks/useWordValidation'
-
 const GameScreen = () => {
   const {
     gameStatus,
@@ -16,12 +14,9 @@ const GameScreen = () => {
     allWords,
     targetScore,
     startGame,
-    addWord,
     startNextRound,
     playAgain,
   } = useGame()
-
-  const { validateWord } = useWordValidation()
 
   switch (gameStatus) {
     case 'welcome':

@@ -1,6 +1,5 @@
 import React from 'react'
 import { calculateWordTotalScore } from '../../utils/scoreUtils'
-import WordScoreBreakdown from './WordScoreBreakdown'
 import WordTypeBonus from './WordTypeBonus'
 
 const PlayedWord = ({ word, type, isInvalid = false }) => {

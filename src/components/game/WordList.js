@@ -1,18 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PlayedWord from '../common/PlayedWord'
-import { LAYOUT_STYLES } from '../../constants/styleConstants'
-import { ANIMATION_CONSTANTS } from '../../constants/cardConstants'
 
 const WordList = ({ allWords = [] }) => {
-  const [isExpanded, setIsExpanded] = useState(true)
-
-  const toggleExpand = () => {
-    // setIsExpanded(!isExpanded)
-  }
-
   return (
     <div className='played-words'>
-      <h3 className='font-semibold' onClick={toggleExpand}>
+      <h3 className='font-semibold'>
         {allWords.length === 0
           ? `Get started`
           : `Played Words ${allWords.length}`}

@@ -1,12 +1,10 @@
 import React from 'react'
 import Button from '../common/Button'
-import ScoreDisplay from '../common/ScoreDisplay'
 import AnimatedScoreDisplay from '../common/AnimatedScoreDisplay'
 
 const RoundEnd = ({
   words,
   roundScore,
-  totalScore,
   roundNumber,
   targetScore,
   onNextRound,

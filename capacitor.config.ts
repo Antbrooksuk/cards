@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Word Game',
   webDir: 'build',
   server: {
-    url: 'http://localhost:3001',
+    url: 'http://localhost:3000',
     cleartext: true,
   },
   plugins: {
