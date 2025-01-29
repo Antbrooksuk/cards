@@ -37,6 +37,7 @@ const Header = ({
   return (
     <div id='header' className='flex'>
       <div className={ROUND_SCORE_STYLES.CONTAINER}>
+        <h1 className='logo-text text-center -mt-9'>Game!</h1>
         <div className={ROUND_SCORE_STYLES.TOP}>
           <AnimatedScoreDisplay
             label={`Round ${roundNumber} Score`}
