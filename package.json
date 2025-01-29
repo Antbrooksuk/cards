@@ -2,8 +2,12 @@
   "name": "word-game",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://antbrooksuk.github.io/cards",
-"dependencies": {
+  "dependencies": {
+    "@capacitor/android": "^7.0.1",
+    "@capacitor/cli": "^7.0.1",
+    "@capacitor/core": "^7.0.1",
+    "@capacitor/ios": "^7.0.1",
+    "@capacitor/preferences": "^7.0.0",
     "cra-template": "1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -15,8 +19,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "cap:sync": "npx cap sync",
+    "cap:build": "npm run build && npx cap sync",
+    "cap:serve": "npm run start",
+    "cap:android": "npx cap open android",
+    "cap:build:android": "npm run cap:build && npx cap open android",
+    "cap:run:android": "npx cap run android"
   },
   "eslintConfig": {
     "extends": [
