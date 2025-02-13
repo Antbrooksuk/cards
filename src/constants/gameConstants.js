@@ -55,3 +55,8 @@ export const ERROR_MESSAGES = {
   DICTIONARY_VALIDATION_FAILED: 'Dictionary validation failed',
   WORD_NOT_FOUND: 'Word not found in dictionary',
 }
+
+export const WORD_LENGTH = {
+  MIN: 3,
+  MAX: 15
+}
