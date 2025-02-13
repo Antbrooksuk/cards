@@ -9,6 +9,16 @@ export const getStoredState = () => {
     const storedState = localStorage.getItem(STORAGE_KEY)
     if (storedState) {
       const state = JSON.parse(storedState)
+      // Reset current word state and selections
+      state.wordHistory = {
+        ...state.wordHistory,
+        current: {
+          ...state.wordHistory.current,
+          text: '',
+          selectedIndices: [],
+        }
+      }
+      
       // If we're in a playing state but have no cards, deal new ones
       if (state.gameStatus === GAME_STATUS.PLAYING && state.playerHand.length === 0) {
         const { deck, playerHand, canReshuffle } = handleNewRound(createDeck())

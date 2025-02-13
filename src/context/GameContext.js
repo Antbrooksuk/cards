@@ -14,7 +14,19 @@ export const GameProvider = ({ children }) => {
   // Save state to localStorage whenever it changes
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      // Create a copy of state without selected indices
+      const stateToSave = {
+        ...state,
+        wordHistory: {
+          ...state.wordHistory,
+          current: {
+            ...state.wordHistory.current,
+            selectedIndices: [], // Clear selected indices when saving
+            text: '' // Clear current text when saving
+          }
+        }
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave))
     } catch (error) {
       console.error('Failed to save game state:', error)
     }
